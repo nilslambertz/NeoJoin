@@ -47,6 +47,7 @@
     <module>backend-tgg</module>
     <module>frontend</module>
     <module>model</module>
+    <module>expression-parser</module>
   </modules>
 
   <!-- Dependency Management -->
