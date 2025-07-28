@@ -1,5 +1,6 @@
 package tools.vitruv.neojoin.cli;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
@@ -40,6 +41,7 @@ import java.util.concurrent.Callable;
 @Command(name = "NeoJoin", mixinStandardHelpOptions = true)
 public class Main implements Callable<Integer> {
 
+	private static final Logger log = Logger.getLogger(Main.class);
 	@Parameters(index = "0", paramLabel = "FILE", description = "Path to the query file")
 	Path queryFile;
 
@@ -127,6 +129,8 @@ public class Main implements Callable<Integer> {
 		}
 
 		var aqr = ((Parser.Result.Success) result).aqr();
+
+		log.info(String.format("[DEBUG] Resulting AQR: %s", aqr));
 
 		// generate meta-model
 		var targetMetaModel = new MetaModelGenerator(aqr).generate();
