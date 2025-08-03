@@ -9,8 +9,13 @@ import java.util.List;
 
 public class PatternMatcher {
 	private static final Logger log = Logger.getLogger(PatternMatcher.class);
+	private final AQR aqr;
 
-	public static void match(AQR aqr) {
+	public PatternMatcher(final AQR aqr) {
+		this.aqr = aqr;
+	}
+
+	public void matchAndExtract() {
 		log.info(String.format("Pattern matching called: %s", aqr));
 
 		final List<AQRFeature> features = aqr.classes().stream().flatMap(targetClass -> targetClass.features().stream()).toList();

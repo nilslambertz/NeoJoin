@@ -23,6 +23,7 @@ import tools.vitruv.neojoin.Parser;
 import tools.vitruv.neojoin.SourceLocation;
 import tools.vitruv.neojoin.collector.InstanceModelCollector;
 import tools.vitruv.neojoin.collector.PackageModelCollector;
+import tools.vitruv.neojoin.expression_parser.PatternMatcher;
 import tools.vitruv.neojoin.generation.MetaModelGenerator;
 import tools.vitruv.neojoin.transformation.Transformator;
 import tools.vitruv.neojoin.transformation.TransformatorException;
@@ -72,7 +73,16 @@ public class Main implements Callable<Integer> {
 
 		@Option(names = {"-i", "--instance-model-path"}, paramLabel = "MODEL PATH", required = true, description = "Path specification (including URI scheme) to find instance models")
 		String instanceModelPath;
+	}
 
+	@ArgGroup(exclusive = false, heading = "Run reference operator pattern matching:%n")
+	@Nullable
+	ReferenceOperatorPatternMatching referenceOperatorPatternMatching;
+
+	static class ReferenceOperatorPatternMatching {
+
+		@Option(names = {"-p", "--pattern-matching"}, paramLabel = "PATTERN MATCHING", description = "Whether to run pattern matching and extraction of reference operators")
+		boolean patternMatching;
 	}
 
 	/**
@@ -132,6 +142,13 @@ public class Main implements Callable<Integer> {
 
 		log.info(String.format("[DEBUG] Resulting AQR: %s", aqr));
 
+		// Run pattern matching
+		if (referenceOperatorPatternMatching != null && referenceOperatorPatternMatching.patternMatching) {
+			log.info("[DEBUG] Running pattern matching");
+			var patternMatcher = new PatternMatcher(aqr);
+			patternMatcher.matchAndExtract();
+		}
+
 		// generate meta-model
 		var targetMetaModel = new MetaModelGenerator(aqr).generate();
 		printIssues(targetMetaModel.diagnostic());
@@ -142,12 +159,7 @@ public class Main implements Callable<Integer> {
 		if (transform != null) {
 			// transform instance models
 			var inputModels = new InstanceModelCollector(transform.instanceModelPath, registry).collect();
-			var targetInstanceModel = new Transformator(
-				setup.getExpressionHelper(),
-				aqr,
-				targetMetaModel.pack(),
-				inputModels
-			).transform();
+			var targetInstanceModel = new Transformator(setup.getExpressionHelper(), aqr, targetMetaModel.pack(), inputModels).transform();
 			write(getOutputURI(transform.output, "xmi"), targetInstanceModel);
 			validateInstanceModel(targetInstanceModel);
 		}
@@ -157,12 +169,7 @@ public class Main implements Callable<Integer> {
 
 	private static void printIssues(List<Issue> issues) {
 		for (Issue issue : issues) {
-			System.err.printf(
-				"[%s] %s (%s)%n",
-				issue.getSeverity().name(),
-				issue.getMessage(),
-				SourceLocation.from(issue).display()
-			);
+			System.err.printf("[%s] %s (%s)%n", issue.getSeverity().name(), issue.getMessage(), SourceLocation.from(issue).display());
 		}
 	}
 
