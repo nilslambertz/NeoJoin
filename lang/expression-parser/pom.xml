@@ -48,4 +48,76 @@
             <version>${viatra.version}</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <!-- Generated code folder -->
+                                    <directory>src-gen</directory>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.eclipse.viatra</groupId>
+                <artifactId>viatra-maven-plugin</artifactId>
+                <version>${viatra.version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <outputDirectory>src-gen</outputDirectory>
+                    <metamodels>
+                        <metamodel>
+                            <packageClass>
+                                org.eclipse.xtext.xbase.XbasePackage
+                            </packageClass>
+                            <!-- (b) genmodel file used for generating the EMF model classes - use this if EMF model is in the same project -->
+                            <!-- <genmodelUri>model/model.genmodel</genmodelUri> -->
+                        </metamodel>
+                    </metamodels>
+                    <useProjectDependencies>true</useProjectDependencies>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.eclipse.xtend</groupId>
+                <artifactId>xtend-maven-plugin</artifactId>
+                <configuration>
+                    <!-- need to prefix by basedir to generate to currently built module -->
+                    <outputDirectory>${basedir}/xtend-gen</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
