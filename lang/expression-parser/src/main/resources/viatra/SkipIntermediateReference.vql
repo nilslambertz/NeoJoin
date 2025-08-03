@@ -1,10 +1,18 @@
 package viatra
 
-import "http://www.eclipse.org/Xtext/Xbase/XAnnotations"
-import "http://www.eclipse.org/xtext/xbase/Xbase"
-import "http://www.eclipse.org/xtext/xbase/Xtype"
+import "http://www.eclipse.org/xtext/xbase/Xbase" as xbase
+import "http://www.eclipse.org/xtext/common/JavaVMTypes" as jvm
 
 pattern SkipIntermediateReferencePattern(expression: XExpression) {
-	XMemberFeatureCall(expression);
-	XMemberFeatureCall.feature(expression, feature);
+	xbase::XMemberFeatureCall(expression);
+	xbase::XMemberFeatureCall.feature(expression, feature);
+	jvm::JvmOperation.simpleName(feature, "toList");
+	
+	xbase::XMemberFeatureCall.memberCallTarget(expression, flatMapTarget);
+	xbase::XMemberFeatureCall.feature(flatMapTarget, flatMapFeature);
+	jvm::JvmOperation.simpleName(flatMapFeature, "flatMap");
+	
+	xbase::XMemberFeatureCall.memberCallTarget(flatMapTarget, intermediateReferenceTarget);
+	xbase::XMemberFeatureCall.memberCallTarget(intermediateReferenceTarget, sourceTarget);
+	xbase::XFeatureCall(sourceTarget);
 }
