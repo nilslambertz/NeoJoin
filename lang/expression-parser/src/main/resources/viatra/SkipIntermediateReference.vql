@@ -1,0 +1,10 @@
+package viatra
+
+import "http://www.eclipse.org/Xtext/Xbase/XAnnotations"
+import "http://www.eclipse.org/xtext/xbase/Xbase"
+import "http://www.eclipse.org/xtext/xbase/Xtype"
+
+pattern SkipIntermediateReferencePattern(expression: XExpression) {
+	XMemberFeatureCall(expression);
+	XMemberFeatureCall.feature(expression, feature);
+}
