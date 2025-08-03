@@ -16,6 +16,13 @@
             <url>https://repo.eclipse.org/content/groups/releases/</url>
         </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>eclipse-releases</id>
+            <name>Eclipse Releases</name>
+            <url>https://repo.eclipse.org/content/groups/releases/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <artifactId>tools.vitruv.neojoin.expression-parser</artifactId>
     <name>Expression Parser</name>
@@ -33,6 +40,11 @@
         <dependency>
             <groupId>org.eclipse.viatra</groupId>
             <artifactId>viatra-query-runtime</artifactId>
+            <version>${viatra.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.viatra</groupId>
+            <artifactId>viatra-query-language</artifactId>
             <version>${viatra.version}</version>
         </dependency>
     </dependencies>
