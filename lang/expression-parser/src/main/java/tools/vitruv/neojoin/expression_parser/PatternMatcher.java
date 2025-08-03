@@ -25,9 +25,13 @@ public class PatternMatcher {
 		final AQRFeature.Reference reference = referenceFeatures.getFirst();
 		final XExpression expression = reference.kind().expression();
 
-		SkipIntermediateReferencePattern instance = SkipIntermediateReferencePattern.instance();
-		SkipIntermediateReferencePattern.Match match = instance.instantiate().newMatch(expression);
-		log.info(String.format("Pattern matched: %s", match));
+		try {
+			SkipIntermediateReferencePattern instance = SkipIntermediateReferencePattern.instance();
+			SkipIntermediateReferencePattern.Match match = instance.instantiate().newMatch(expression);
+			log.info(String.format("Pattern matched: %s", match));
+		} catch (Exception e) {
+			log.error("Exception during Pattern matching", e);
+		}
 
 
 	}
