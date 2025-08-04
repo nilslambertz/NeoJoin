@@ -132,15 +132,13 @@ public class Main implements Callable<Integer> {
 			return 1;
 		}
 
-		if (generate == null && transform == null) {
+		if (generate == null && transform == null && referenceOperatorPatternMatching == null) {
 			// neither generation nor transformation requested
 			System.out.println("Query is valid. Use --generate or --transform for further processing.");
 			return 0;
 		}
 
 		var aqr = ((Parser.Result.Success) result).aqr();
-
-		log.info(String.format("[DEBUG] Resulting AQR: %s", aqr));
 
 		// Run pattern matching
 		if (referenceOperatorPatternMatching != null && referenceOperatorPatternMatching.patternMatching) {
