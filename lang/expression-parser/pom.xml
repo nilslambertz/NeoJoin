@@ -11,16 +11,16 @@
 
     <repositories>
         <repository>
-            <id>eclipse-releases</id>
-            <name>Eclipse Releases</name>
-            <url>https://repo.eclipse.org/content/groups/releases/</url>
+            <id>viatra</id>
+            <name>VIATRA Releases</name>
+            <url>https://repo.eclipse.org/content/groups/viatra2/</url>
         </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
-            <id>eclipse-releases</id>
-            <name>Eclipse Releases</name>
-            <url>https://repo.eclipse.org/content/groups/releases/</url>
+            <id>viatra</id>
+            <name>VIATRA Releases</name>
+            <url>https://repo.eclipse.org/content/groups/viatra2/</url>
         </pluginRepository>
     </pluginRepositories>
 
@@ -51,23 +51,73 @@
 
     <build>
         <plugins>
+            <!-- To ensure that VIATRA files are correctly generated and included as sources -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>add-generated-sources</id>
+                        <id>add-viatra-sources</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>add-source</goal>
                         </goals>
                         <configuration>
                             <sources>
+                                <source>${project.basedir}/src/main/viatra</source>
                                 <source>${project.basedir}/src-gen</source>
                             </sources>
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!-- Remove previously generated code -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>${project.basedir}/src-gen</directory>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Setting up generator -->
+            <plugin>
+                <groupId>org.eclipse.viatra</groupId>
+                <artifactId>viatra-maven-plugin</artifactId>
+                <version>${viatra.version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <outputDirectory>${project.basedir}/src-gen</outputDirectory>
+                    <metamodels>
+                        <metamodel>
+                            <packageClass>org.eclipse.xtext.xbase.XbasePackage</packageClass>
+                            <packageClass>org.eclipse.xtext.XtextPackage</packageClass>
+                        </metamodel>
+                    </metamodels>
+                    <useProjectDependencies>true</useProjectDependencies>
+                </configuration>
             </plugin>
         </plugins>
     </build>
