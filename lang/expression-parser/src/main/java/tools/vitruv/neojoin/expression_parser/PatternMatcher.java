@@ -1,15 +1,16 @@
 package tools.vitruv.neojoin.expression_parser;
 
-import com.google.inject.Injector;
 import org.apache.log4j.Logger;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineOptions;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.xtext.resource.XtextResourceSet;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
+import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
+import org.eclipse.xtext.common.types.TypesPackage;
 import org.eclipse.xtext.xbase.XExpression;
-import org.eclipse.xtext.xbase.XbaseStandaloneSetup;
+import org.eclipse.xtext.xbase.XbasePackage;
 import tools.vitruv.neojoin.aqr.AQR;
 import tools.vitruv.neojoin.aqr.AQRFeature;
 import viatra.SkipIntermediateReference;
@@ -36,13 +37,14 @@ public class PatternMatcher {
 		final XExpression expression = reference.kind().expression();
 		log.info("expression: " + expression);
 
-		Injector injector = new XbaseStandaloneSetup().createInjectorAndDoEMFRegistration();
-		XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
-		resourceSet.getResourceFactoryRegistry().getProtocolToFactoryMap().put("dummy", new XMIResourceFactoryImpl());
-		Resource exprRes = resourceSet.createResource(URI.createURI("dummy:/expr.xbase"));
-		exprRes.getContents().add(expression);
-		EMFScope scope = new EMFScope(resourceSet);
-		ViatraQueryEngine engine = ViatraQueryEngine.on(scope);
+		IQueryBackendFactory reteFactory = ReteBackendFactory.INSTANCE;
+		ViatraQueryEngineOptions options = new ViatraQueryEngineOptions.Builder().withDefaultBackend(reteFactory).build();
+		ResourceSet resourceSet = new ResourceSetImpl();
+		resourceSet.getPackageRegistry().put(XbasePackage.eNS_URI, XbasePackage.eINSTANCE);
+		resourceSet.getPackageRegistry().put(TypesPackage.eNS_URI, TypesPackage.eINSTANCE);
+
+		ViatraQueryEngine engine = ViatraQueryEngine.on(new EMFScope(resourceSet), options);
+
 		SkipIntermediateReference.instance().prepare(engine);
 		final var matcher = SkipIntermediateReferencePattern.Matcher.on(engine);
 		log.info(String.format("SkipIntermediateReferencePattern matched: %s", matcher.getAllMatches()));
