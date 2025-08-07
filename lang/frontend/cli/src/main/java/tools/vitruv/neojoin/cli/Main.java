@@ -1,6 +1,5 @@
 package tools.vitruv.neojoin.cli;
 
-import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
@@ -39,14 +38,25 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 @NullUnmarked
-@Command(name = "NeoJoin", mixinStandardHelpOptions = true)
+@Command(
+	name = "neojoin",
+	version = "NeoJoin CLI 1.0.0",
+	mixinStandardHelpOptions = true,
+	footer = {
+		"",
+		"Model Path",
+		"  A semicolon separated list of file URLs to search for models",
+		"  used in the options --meta-model-path and --instance-model-path.",
+		"  Examples:",
+		"  - Linux: file:///path/to/directory;file:///path/to/file.ecore",
+		"  - Windows: file:///C:/path/to/directory;file:///C:/path/to/file.ecore",
+	})
 public class Main implements Callable<Integer> {
 
-	private static final Logger log = Logger.getLogger(Main.class);
-	@Parameters(index = "0", paramLabel = "FILE", description = "Path to the query file")
+	@Parameters(index = "0", paramLabel = "QUERY", description = "Path to the query file.")
 	Path queryFile;
 
-	@Option(names = {"-m", "--meta-model-path"}, paramLabel = "MODEL PATH", required = true, description = "Path specification (including URI scheme) to find referenced meta-models")
+	@Option(names = {"-m", "--meta-model-path"}, paramLabel = "MODEL-PATH", required = true, description = "Model path (see below) to find referenced meta-models (.ecore).")
 	String metaModelPath;
 
 
@@ -56,7 +66,7 @@ public class Main implements Callable<Integer> {
 
 	static class Generate {
 
-		@Option(names = {"-g", "--generate"}, paramLabel = "OUTPUT", description = "Generate the meta-model and write it to the given file or directory")
+		@Option(names = {"-g", "--generate"}, paramLabel = "OUTPUT", required = true, description = "Generate the meta-model and write it to the given output file or directory.")
 		Path output;
 
 	}
@@ -68,11 +78,12 @@ public class Main implements Callable<Integer> {
 
 	static class Transform {
 
-		@Option(names = {"-t", "--transform"}, paramLabel = "OUTPUT", required = true, description = "Transform the given input models based on the query and write the result to the given file or directory")
+		@Option(names = {"-i", "--instance-model-path"}, paramLabel = "MODEL-PATH", required = true, description = "Model path (see below) to find instance models (.xmi).")
+		String instanceModelPath;
+
+		@Option(names = {"-t", "--transform"}, paramLabel = "OUTPUT", required = true, description = "Transform the input models based on the query and write the result to the given output file or directory.")
 		Path output;
 
-		@Option(names = {"-i", "--instance-model-path"}, paramLabel = "MODEL PATH", required = true, description = "Path specification (including URI scheme) to find instance models")
-		String instanceModelPath;
 	}
 
 	@ArgGroup(exclusive = false, heading = "Run reference operator pattern matching:%n")
@@ -112,12 +123,24 @@ public class Main implements Callable<Integer> {
 		return 1;
 	}
 
+	/**
+	 * Prints an error message with optional formatting arguments.
+	 *
+	 * @param message message format string
+	 * @param args    formatting arguments
+	 * @see java.io.PrintStream#printf(String, Object...)
+	 */
 	private void printError(String message, @Nullable Object... args) {
 		System.err.print("[ERROR] ");
 		System.err.printf(message, args);
 		System.err.println();
 	}
 
+	/**
+	 * Execute the CLI operation.
+	 *
+	 * @return exit code
+	 */
 	private int execute() throws IOException {
 		// collect available meta-models
 		EPackage.Registry registry = new PackageModelCollector(metaModelPath).collect();
@@ -142,7 +165,6 @@ public class Main implements Callable<Integer> {
 
 		// Run pattern matching
 		if (referenceOperatorPatternMatching != null && referenceOperatorPatternMatching.patternMatching) {
-			log.info("[DEBUG] Running pattern matching");
 			var patternMatcher = new PatternMatcher(aqr);
 			patternMatcher.matchAndExtract();
 		}
@@ -183,6 +205,12 @@ public class Main implements Callable<Integer> {
 
 	private @Nullable ResourceSet resourceSet;
 
+	/**
+	 * Write the given {@link EObject} to a file specified by the given {@link URI}.
+	 *
+	 * @param outputUri URI of the output file
+	 * @param object    the {@link EObject} to write
+	 */
 	private void write(URI outputUri, EObject object) throws IOException {
 		if (resourceSet == null) {
 			resourceSet = new ResourceSetImpl();
@@ -190,12 +218,19 @@ public class Main implements Callable<Integer> {
 
 		var resource = resourceSet.createResource(outputUri);
 		resource.getContents().add(object);
-		var options = Map.of(XMLResource.OPTION_URI_HANDLER, new RelativeURIResolver(resource.getURI()));
+		var options = Map.of(XMLResource.OPTION_URI_HANDLER, new RelativeURIResolver(resource));
 		resource.save(options);
 	}
 
+	/**
+	 * Infer the output file URI based on the given output path and file extension.
+	 *
+	 * @param output    the output path (file or directory)
+	 * @param extension file extension of the output file
+	 * @return the output file URI
+	 */
 	private URI getOutputURI(Path output, String extension) {
-		if (Files.isDirectory(output)) {
+		if (Files.isDirectory(output)) { // if output is given as directory, infer file name from input file
 			String outputFileName = Utils.removeSuffix(queryFile.getFileName().toString(), ".nj") + "." + extension;
 			output = output.resolve(outputFileName);
 		}
@@ -203,6 +238,11 @@ public class Main implements Callable<Integer> {
 		return URI.createFileURI(output.toString());
 	}
 
+	/**
+	 * Validate the given instance model and print any validation issues.
+	 *
+	 * @param instanceModel the instance model to validate
+	 */
 	private void validateInstanceModel(EObject instanceModel) {
 		var rootDiagnostic = Diagnostician.INSTANCE.validate(instanceModel);
 		if (rootDiagnostic.getSeverity() == Diagnostic.OK) {
