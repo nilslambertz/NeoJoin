@@ -1,0 +1,7 @@
+package viatra
+
+import "http://www.eclipse.org/xtext/xbase/Xbase" as xbase
+
+pattern SanityCheckPattern(expression: XExpression) {
+  xbase::XMemberFeatureCall(expression);
+}
