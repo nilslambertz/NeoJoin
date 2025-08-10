@@ -7,12 +7,9 @@ pattern SkipIntermediateReferencePattern(expression: XExpression) {
 	xbase::XMemberFeatureCall(expression);
 	xbase::XMemberFeatureCall.feature(expression, feature);
 	jvm::JvmOperation.simpleName(feature, "toList");
-	
-	xbase::XMemberFeatureCall.memberCallTarget(expression, flatMapTarget);
-	xbase::XMemberFeatureCall.feature(flatMapTarget, flatMapFeature);
-	jvm::JvmOperation.simpleName(flatMapFeature, "flatMap");
-	
-	xbase::XMemberFeatureCall.memberCallTarget(flatMapTarget, intermediateReferenceTarget);
-	xbase::XMemberFeatureCall.memberCallTarget(intermediateReferenceTarget, sourceTarget);
-	xbase::XFeatureCall(sourceTarget);
+}
+
+pattern SkipIntermediateReferencePatternWithoutJvm(expression: XExpression) {
+	xbase::XMemberFeatureCall(expression);
+	xbase::XMemberFeatureCall.feature(expression, feature);
 }
