@@ -25,6 +25,7 @@ import viatra.SkipIntermediateReferencePatternStartWithoutJvm;
 import viatra.SkipIntermediateReferencePatternWithArguments;
 import viatra.SkipIntermediateReferencePatternWithJvm;
 import viatra.SkipIntermediateReferencePatternWithoutJvm;
+import viatra.operators.TestNewSkipOperator;
 
 import java.util.List;
 
@@ -119,6 +120,16 @@ public class PatternMatcher {
 			log.info(String.format("SkipIntermediateReferencePatternWithArguments: Matched sub flatMap: %s", match.getFlatMapTarget()));
 			log.info(String.format("SkipIntermediateReferencePatternWithArguments: Matched sub intermediate: %s", match.getIntermediateReferenceTarget()));
 			log.info(String.format("SkipIntermediateReferencePatternWithArguments: Matched sub source: %s", match.getSourceTarget()));
+		}
+
+		// Full with separated arguments
+		printDivider("TestNewSkipOperator");
+		final TestNewSkipOperator.Matcher test = TestNewSkipOperator.Matcher.on(engine);
+		for (TestNewSkipOperator.Match match : test.getAllMatches()) {
+			log.info(String.format("TestNewSkipOperator source: %s", match.getSourceTarget()));
+			log.info(String.format("TestNewSkipOperator intermediate: %s", match.getIntermediateReferenceTarget()));
+			log.info(String.format("TestNewSkipOperator flatMap: %s", match.getFlatMapTarget()));
+			log.info(String.format("TestNewSkipOperator expression: %s", match.getExpression()));
 		}
 	}
 
