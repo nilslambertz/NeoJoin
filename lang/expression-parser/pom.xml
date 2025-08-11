@@ -118,7 +118,12 @@
                     <metamodels>
                         <metamodel>
                             <packageClass>org.eclipse.xtext.xbase.XbasePackage</packageClass>
+                        </metamodel>
+                        <metamodel>
                             <packageClass>org.eclipse.xtext.XtextPackage</packageClass>
+                        </metamodel>
+                        <metamodel>
+                            <packageClass>org.eclipse.xtext.common.types.TypesPackage</packageClass>
                         </metamodel>
                     </metamodels>
                     <useProjectDependencies>true</useProjectDependencies>
