@@ -71,11 +71,6 @@ public class PatternMatcher {
 		// setup pattern
 		SkipIntermediateReference.instance().prepare(engine);
 
-		log.info(((XMemberFeatureCall) expression).getFeature());
-		log.info(((XMemberFeatureCall) expression).getFeature().getSimpleName());
-		log.info(((XMemberFeatureCall) expression).getFeature().getIdentifier());
-		log.info(((XMemberFeatureCall) expression).getFeature().getQualifiedName());
-
 		// Start without JVM
 		printDivider("SkipIntermediateReferencePatternStartWithoutJvm");
 		final SkipIntermediateReferencePatternStartWithoutJvm.Matcher startWithoutJvmMatcher = SkipIntermediateReferencePatternStartWithoutJvm.Matcher.on(engine);
@@ -97,6 +92,8 @@ public class PatternMatcher {
 			log.info(String.format("SkipIntermediateReferencePatternStartWithJvmWithArguments: Matched sub expression: %s", match.getExpression()));
 			log.info(String.format("SkipIntermediateReferencePatternStartWithJvmWithArguments: Matched sub feature: %s", match.getFeature()));
 			log.info(String.format("SkipIntermediateReferencePatternStartWithJvmWithArguments: Matched sub feature simpleName: %s", match.getFeature().getSimpleName()));
+			log.info(String.format("SkipIntermediateReferencePatternStartWithJvmWithArguments: Matched sub feature qualifiedName: %s", match.getFeature().getQualifiedName()));
+			log.info(String.format("SkipIntermediateReferencePatternStartWithJvmWithArguments: Matched sub feature identifier: %s", match.getFeature().getIdentifier()));
 		}
 
 		// Full without JVM
