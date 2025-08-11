@@ -4,6 +4,7 @@ import tools.vitruv.neojoin.aqr.AQR;
 import tools.vitruv.neojoin.aqr.AQRFeature;
 import tools.vitruv.neojoin.aqr.AQRFrom;
 import tools.vitruv.neojoin.aqr.AQRJoin;
+import tools.vitruv.neojoin.aqr.AQRSource;
 import tools.vitruv.neojoin.aqr.AQRTargetClass;
 import tools.vitruv.optggs.operators.selection.Pattern;
 
@@ -24,7 +25,7 @@ public class ViewExtractor {
     }
 
     private static Query queryFromTargetClass(AQRTargetClass targetClass) {
-        final FQN source = fqn(targetClass.source().from());
+        final FQN source = Optional.ofNullable(targetClass.source()).map(AQRSource::from).map(ViewExtractor::fqn).orElse(fqn(targetClass.name()));
         final FQN target = fqn(targetClass.name());
 
         final Map<String, FQN> namedRefs = new HashMap<>();
@@ -38,7 +39,7 @@ public class ViewExtractor {
         var query = new Query(new Selection(sourcePattern, Pattern.from(target)));
 
         // TODO: Filters???
-        if(targetClass.source().condition() != null) {
+        if (targetClass.source().condition() != null) {
             throw new RuntimeException("Condition expressions are not supported");
         }
 
