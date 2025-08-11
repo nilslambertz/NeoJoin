@@ -96,7 +96,7 @@
       <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
-        <version>3.27.3</version>
+        <version>3.27.4</version>
       </dependency>
         <dependency>
           <groupId>org.projectlombok</groupId>
@@ -178,6 +178,16 @@
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter-api</artifactId>
         <version>5.13.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-params</artifactId>
+        <version>5.13.4</version>
+      </dependency>
+      <dependency>
+        <groupId>tools.vitruv</groupId>
+        <artifactId>tools.vitruv.change.p2wrappers.emfcompare</artifactId>
+        <version>3.2.2</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
