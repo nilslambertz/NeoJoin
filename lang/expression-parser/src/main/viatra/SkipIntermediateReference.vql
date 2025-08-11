@@ -7,7 +7,12 @@ pattern SkipIntermediateReferencePatternStartWithJvm(expression: XExpression) {
 	xbase::XMemberFeatureCall(expression);
 	xbase::XMemberFeatureCall.feature(expression, feature);
 	jvm::JvmOperation(feature);
-	jvm::JvmOperation.simpleName(feature, "toList");
+}
+
+pattern SkipIntermediateReferencePatternStartWithJvmWithArguments(expression: XExpression, feature: JvmOperation) {
+	xbase::XMemberFeatureCall(expression);
+	xbase::XMemberFeatureCall.feature(expression, feature);
+	jvm::JvmOperation(feature);
 }
 
 pattern SkipIntermediateReferencePatternStartWithoutJvm(expression: XExpression) {

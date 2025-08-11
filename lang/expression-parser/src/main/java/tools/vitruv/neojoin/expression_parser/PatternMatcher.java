@@ -14,10 +14,17 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSea
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.xtext.common.types.TypesPackage;
 import org.eclipse.xtext.xbase.XExpression;
+import org.eclipse.xtext.xbase.XMemberFeatureCall;
 import org.eclipse.xtext.xbase.XbasePackage;
 import tools.vitruv.neojoin.aqr.AQR;
 import tools.vitruv.neojoin.aqr.AQRFeature;
-import viatra.*;
+import viatra.SkipIntermediateReference;
+import viatra.SkipIntermediateReferencePatternStartWithJvm;
+import viatra.SkipIntermediateReferencePatternStartWithJvmWithArguments;
+import viatra.SkipIntermediateReferencePatternStartWithoutJvm;
+import viatra.SkipIntermediateReferencePatternWithArguments;
+import viatra.SkipIntermediateReferencePatternWithJvm;
+import viatra.SkipIntermediateReferencePatternWithoutJvm;
 
 import java.util.List;
 
@@ -45,7 +52,7 @@ public class PatternMatcher {
 	}
 
 	private ViatraQueryEngine prepareQueryEngine(EMFScope scope) {
-		ViatraQueryEngineOptions options = new ViatraQueryEngineOptions.Builder().withDefaultBackend(ReteBackendFactory.INSTANCE).withDefaultCachingBackend(ReteBackendFactory.INSTANCE).withDefaultSearchBackend(LocalSearchGenericBackendFactory.INSTANCE).build();
+		ViatraQueryEngineOptions options = new ViatraQueryEngineOptions.Builder().withDefaultCachingBackend(ReteBackendFactory.INSTANCE).withDefaultSearchBackend(LocalSearchGenericBackendFactory.INSTANCE).build();
 
 		return ViatraQueryEngine.on(scope, options);
 	}
@@ -64,6 +71,11 @@ public class PatternMatcher {
 		// setup pattern
 		SkipIntermediateReference.instance().prepare(engine);
 
+		log.info(((XMemberFeatureCall) expression).getFeature());
+		log.info(((XMemberFeatureCall) expression).getFeature().getSimpleName());
+		log.info(((XMemberFeatureCall) expression).getFeature().getIdentifier());
+		log.info(((XMemberFeatureCall) expression).getFeature().getQualifiedName());
+
 		// Start without JVM
 		printDivider("SkipIntermediateReferencePatternStartWithoutJvm");
 		final SkipIntermediateReferencePatternStartWithoutJvm.Matcher startWithoutJvmMatcher = SkipIntermediateReferencePatternStartWithoutJvm.Matcher.on(engine);
@@ -76,6 +88,15 @@ public class PatternMatcher {
 		final SkipIntermediateReferencePatternStartWithJvm.Matcher startWithJvmMatcher = SkipIntermediateReferencePatternStartWithJvm.Matcher.on(engine);
 		for (SkipIntermediateReferencePatternStartWithJvm.Match match : startWithJvmMatcher.getAllMatches()) {
 			log.info(String.format("SkipIntermediateReferencePatternStartWithJvm: Matched sub expression: %s", match.getExpression()));
+		}
+
+		// Start with JVM and arguments
+		printDivider("SkipIntermediateReferencePatternStartWithJvmWithArguments");
+		final SkipIntermediateReferencePatternStartWithJvmWithArguments.Matcher startWithJvmAndArgumentsMatcher = SkipIntermediateReferencePatternStartWithJvmWithArguments.Matcher.on(engine);
+		for (SkipIntermediateReferencePatternStartWithJvmWithArguments.Match match : startWithJvmAndArgumentsMatcher.getAllMatches()) {
+			log.info(String.format("SkipIntermediateReferencePatternStartWithJvmWithArguments: Matched sub expression: %s", match.getExpression()));
+			log.info(String.format("SkipIntermediateReferencePatternStartWithJvmWithArguments: Matched sub feature: %s", match.getFeature()));
+			log.info(String.format("SkipIntermediateReferencePatternStartWithJvmWithArguments: Matched sub feature simpleName: %s", match.getFeature().getSimpleName()));
 		}
 
 		// Full without JVM
@@ -97,6 +118,7 @@ public class PatternMatcher {
 		final SkipIntermediateReferencePatternWithArguments.Matcher fullWithArgumentsMatcher = SkipIntermediateReferencePatternWithArguments.Matcher.on(engine);
 		for (SkipIntermediateReferencePatternWithArguments.Match match : fullWithArgumentsMatcher.getAllMatches()) {
 			log.info(String.format("SkipIntermediateReferencePatternWithArguments: Matched sub expression: %s", match.getExpression()));
+			log.info(String.format("SkipIntermediateReferencePatternWithArguments: Matched sub expression feature: %s", ((XMemberFeatureCall) match.getExpression()).getFeature()));
 			log.info(String.format("SkipIntermediateReferencePatternWithArguments: Matched sub flatMap: %s", match.getFlatMapTarget()));
 			log.info(String.format("SkipIntermediateReferencePatternWithArguments: Matched sub intermediate: %s", match.getIntermediateReferenceTarget()));
 			log.info(String.format("SkipIntermediateReferencePatternWithArguments: Matched sub source: %s", match.getSourceTarget()));
