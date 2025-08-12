@@ -201,7 +201,8 @@ public class Main implements Callable<Integer> {
         }
 
         if (tggRuleGeneration != null) {
-            final Project project = new Project("test-project");
+            // TODO: How to choose Project name?
+            final Project project = new Project("TestTGGProject");
             final View view = ViewExtractor.viewFromAQR(aqr);
 
             API.generateProjectForView(project, view, tggRuleGeneration.output, new LocalNameResolver());
