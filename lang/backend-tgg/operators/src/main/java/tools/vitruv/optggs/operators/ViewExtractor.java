@@ -1,11 +1,6 @@
 package tools.vitruv.optggs.operators;
 
-import tools.vitruv.neojoin.aqr.AQR;
-import tools.vitruv.neojoin.aqr.AQRFeature;
-import tools.vitruv.neojoin.aqr.AQRFrom;
-import tools.vitruv.neojoin.aqr.AQRJoin;
-import tools.vitruv.neojoin.aqr.AQRSource;
-import tools.vitruv.neojoin.aqr.AQRTargetClass;
+import tools.vitruv.neojoin.aqr.*;
 import tools.vitruv.optggs.operators.selection.Pattern;
 
 import java.util.HashMap;
@@ -33,19 +28,20 @@ public class ViewExtractor {
         namedRefs.put("self", source);
 
         Pattern sourcePattern = Pattern.from(source);
-        for (var join : targetClass.source().joins()) {
+        final List<AQRJoin> joins = Optional.ofNullable(targetClass.source()).map(AQRSource::joins).orElse(List.of());
+        for (var join : joins) {
             sourcePattern = joinFromAST(join, sourcePattern, namedRefs);
         }
         var query = new Query(new Selection(sourcePattern, Pattern.from(target)));
 
         // TODO: Filters???
-        if (targetClass.source().condition() != null) {
+        if (targetClass.source() != null && targetClass.source().condition() != null) {
             throw new RuntimeException("Condition expressions are not supported");
         }
 
         applyProjectionsFromAST(targetClass.features(), query, namedRefs, target);
 
-        if (!targetClass.source().groupingExpressions().isEmpty()) {
+        if (targetClass.source() != null && !targetClass.source().groupingExpressions().isEmpty()) {
             throw new RuntimeException("Grouping expressions are not supported");
         }
 
