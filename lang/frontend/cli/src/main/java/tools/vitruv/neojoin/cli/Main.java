@@ -28,6 +28,11 @@ import tools.vitruv.neojoin.transformation.Transformator;
 import tools.vitruv.neojoin.transformation.TransformatorException;
 import tools.vitruv.neojoin.utils.EMFUtils;
 import tools.vitruv.neojoin.utils.Utils;
+import tools.vitruv.optggs.driver.API;
+import tools.vitruv.optggs.driver.Project;
+import tools.vitruv.optggs.operators.View;
+import tools.vitruv.optggs.operators.ViewExtractor;
+import tools.vitruv.optggs.transpiler.LocalNameResolver;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -90,11 +95,21 @@ public class Main implements Callable<Integer> {
 	@Nullable
 	ReferenceOperatorPatternMatching referenceOperatorPatternMatching;
 
-	static class ReferenceOperatorPatternMatching {
+    static class ReferenceOperatorPatternMatching {
 
-		@Option(names = {"-p", "--pattern-matching"}, paramLabel = "PATTERN MATCHING", description = "Whether to run pattern matching and extraction of reference operators")
-		boolean patternMatching;
-	}
+        @Option(names = {"-p", "--pattern-matching"}, paramLabel = "PATTERN MATCHING", description = "Whether to run pattern matching and extraction of reference operators")
+        boolean patternMatching;
+    }
+
+    @ArgGroup(exclusive = false, heading = "Generate Triple Graph Grammar (TGG) rules:%n")
+    @Nullable
+    TGGRuleGeneration tggRuleGeneration;
+
+    static class TGGRuleGeneration {
+
+        @Option(names = {"-tgg", "--generate-tgg-rules"}, paramLabel = "GENERATE TGG RULES", required = true, description = "Generate the corresponding TGG rules and write them to the given output directory")
+        Path output;
+    }
 
     /**
      * CLI entry point.
@@ -155,19 +170,19 @@ public class Main implements Callable<Integer> {
             return 1;
         }
 
-        if (generate == null && transform == null && referenceOperatorPatternMatching == null) {
+        if (generate == null && transform == null && referenceOperatorPatternMatching == null && tggRuleGeneration == null) {
             // neither generation nor transformation requested
-            System.out.println("Query is valid. Use --generate or --transform for further processing.");
+            System.out.println("Query is valid. Use additional commands for further processing.");
             return 0;
         }
 
         var aqr = ((Parser.Result.Success) result).aqr();
 
-		// Run pattern matching
-		if (referenceOperatorPatternMatching != null && referenceOperatorPatternMatching.patternMatching) {
-			var patternMatcher = new PatternMatcher(aqr);
-			patternMatcher.matchAndExtract();
-		}
+        // Run pattern matching
+        if (referenceOperatorPatternMatching != null && referenceOperatorPatternMatching.patternMatching) {
+            var patternMatcher = new PatternMatcher(aqr);
+            patternMatcher.matchAndExtract();
+        }
 
         // generate meta-model
         var targetMetaModel = new MetaModelGenerator(aqr).generate();
@@ -179,14 +194,17 @@ public class Main implements Callable<Integer> {
         if (transform != null) {
             // transform instance models
             var inputModels = new InstanceModelCollector(transform.instanceModelPath, registry).collect();
-            var targetInstanceModel = new Transformator(
-                setup.getExpressionHelper(),
-                aqr,
-                targetMetaModel.pack(),
-                inputModels
-            ).transform();
+            var targetInstanceModel = new Transformator(setup.getExpressionHelper(), aqr, targetMetaModel.pack(), inputModels).transform();
             write(getOutputURI(transform.output, "xmi"), targetInstanceModel);
             validateInstanceModel(targetInstanceModel);
+
+        }
+
+        if (tggRuleGeneration != null) {
+            final Project project = new Project("test-project");
+            final View view = ViewExtractor.viewFromAQR(aqr);
+
+            API.generateProjectForView(project, view, tggRuleGeneration.output, new LocalNameResolver());
         }
 
         return 0;
