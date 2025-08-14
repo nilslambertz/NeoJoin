@@ -39,6 +39,7 @@
     <maven.compiler.release>21</maven.compiler.release>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
+    <xtext.version>2.39.0</xtext.version>
   </properties>
 
   <!-- Modules -->
@@ -132,37 +133,37 @@
       <dependency>
         <groupId>org.eclipse.xtext</groupId>
         <artifactId>org.eclipse.xtext</artifactId>
-        <version>2.39.0</version>
+        <version>${xtext.version}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.xtext</groupId>
         <artifactId>org.eclipse.xtext.common.types</artifactId>
-        <version>2.39.0</version>
+        <version>${xtext.version}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.xtext</groupId>
         <artifactId>org.eclipse.xtext.ide</artifactId>
-        <version>2.39.0</version>
+        <version>${xtext.version}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.xtext</groupId>
         <artifactId>org.eclipse.xtext.util</artifactId>
-        <version>2.39.0</version>
+        <version>${xtext.version}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.xtext</groupId>
         <artifactId>org.eclipse.xtext.xbase</artifactId>
-        <version>2.39.0</version>
+        <version>${xtext.version}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.xtext</groupId>
         <artifactId>org.eclipse.xtext.xbase.ide</artifactId>
-        <version>2.39.0</version>
+        <version>${xtext.version}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.xtext</groupId>
         <artifactId>org.eclipse.xtext.xbase.lib</artifactId>
-        <version>2.39.0</version>
+        <version>${xtext.version}</version>
       </dependency>
       <dependency>
         <groupId>org.jetbrains</groupId>
