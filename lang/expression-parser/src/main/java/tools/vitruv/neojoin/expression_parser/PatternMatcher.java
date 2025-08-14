@@ -11,7 +11,6 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineOptions;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchGenericBackendFactory;
-import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.xtext.common.types.TypesPackage;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
@@ -47,7 +46,7 @@ public class PatternMatcher {
     }
 
     private ViatraQueryEngine prepareQueryEngine(EMFScope scope) {
-        ViatraQueryEngineOptions options = new ViatraQueryEngineOptions.Builder().withDefaultCachingBackend(ReteBackendFactory.INSTANCE).withDefaultSearchBackend(LocalSearchGenericBackendFactory.INSTANCE).build();
+        ViatraQueryEngineOptions options = new ViatraQueryEngineOptions.Builder().withDefaultSearchBackend(LocalSearchGenericBackendFactory.INSTANCE).build();
 
         return ViatraQueryEngine.on(scope, options);
     }
