@@ -1,5 +1,6 @@
 package tools.vitruv.neojoin.cli;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
@@ -22,7 +23,7 @@ import tools.vitruv.neojoin.Parser;
 import tools.vitruv.neojoin.SourceLocation;
 import tools.vitruv.neojoin.collector.InstanceModelCollector;
 import tools.vitruv.neojoin.collector.PackageModelCollector;
-import tools.vitruv.neojoin.expression_parser.PatternMatcher;
+import tools.vitruv.neojoin.expression_parser.ManualPatternMatcher;
 import tools.vitruv.neojoin.generation.MetaModelGenerator;
 import tools.vitruv.neojoin.transformation.Transformator;
 import tools.vitruv.neojoin.transformation.TransformatorException;
@@ -43,21 +44,10 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 @NullUnmarked
-@Command(
-    name = "neojoin",
-    version = "NeoJoin CLI 1.0.0",
-    mixinStandardHelpOptions = true,
-    footer = {
-        "",
-        "Model Path",
-        "  A semicolon separated list of file URLs to search for models",
-        "  used in the options --meta-model-path and --instance-model-path.",
-        "  Examples:",
-        "  - Linux: file:///path/to/directory;file:///path/to/file.ecore",
-        "  - Windows: file:///C:/path/to/directory;file:///C:/path/to/file.ecore",
-    })
+@Command(name = "neojoin", version = "NeoJoin CLI 1.0.0", mixinStandardHelpOptions = true, footer = {"", "Model Path", "  A semicolon separated list of file URLs to search for models", "  used in the options --meta-model-path and --instance-model-path.", "  Examples:", "  - Linux: file:///path/to/directory;file:///path/to/file.ecore", "  - Windows: file:///C:/path/to/directory;file:///C:/path/to/file.ecore",})
 public class Main implements Callable<Integer> {
 
+    private static final Logger log = Logger.getLogger(Main.class);
     @Parameters(index = "0", paramLabel = "QUERY", description = "Path to the query file.")
     Path queryFile;
 
@@ -91,9 +81,9 @@ public class Main implements Callable<Integer> {
 
     }
 
-	@ArgGroup(exclusive = false, heading = "Run reference operator pattern matching:%n")
-	@Nullable
-	ReferenceOperatorPatternMatching referenceOperatorPatternMatching;
+    @ArgGroup(exclusive = false, heading = "Run reference operator pattern matching:%n")
+    @Nullable
+    ReferenceOperatorPatternMatching referenceOperatorPatternMatching;
 
     static class ReferenceOperatorPatternMatching {
 
@@ -180,8 +170,9 @@ public class Main implements Callable<Integer> {
 
         // Run pattern matching
         if (referenceOperatorPatternMatching != null && referenceOperatorPatternMatching.patternMatching) {
-            var patternMatcher = new PatternMatcher(aqr);
-            patternMatcher.matchAndExtract();
+            var patternMatcher = new ManualPatternMatcher(aqr);
+            final var referenceOperators =  patternMatcher.extractReferenceOperators();
+            log.info("referenceOperators: " +referenceOperators);
         }
 
         // generate meta-model
@@ -213,12 +204,7 @@ public class Main implements Callable<Integer> {
 
     private static void printIssues(List<Issue> issues) {
         for (Issue issue : issues) {
-            System.err.printf(
-                "[%s] %s (%s)%n",
-                issue.getSeverity().name(),
-                issue.getMessage(),
-                SourceLocation.from(issue).display()
-            );
+            System.err.printf("[%s] %s (%s)%n", issue.getSeverity().name(), issue.getMessage(), SourceLocation.from(issue).display());
         }
     }
 
