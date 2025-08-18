@@ -2,15 +2,14 @@ package tools.vitruv.neojoin.expression_parser.utils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.xbase.*;
-import tools.vitruv.neojoin.expression_parser.model.JvmFieldData;
-import tools.vitruv.neojoin.expression_parser.model.JvmParameterData;
-import tools.vitruv.neojoin.expression_parser.model.SingleArgumentFlatMapCallData;
-import tools.vitruv.neojoin.expression_parser.model.ToListCallData;
+
+import tools.vitruv.neojoin.expression_parser.model.*;
 
 import java.util.Optional;
 
@@ -34,14 +33,16 @@ public class JvmTypeUtils {
             return Optional.empty();
         }
 
-        if (!(memberFeatureCall.getMemberCallTarget() instanceof XAbstractFeatureCall nextMemberCallTarget)) {
+        if (!(memberFeatureCall.getMemberCallTarget()
+                instanceof XAbstractFeatureCall nextMemberCallTarget)) {
             return Optional.empty();
         }
 
         return Optional.of(new ToListCallData(nextMemberCallTarget));
     }
 
-    public static Optional<SingleArgumentFlatMapCallData> getSingleArgumentFlatMapCallData(XExpression expression) {
+    public static Optional<SingleArgumentFlatMapCallData> getSingleArgumentFlatMapCallData(
+            XExpression expression) {
         if (!(expression instanceof XMemberFeatureCall memberFeatureCall)) {
             return Optional.empty();
         }
@@ -59,7 +60,8 @@ public class JvmTypeUtils {
             return Optional.empty();
         }
 
-        if (memberFeatureCall.getMemberCallArguments() == null || memberFeatureCall.getMemberCallArguments().size() != 1) {
+        if (memberFeatureCall.getMemberCallArguments() == null
+                || memberFeatureCall.getMemberCallArguments().size() != 1) {
             return Optional.empty();
         }
 
@@ -77,7 +79,8 @@ public class JvmTypeUtils {
             return Optional.empty();
         }
 
-        if (blockExpression.getExpressions() == null || blockExpression.getExpressions().size() != 1) {
+        if (blockExpression.getExpressions() == null
+                || blockExpression.getExpressions().size() != 1) {
             return Optional.empty();
         }
 
@@ -90,11 +93,17 @@ public class JvmTypeUtils {
             return Optional.empty();
         }
 
-        if (!(memberFeatureCall.getMemberCallTarget() instanceof XAbstractFeatureCall nextMemberCallTarget)) {
+        if (!(memberFeatureCall.getMemberCallTarget()
+                instanceof XAbstractFeatureCall nextMemberCallTarget)) {
             return Optional.empty();
         }
 
-        return Optional.of(new SingleArgumentFlatMapCallData(jvmField.getSimpleName(), jvmField.getIdentifier(), jvmField.getType().getType().getIdentifier(), nextMemberCallTarget));
+        return Optional.of(
+                new SingleArgumentFlatMapCallData(
+                        jvmField.getSimpleName(),
+                        jvmField.getIdentifier(),
+                        jvmField.getType().getType().getIdentifier(),
+                        nextMemberCallTarget));
     }
 
     public static Optional<JvmFieldData> getJvmFieldData(XExpression expression) {
@@ -106,11 +115,17 @@ public class JvmTypeUtils {
             return Optional.empty();
         }
 
-        if (!(memberFeatureCall.getMemberCallTarget() instanceof XAbstractFeatureCall nextMemberCallTarget)) {
+        if (!(memberFeatureCall.getMemberCallTarget()
+                instanceof XAbstractFeatureCall nextMemberCallTarget)) {
             return Optional.empty();
         }
 
-        return Optional.of(new JvmFieldData(jvmField.getSimpleName(), jvmField.getIdentifier(), jvmField.getType().getType().getIdentifier(), nextMemberCallTarget));
+        return Optional.of(
+                new JvmFieldData(
+                        jvmField.getSimpleName(),
+                        jvmField.getIdentifier(),
+                        jvmField.getType().getType().getIdentifier(),
+                        nextMemberCallTarget));
     }
 
     public static Optional<JvmParameterData> getJvmParameterData(XExpression expression) {
@@ -122,6 +137,63 @@ public class JvmTypeUtils {
             return Optional.empty();
         }
 
-        return Optional.of(new JvmParameterData(jvmFormalParameter.getParameterType().getType().getIdentifier(), jvmFormalParameter.getParameterType().getType().getSimpleName()));
+        return Optional.of(
+                new JvmParameterData(
+                        jvmFormalParameter.getParameterType().getType().getIdentifier(),
+                        jvmFormalParameter.getParameterType().getType().getSimpleName()));
+    }
+
+    public static Optional<SingleArgumentFilterCallData> getSingleArgumentFilterCallData(
+            XExpression expression) {
+        if (!(expression instanceof XMemberFeatureCall memberFeatureCall)) {
+            return Optional.empty();
+        }
+
+        if (memberFeatureCall.getFeature() == null) {
+            return Optional.empty();
+        }
+
+        final JvmIdentifiableElement feature = memberFeatureCall.getFeature();
+        if (!(feature instanceof JvmOperation)) {
+            return Optional.empty();
+        }
+
+        if (!"filter".equals(feature.getSimpleName())) {
+            return Optional.empty();
+        }
+
+        if (memberFeatureCall.getMemberCallArguments() == null
+                || memberFeatureCall.getMemberCallArguments().size() != 1) {
+            return Optional.empty();
+        }
+
+        final XExpression firstArgument = memberFeatureCall.getMemberCallArguments().getFirst();
+        if (!(firstArgument instanceof XClosure closureArgument)) {
+            return Optional.empty();
+        }
+
+        if (closureArgument.getExpression() == null) {
+            return Optional.empty();
+        }
+
+        final XExpression closureArgumentExpression = closureArgument.getExpression();
+        if (!(closureArgumentExpression instanceof XBlockExpression blockExpression)) {
+            return Optional.empty();
+        }
+
+        if (blockExpression.getExpressions() == null
+                || blockExpression.getExpressions().size() != 1) {
+            return Optional.empty();
+        }
+
+        final XExpression firstBlockExpression = blockExpression.getExpressions().getFirst();
+
+        if (!(memberFeatureCall.getMemberCallTarget()
+                instanceof XAbstractFeatureCall nextMemberCallTarget)) {
+            return Optional.empty();
+        }
+
+        return Optional.of(
+                new SingleArgumentFilterCallData(firstBlockExpression, nextMemberCallTarget));
     }
 }

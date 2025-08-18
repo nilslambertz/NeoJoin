@@ -1,13 +1,15 @@
 package tools.vitruv.neojoin.reference_operator;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import org.eclipse.xtext.xbase.XExpression;
 import org.jspecify.annotations.Nullable;
 
 @Data
-public class FilterReference implements ReferenceOperator {
-    String parentClass;
+@AllArgsConstructor
+public class ReferenceFilter implements ReferenceOperator {
+    String parentIdentifier;
     String parentReference;
     // TODO
     XExpression filterExpression;

@@ -8,8 +8,10 @@ import org.eclipse.xtext.xbase.XExpression;
 import tools.vitruv.neojoin.aqr.AQR;
 import tools.vitruv.neojoin.aqr.AQRFeature;
 import tools.vitruv.neojoin.aqr.AQRTargetClass;
+import tools.vitruv.neojoin.expression_parser.extractors.ReferenceFilterExtractor;
 import tools.vitruv.neojoin.expression_parser.extractors.SkipIntermediateReferenceExtractor;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperatorWithFollowingExpression;
+import tools.vitruv.neojoin.reference_operator.ReferenceFilter;
 import tools.vitruv.neojoin.reference_operator.ReferenceOperator;
 import tools.vitruv.neojoin.reference_operator.SkipIntermediateReference;
 
@@ -74,6 +76,13 @@ public class ManualPatternMatcher {
             return Optional.of(
                     new ReferenceOperatorWithFollowingExpression(
                             skipIntermediateReferenceOperator.get(), null));
+        }
+        final Optional<ReferenceFilter> referenceFilterOperator =
+                ReferenceFilterExtractor.extract(expression);
+        if (referenceFilterOperator.isPresent()) {
+            return Optional.of(
+                    new ReferenceOperatorWithFollowingExpression(
+                            referenceFilterOperator.get(), null));
         }
 
         // TODO: Others
