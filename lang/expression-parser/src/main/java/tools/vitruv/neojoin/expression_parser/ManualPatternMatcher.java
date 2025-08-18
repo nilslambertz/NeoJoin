@@ -25,31 +25,45 @@ public class ManualPatternMatcher {
 
     public List<ReferenceOperator> extractReferenceOperators() {
         log.info("AQR: " + aqr);
-        final XExpression firstExpression =
+        final List<XExpression> allExpressions =
                 aqr.classes().stream()
                         .map(AQRTargetClass::features)
                         .flatMap(List::stream)
                         .filter(feature -> feature instanceof AQRFeature.Reference)
                         .map(feature -> feature.kind().expression())
                         .filter(Objects::nonNull)
-                        .findFirst()
-                        .orElseThrow();
-        log.info("firstExpression: " + firstExpression);
+                        .toList();
+        log.info("allExpressions: " + allExpressions);
 
-        final List<ReferenceOperator> referenceOperators = new ArrayList<>();
-        XExpression currentExpression = firstExpression;
-        while (currentExpression != null) {
-            final Optional<ReferenceOperatorWithFollowingExpression> nextReferenceOperator =
-                    getNextReferenceOperator(currentExpression);
-            if (nextReferenceOperator.isEmpty()) {
-                throw new RuntimeException("No matching reference operator found");
+        final List<ReferenceOperator> foundOperators = new ArrayList<>();
+        for (final var expression : allExpressions) {
+            final Optional<ReferenceOperatorWithFollowingExpression> firstOperatorOptional =
+                    getNextReferenceOperator(expression);
+            if (firstOperatorOptional.isEmpty()) {
+                log.info("No operator found in expression: " + expression);
+                continue;
             }
+            final ReferenceOperatorWithFollowingExpression firstOperator =
+                    firstOperatorOptional.get();
+            ReferenceOperator currentOperator = firstOperator.getOperator();
+            foundOperators.add(currentOperator);
 
-            referenceOperators.add(nextReferenceOperator.get().getOperator());
-            currentExpression = nextReferenceOperator.get().getExpression();
+            XExpression currentExpression = firstOperator.getExpression();
+            while (currentExpression != null) {
+                final Optional<ReferenceOperatorWithFollowingExpression> nextReferenceOperator =
+                        getNextReferenceOperator(currentExpression);
+                if (nextReferenceOperator.isEmpty()) {
+                    throw new RuntimeException("No matching reference operator found");
+                }
+
+                final ReferenceOperator nextOperator = nextReferenceOperator.get().getOperator();
+                currentOperator.setFollowingOperator(nextOperator);
+                currentOperator = nextOperator;
+                currentExpression = nextReferenceOperator.get().getExpression();
+            }
         }
 
-        return referenceOperators;
+        return foundOperators;
     }
 
     private Optional<ReferenceOperatorWithFollowingExpression> getNextReferenceOperator(
