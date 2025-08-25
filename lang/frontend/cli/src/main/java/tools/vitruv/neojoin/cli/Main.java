@@ -23,7 +23,8 @@ import tools.vitruv.neojoin.Parser;
 import tools.vitruv.neojoin.SourceLocation;
 import tools.vitruv.neojoin.collector.InstanceModelCollector;
 import tools.vitruv.neojoin.collector.PackageModelCollector;
-import tools.vitruv.neojoin.expression_parser.ManualPatternMatcher;
+import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.ManualPatternMatchingStrategy;
 import tools.vitruv.neojoin.generation.MetaModelGenerator;
 import tools.vitruv.neojoin.transformation.Transformator;
 import tools.vitruv.neojoin.transformation.TransformatorException;
@@ -81,16 +82,6 @@ public class Main implements Callable<Integer> {
 
     }
 
-    @ArgGroup(exclusive = false, heading = "Run reference operator pattern matching:%n")
-    @Nullable
-    ReferenceOperatorPatternMatching referenceOperatorPatternMatching;
-
-    static class ReferenceOperatorPatternMatching {
-
-        @Option(names = {"-p", "--pattern-matching"}, paramLabel = "PATTERN MATCHING", description = "Whether to run pattern matching and extraction of reference operators")
-        boolean patternMatching;
-    }
-
     @ArgGroup(exclusive = false, heading = "Generate Triple Graph Grammar (TGG) rules:%n")
     @Nullable
     TGGRuleGeneration tggRuleGeneration;
@@ -121,6 +112,8 @@ public class Main implements Callable<Integer> {
             }
         } catch (IOException e) {
             printError("Failed to write output: %s", e.getMessage());
+        } catch (UnsupportedReferenceExpressionException e) {
+            printError("Unsupported expression detected: %s", e.getMessage());
         } catch (WrappedException e) {
             printError("Failed to read input model: %s", e.getMessage());
         }
@@ -146,7 +139,7 @@ public class Main implements Callable<Integer> {
      *
      * @return exit code
      */
-    private int execute() throws IOException {
+    private int execute() throws IOException, UnsupportedReferenceExpressionException {
         // collect available meta-models
         EPackage.Registry registry = new PackageModelCollector(metaModelPath).collect();
 
@@ -160,20 +153,13 @@ public class Main implements Callable<Integer> {
             return 1;
         }
 
-        if (generate == null && transform == null && referenceOperatorPatternMatching == null && tggRuleGeneration == null) {
+        if (generate == null && transform == null && tggRuleGeneration == null) {
             // neither generation nor transformation requested
             System.out.println("Query is valid. Use additional commands for further processing.");
             return 0;
         }
 
         var aqr = ((Parser.Result.Success) result).aqr();
-
-        // Run pattern matching
-        if (referenceOperatorPatternMatching != null && referenceOperatorPatternMatching.patternMatching) {
-            var patternMatcher = new ManualPatternMatcher(aqr);
-            final var referenceOperators =  patternMatcher.extractReferenceOperators();
-            log.info("referenceOperators: " +referenceOperators);
-        }
 
         // generate meta-model
         var targetMetaModel = new MetaModelGenerator(aqr).generate();
@@ -194,7 +180,7 @@ public class Main implements Callable<Integer> {
         if (tggRuleGeneration != null) {
             // TODO: How to choose Project name?
             final Project project = new Project("TestTGGProject");
-            final View view = ViewExtractor.viewFromAQR(aqr);
+            final View view = ViewExtractor.viewFromAQR(aqr, new ManualPatternMatchingStrategy());
 
             API.generateProjectForView(project, view, tggRuleGeneration.output, new LocalNameResolver());
         }
