@@ -12,5 +12,25 @@
     <artifactId>tools.vitruv.neojoin.expression_parser.parser</artifactId>
 
     <name>Expression Parser Logic</name>
-    <description />
+    <description/>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.eclipse.xtext</groupId>
+            <artifactId>org.eclipse.xtext.xbase</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jspecify</groupId>
+            <artifactId>jspecify</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>tools.vitruv.neojoin.expression_parser.model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 </project>
