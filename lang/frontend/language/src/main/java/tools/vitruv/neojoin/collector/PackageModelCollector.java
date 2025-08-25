@@ -1,15 +1,11 @@
 package tools.vitruv.neojoin.collector;
 
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EPackageRegistryImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import tools.vitruv.neojoin.utils.EMFUtils;
-
-import java.util.Objects;
-import java.util.function.Predicate;
 
 /**
  * Searches for meta-model files with the {@code .ecore} extension and collects them into a package registry.
@@ -20,13 +16,13 @@ public class PackageModelCollector extends AbstractModelCollector {
 
     public static final String FileExtension = "ecore";
 
-    public PackageModelCollector(String searchPathString) {
-        super(searchPathString);
+    @Override
+    protected String fileExtension() {
+        return FileExtension;
     }
 
-    @Override
-    protected Predicate<URI> getFilter() {
-        return uri -> Objects.equals(uri.fileExtension(), FileExtension);
+    public PackageModelCollector(String searchPathString) {
+        super(searchPathString);
     }
 
     public EPackage.Registry collect() {

@@ -1,7 +1,6 @@
 package tools.vitruv.neojoin.cli.integration;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.List;
@@ -15,9 +14,10 @@ import org.eclipse.emf.ecore.impl.EPackageRegistryImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import static tools.vitruv.neojoin.utils.Assertions.check;
 
 public class Utils {
-    
+
     private Utils() {}
 
     public static final Path INSTANCES = Path.of("instances");
@@ -25,11 +25,13 @@ public class Utils {
     public static final Path QUERIES = Path.of("queries");
     public static final Path RESULTS = Path.of("results");
 
-    public static URI getResource(Path path) {
+    public static Path getResource(Path path) {
         try {
-            return Utils.class.getClassLoader().getResource(path.toString()).toURI();
+            var url = Utils.class.getClassLoader().getResource(path.toString());
+            check(url != null);
+            return Path.of(url.toURI());
         } catch (URISyntaxException e) {
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -60,7 +62,7 @@ public class Utils {
 
     public static Comparison compareInstanceFiles(Path model, Path instanceA, Path instanceB) throws IOException {
         EPackage.Registry packageRegistry = createPackageRegistry(List.of(model));
-        
+
         ResourceSet resourceSetA = new ResourceSetImpl();
         resourceSetA.setPackageRegistry(packageRegistry);
         resourceSetA.getResource(org.eclipse.emf.common.util.URI.createURI(instanceA.toUri().toString()), true);

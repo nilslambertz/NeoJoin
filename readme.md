@@ -82,6 +82,8 @@ cd lang
 ./mvnw verify
 ```
 
+We use [SonarQube](https://sonarcloud.io/project/overview?id=vitruv-tools_NeoJoin) to analyze our Maven projects.
+
 ### VSCode Plugin
 
 * Open the `vscode-plugin` folder in VSCode (top-level in a workspace)
@@ -111,6 +113,7 @@ Provides basic IDE support (syntax highlighting, code-completion, etc.) and a si
 
 #### Commands
 * **Show Query Visualization** - Show a live visualization of the queries in the currently active text editor.
+* **Generate View Type** - Generate the view type resulting from the queries in the currently active text editor and save it as an Ecore file next to the query file.
 * **Restart Server** - Restart the language server after configuration changes.
 
 #### Settings
@@ -142,11 +145,11 @@ Transform the input models:
                              directory.
 
 Model Path
-  A semicolon separated list of file URLs to search for models
+  A semicolon separated list of paths to search for models
   used in the options --meta-model-path and --instance-model-path.
   Examples:
-  - Linux: file:///path/to/directory;file:///path/to/file.ecore
-  - Windows: file:///C:/path/to/directory;file:///C:/path/to/file.ecore
+  - Linux: /path/to/directory;/path/to/file.ecore
+  - Windows: C:\path\to\directory;C:/path/to/file.ecore
 ```
 
 *Note: `QUERY` and `OUTPUT`s need to be specified with regular paths, e.g., `/x/y/z` or `./x/y`.*

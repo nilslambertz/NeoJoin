@@ -6,10 +6,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.Diagnostician;
-import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.xtext.validation.Issue;
 import org.jspecify.annotations.NullUnmarked;
 import org.jspecify.annotations.Nullable;
@@ -38,14 +35,24 @@ import tools.vitruv.optggs.transpiler.LocalNameResolver;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 
 @NullUnmarked
-@Command(name = "neojoin", version = "NeoJoin CLI 1.0.0", mixinStandardHelpOptions = true, footer = {"", "Model Path", "  A semicolon separated list of file URLs to search for models", "  used in the options --meta-model-path and --instance-model-path.", "  Examples:", "  - Linux: file:///path/to/directory;file:///path/to/file.ecore", "  - Windows: file:///C:/path/to/directory;file:///C:/path/to/file.ecore",})
+@Command(
+    name = "neojoin",
+    version = "NeoJoin CLI 1.0.0",
+    mixinStandardHelpOptions = true,
+    footer = {
+        "",
+        "Model Path",
+        "  A semicolon separated list of paths to search for models",
+        "  used in the options --meta-model-path and --instance-model-path.",
+        "  Examples:",
+        "  - Linux: /path/to/directory;/path/to/file.ecore",
+        "  - Windows: C:\\path\\to\\directory;C:/path/to/file.ecore",
+    })
 public class Main implements Callable<Integer> {
 
     private static final Logger log = Logger.getLogger(Main.class);
@@ -101,7 +108,7 @@ public class Main implements Callable<Integer> {
     public Integer call() {
         try {
             return execute();
-        } catch (InvalidPathException ex) {
+        } catch (IllegalArgumentException ex) {
             printError("Invalid meta-model path: %s", ex.getMessage());
         } catch (TransformatorException e) {
             var source = e.getSourceLocation();
@@ -165,14 +172,19 @@ public class Main implements Callable<Integer> {
         var targetMetaModel = new MetaModelGenerator(aqr).generate();
         printIssues(targetMetaModel.diagnostic());
         if (generate != null) {
-            write(getOutputURI(generate.output, "ecore"), targetMetaModel.pack());
+            EMFUtils.save(getOutputURI(generate.output, "ecore"), targetMetaModel.pack());
         }
 
         if (transform != null) {
             // transform instance models
             var inputModels = new InstanceModelCollector(transform.instanceModelPath, registry).collect();
-            var targetInstanceModel = new Transformator(setup.getExpressionHelper(), aqr, targetMetaModel.pack(), inputModels).transform();
-            write(getOutputURI(transform.output, "xmi"), targetInstanceModel);
+            var targetInstanceModel = new Transformator(
+                setup.getExpressionHelper(),
+                aqr,
+                targetMetaModel.pack(),
+                inputModels
+            ).transform();
+            EMFUtils.save(getOutputURI(transform.output, "xmi"), targetInstanceModel);
             validateInstanceModel(targetInstanceModel);
 
         }
@@ -190,7 +202,12 @@ public class Main implements Callable<Integer> {
 
     private static void printIssues(List<Issue> issues) {
         for (Issue issue : issues) {
-            System.err.printf("[%s] %s (%s)%n", issue.getSeverity().name(), issue.getMessage(), SourceLocation.from(issue).display());
+            System.err.printf(
+                "[%s] %s (%s)%n",
+                issue.getSeverity().name(),
+                issue.getMessage(),
+                SourceLocation.from(issue).display()
+            );
         }
     }
 
@@ -202,25 +219,6 @@ public class Main implements Callable<Integer> {
         rootDiagnostic.getChildren().forEach(d -> {
             System.err.printf("[%s] %s%n", EMFUtils.diagnosticSeverityText(d), d.getMessage());
         });
-    }
-
-    private @Nullable ResourceSet resourceSet;
-
-    /**
-     * Write the given {@link EObject} to a file specified by the given {@link URI}.
-     *
-     * @param outputUri URI of the output file
-     * @param object    the {@link EObject} to write
-     */
-    private void write(URI outputUri, EObject object) throws IOException {
-        if (resourceSet == null) {
-            resourceSet = new ResourceSetImpl();
-        }
-
-        var resource = resourceSet.createResource(outputUri);
-        resource.getContents().add(object);
-        var options = Map.of(XMLResource.OPTION_URI_HANDLER, new RelativeURIResolver(resource));
-        resource.save(options);
     }
 
     /**
