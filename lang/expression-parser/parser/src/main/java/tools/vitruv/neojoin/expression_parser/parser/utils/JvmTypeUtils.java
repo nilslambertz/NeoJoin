@@ -14,10 +14,6 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JvmTypeUtils {
     public static Optional<ToListCallData> getToListCallData(XExpression expression) {
-        if (!(expression instanceof XMemberFeatureCall memberFeatureCall)) {
-            return Optional.empty();
-        }
-
         return getAsMemberFeatureCall(expression)
                 .filter(JvmTypeUtils::isToListOperation)
                 .flatMap(JvmTypeUtils::getNextFeatureCallTarget)
