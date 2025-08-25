@@ -15,31 +15,6 @@ import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JvmTypeUtils {
-    public static Optional<ToListCallData> getToListCallData(XExpression expression) {
-        if (!(expression instanceof XMemberFeatureCall memberFeatureCall)) {
-            return Optional.empty();
-        }
-
-        if (memberFeatureCall.getFeature() == null) {
-            return Optional.empty();
-        }
-
-        final JvmIdentifiableElement feature = memberFeatureCall.getFeature();
-        if (!(feature instanceof JvmOperation)) {
-            return Optional.empty();
-        }
-
-        if (!"toList".equals(feature.getSimpleName())) {
-            return Optional.empty();
-        }
-
-        if (!(memberFeatureCall.getMemberCallTarget()
-                instanceof XAbstractFeatureCall nextMemberCallTarget)) {
-            return Optional.empty();
-        }
-
-        return Optional.of(new ToListCallData(nextMemberCallTarget));
-    }
 
     public static Optional<SingleArgumentFlatMapCallData> getSingleArgumentFlatMapCallData(
             XExpression expression) {
