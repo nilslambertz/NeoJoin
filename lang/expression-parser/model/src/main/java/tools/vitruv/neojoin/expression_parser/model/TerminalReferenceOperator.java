@@ -1,4 +1,4 @@
-package tools.vitruv.neojoin.reference_operator;
+package tools.vitruv.neojoin.expression_parser.model;
 
 public interface TerminalReferenceOperator extends ReferenceOperator {
     // Terminal operator doesn't have a following operator

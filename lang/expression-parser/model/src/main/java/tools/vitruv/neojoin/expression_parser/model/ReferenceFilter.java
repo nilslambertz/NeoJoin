@@ -1,4 +1,4 @@
-package tools.vitruv.neojoin.reference_operator;
+package tools.vitruv.neojoin.expression_parser.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
