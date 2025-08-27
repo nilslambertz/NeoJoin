@@ -5,7 +5,7 @@ import org.jspecify.annotations.NonNull;
 
 import tools.vitruv.neojoin.aqr.*;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
-import tools.vitruv.neojoin.expression_parser.parser.PatternMatchingStrategy;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.optggs.operators.selection.Pattern;
 

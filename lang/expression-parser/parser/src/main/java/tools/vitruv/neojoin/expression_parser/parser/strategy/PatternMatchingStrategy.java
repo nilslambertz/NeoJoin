@@ -1,4 +1,4 @@
-package tools.vitruv.neojoin.expression_parser.parser;
+package tools.vitruv.neojoin.expression_parser.parser.strategy;
 
 import org.eclipse.xtext.xbase.XExpression;
 import org.jspecify.annotations.NonNull;
