@@ -38,16 +38,20 @@ public class SkipIntermediateReferenceExtractor {
                 return Optional.empty();
             } else if (childFeatureSimpleName == null) {
                 childFeatureSimpleName = flatMapCallData.get().getFeatureSimpleName();
+            } else {
+                intermediateReferenceInformation.add(
+                        new SkipIntermediateReference.IntermediateReferenceInformation(
+                                flatMapCallData.get().getFeatureSimpleName(),
+                                flatMapCallData.get().getFeatureIdentifier()));
             }
-
-            intermediateReferenceInformation.add(
-                    new SkipIntermediateReference.IntermediateReferenceInformation(
-                            flatMapCallData.get().getFeatureSimpleName(),
-                            flatMapCallData.get().getFeatureIdentifier()));
 
             lastFieldData =
                     JvmFieldUtils.getJvmFieldData(flatMapCallData.get().getNextFeatureCall());
             if (lastFieldData.isPresent()) {
+                intermediateReferenceInformation.add(
+                        new SkipIntermediateReference.IntermediateReferenceInformation(
+                                lastFieldData.get().getFeatureSimpleName(),
+                                lastFieldData.get().getFeatureIdentifier()));
                 lastFeatureCall = flatMapCallData.get().getNextFeatureCall();
                 break;
             }
@@ -59,7 +63,7 @@ public class SkipIntermediateReferenceExtractor {
                 new ReferenceOperatorWithNextCallTarget(
                         new SkipIntermediateReference(
                                 intermediateReferenceInformation.reversed(),
-                                lastFieldData.get().getFeatureSimpleName(),
+                                childFeatureSimpleName,
                                 null),
                         lastFeatureCall));
     }
