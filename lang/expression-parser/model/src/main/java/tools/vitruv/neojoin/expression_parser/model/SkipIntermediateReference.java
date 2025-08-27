@@ -11,7 +11,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class SkipIntermediateReference implements ReferenceOperator {
-    String parentClass;
     List<IntermediateReferenceInformation> intermediateReferenceInformation;
     String childReference;
 

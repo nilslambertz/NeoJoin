@@ -7,6 +7,7 @@ import lombok.Value;
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -18,7 +19,7 @@ public class JvmFieldUtils {
         String featureIdentifier;
         String returnTypeIdentifier;
 
-        XAbstractFeatureCall nextFeatureCall;
+        @Nullable XAbstractFeatureCall nextFeatureCall;
     }
 
     public static Optional<JvmFieldData> getJvmFieldData(XAbstractFeatureCall featureCall) {
@@ -30,10 +31,10 @@ public class JvmFieldUtils {
             return Optional.empty();
         }
 
-        if (!(memberFeatureCall.getMemberCallTarget()
-                instanceof XAbstractFeatureCall nextMemberCallTarget)) {
-            return Optional.empty();
-        }
+        final XAbstractFeatureCall nextMemberCallTarget =
+                Optional.of(memberFeatureCall)
+                        .flatMap(JvmFeatureCallUtils::getNextMemberCallTarget)
+                        .orElse(null);
 
         return Optional.of(
                 new JvmFieldData(

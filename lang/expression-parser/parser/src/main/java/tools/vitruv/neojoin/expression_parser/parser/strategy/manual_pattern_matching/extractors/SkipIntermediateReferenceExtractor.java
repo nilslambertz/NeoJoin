@@ -16,7 +16,6 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFieldUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFlatMapUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmMemberCallUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmParameterUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,16 +55,9 @@ public class SkipIntermediateReferenceExtractor {
             nextIntermediateReferenceExpression = flatMapCallData.get().getNextFeatureCall();
         }
 
-        Optional<JvmParameterUtils.JvmParameterData> lastParameterData =
-                JvmParameterUtils.getJvmParameterData(lastFieldData.get().getNextFeatureCall());
-        if (lastParameterData.isEmpty()) {
-            return Optional.empty();
-        }
-
         return Optional.of(
                 new ReferenceOperatorWithNextCallTarget(
                         new SkipIntermediateReference(
-                                lastParameterData.get().getIdentifier(),
                                 intermediateReferenceInformation.reversed(),
                                 lastFieldData.get().getFeatureSimpleName(),
                                 null),
@@ -89,6 +81,12 @@ public class SkipIntermediateReferenceExtractor {
             return Optional.empty();
         }
 
+        final Optional<XAbstractFeatureCall> nextMemberCallTarget =
+                memberFeatureCall.flatMap(JvmFeatureCallUtils::getNextMemberCallTarget);
+        if (nextMemberCallTarget.isEmpty()) {
+            return Optional.empty();
+        }
+
         return memberFeatureCall
                 .filter(JvmFlatMapUtils::isFlatMapOperation)
                 .filter(JvmMemberCallUtils::hasExactlyOneMemberCallArgument)
@@ -97,6 +95,7 @@ public class SkipIntermediateReferenceExtractor {
                 .flatMap(ClosureUtils::getExpression)
                 .flatMap(BlockExpressionUtils::asBlockExpression)
                 .filter(BlockExpressionUtils::hasExactlyOneExpression)
+                .flatMap(BlockExpressionUtils::getFirstExpression)
                 .flatMap(JvmFeatureCallUtils::asMemberFeatureCall)
                 .flatMap(JvmFieldUtils::getJvmFieldData)
                 // TODO: We probably don't need SingleArgumentFlatMapCallData if we have
@@ -107,6 +106,6 @@ public class SkipIntermediateReferenceExtractor {
                                         fieldData.getFeatureSimpleName(),
                                         fieldData.getFeatureIdentifier(),
                                         fieldData.getReturnTypeIdentifier(),
-                                        fieldData.getNextFeatureCall()));
+                                        nextMemberCallTarget.get()));
     }
 }

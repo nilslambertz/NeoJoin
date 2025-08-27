@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.xbase.XAbstractFeatureCall;
+import org.eclipse.xtext.xbase.XFeatureCall;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 
 import java.util.Optional;
@@ -14,5 +15,10 @@ public class JvmFeatureUtils {
     public static Optional<JvmIdentifiableElement> getFeature(XMemberFeatureCall featureCall) {
         return JvmFeatureCallUtils.asMemberFeatureCall(featureCall)
                 .map(XAbstractFeatureCall::getFeature);
+    }
+
+    public static Optional<JvmIdentifiableElement> getFeature(XFeatureCall featureCall) {
+        return JvmFeatureCallUtils.asFeatureCall(featureCall)
+            .map(XAbstractFeatureCall::getFeature);
     }
 }
