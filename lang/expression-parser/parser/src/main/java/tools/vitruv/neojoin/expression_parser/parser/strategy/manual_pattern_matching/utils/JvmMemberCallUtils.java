@@ -11,8 +11,6 @@ import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JvmMemberCallUtils {
-    private static final String flatMapSimpleName = "flatMap";
-
     public static boolean hasExactlyOneMemberCallArgument(XMemberFeatureCall featureCall) {
         return Optional.ofNullable(featureCall)
                 .map(XMemberFeatureCall::getMemberCallArguments)
