@@ -24,28 +24,33 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SkipIntermediateReferenceExtractor {
     public static Optional<ReferenceOperatorWithNextCallTarget> extract(XExpression expression) {
-        final List<SkipIntermediateReference.IntermediateReferenceInformation>
-                intermediateReferenceInformation = new ArrayList<>();
-
         XExpression nextIntermediateReferenceExpression = expression;
-        Optional<JvmFieldUtils.JvmFieldData> lastFieldData = Optional.empty();
+        if (nextIntermediateReferenceExpression == null) {
+            return Optional.empty();
+        }
+
         String childFeatureSimpleName = null;
         XAbstractFeatureCall lastFeatureCall = null;
+        final List<SkipIntermediateReference.IntermediateReferenceInformation>
+                intermediateReferenceInformation = new ArrayList<>();
         while (nextIntermediateReferenceExpression != null) {
             final Optional<SingleArgumentFlatMapCallData> flatMapCallData =
                     getSingleArgumentFlatMapCallData(nextIntermediateReferenceExpression);
             if (flatMapCallData.isEmpty()) {
+                // No flatMap operation is found, no match
                 return Optional.empty();
             } else if (childFeatureSimpleName == null) {
+                // We are in the first iteration, the data is the child of all flatMaps
                 childFeatureSimpleName = flatMapCallData.get().getFeatureSimpleName();
             } else {
+                // We are not in the first iteration, the data is an intermediate flatMap
                 intermediateReferenceInformation.add(
                         new SkipIntermediateReference.IntermediateReferenceInformation(
                                 flatMapCallData.get().getFeatureSimpleName(),
                                 flatMapCallData.get().getFeatureIdentifier()));
             }
 
-            lastFieldData =
+            final Optional<JvmFieldUtils.JvmFieldData> lastFieldData =
                     JvmFieldUtils.getJvmFieldData(flatMapCallData.get().getNextFeatureCall());
             if (lastFieldData.isPresent()) {
                 intermediateReferenceInformation.add(
