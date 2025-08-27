@@ -6,6 +6,7 @@ import org.jspecify.annotations.NonNull;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FeatureCallExtractor;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.SkipIntermediateReferenceExtractor;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.ToListExtractor;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextCallTarget;
@@ -17,7 +18,7 @@ public class ManualPatternMatchingStrategy implements PatternMatchingStrategy {
     public @NonNull ReferenceOperator extractReferenceOperator(@NonNull XExpression expression)
             throws UnsupportedReferenceExpressionException {
         XExpression currentExpression = expression;
-        ReferenceOperator currentOperator = null;
+        ReferenceOperator lastOperator = null;
         while (currentExpression != null) {
             final Optional<ReferenceOperatorWithNextCallTarget> nextReferenceOperator =
                     getNextReferenceOperator(currentExpression);
@@ -25,21 +26,20 @@ public class ManualPatternMatchingStrategy implements PatternMatchingStrategy {
                 throw new UnsupportedReferenceExpressionException(currentExpression);
             }
 
-            if (currentOperator == null) {
-                currentOperator = nextReferenceOperator.get().getReferenceOperator();
-            } else {
-                currentOperator.setFollowingOperator(
-                        nextReferenceOperator.get().getReferenceOperator());
-            }
+            final ReferenceOperator nextOperator =
+                    nextReferenceOperator.get().getReferenceOperator();
+            nextOperator.setFollowingOperator(lastOperator);
+            lastOperator = nextOperator;
             currentExpression = nextReferenceOperator.get().getNextFeatureCall();
         }
 
-        return currentOperator;
+        return lastOperator;
     }
 
     private static Optional<ReferenceOperatorWithNextCallTarget> getNextReferenceOperator(
             XExpression expression) {
         return ToListExtractor.extract(expression)
-                .or(() -> SkipIntermediateReferenceExtractor.extract(expression));
+                .or(() -> SkipIntermediateReferenceExtractor.extract(expression))
+                .or(() -> FeatureCallExtractor.extract(expression));
     }
 }
