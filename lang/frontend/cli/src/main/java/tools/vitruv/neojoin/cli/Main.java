@@ -194,7 +194,8 @@ public class Main implements Callable<Integer> {
             final Project project = new Project("TestTGGProject");
             final View view = ViewExtractor.viewFromAQR(aqr, new ManualPatternMatchingStrategy());
 
-            API.generateProjectForView(project, view, tggRuleGeneration.output, new LocalNameResolver());
+            // TODO: Don't run full TGG generation for now
+           // API.generateProjectForView(project, view, tggRuleGeneration.output, new LocalNameResolver());
         }
 
         return 0;
