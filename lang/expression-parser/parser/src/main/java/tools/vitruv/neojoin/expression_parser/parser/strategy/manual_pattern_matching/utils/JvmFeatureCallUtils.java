@@ -12,33 +12,27 @@ import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JvmFeatureCallUtils {
-    public static Optional<XMemberFeatureCall> getAsMemberFeatureCall(XExpression expression) {
-        if (!(expression instanceof XMemberFeatureCall memberFeatureCall)) {
-            return Optional.empty();
-        }
-
-        return Optional.of(memberFeatureCall);
+    public static Optional<XMemberFeatureCall> asMemberFeatureCall(XExpression expression) {
+        return Optional.ofNullable(expression)
+                .filter(XMemberFeatureCall.class::isInstance)
+                .map(XMemberFeatureCall.class::cast);
     }
 
-    public static Optional<XFeatureCall> getAsFeatureCall(XExpression expression) {
-        if (!(expression instanceof XFeatureCall featureCall)) {
-            return Optional.empty();
-        }
-
-        return Optional.of(featureCall);
+    public static Optional<XFeatureCall> asFeatureCall(XExpression expression) {
+        return Optional.ofNullable(expression)
+                .filter(XFeatureCall.class::isInstance)
+                .map(XFeatureCall.class::cast);
     }
 
-    public static Optional<XAbstractFeatureCall> getAsAbstractFeatureCall(XExpression expression) {
-        if (!(expression instanceof XAbstractFeatureCall abstractFeatureCall)) {
-            return Optional.empty();
-        }
-
-        return Optional.of(abstractFeatureCall);
+    public static Optional<XAbstractFeatureCall> asAbstractFeatureCall(XExpression expression) {
+        return Optional.ofNullable(expression)
+                .filter(XAbstractFeatureCall.class::isInstance)
+                .map(XAbstractFeatureCall.class::cast);
     }
 
     public static Optional<XAbstractFeatureCall> getNextFeatureCallTarget(XExpression expression) {
-        return getAsMemberFeatureCall(expression)
+        return asMemberFeatureCall(expression)
                 .map(XMemberFeatureCall::getMemberCallTarget)
-                .flatMap(JvmFeatureCallUtils::getAsAbstractFeatureCall);
+                .flatMap(JvmFeatureCallUtils::asAbstractFeatureCall);
     }
 }

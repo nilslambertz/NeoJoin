@@ -15,7 +15,7 @@ import java.util.Optional;
 public class FeatureCallExtractor {
     public static Optional<ReferenceOperatorWithNextCallTarget> extract(XExpression expression) {
         return JvmFeatureCallUtils.getNextFeatureCallTarget(expression)
-                .flatMap(JvmFeatureCallUtils::getAsFeatureCall)
+                .flatMap(JvmFeatureCallUtils::asFeatureCall)
                 .map(
                         nextCallTarget ->
                                 new ReferenceOperatorWithNextCallTarget(
