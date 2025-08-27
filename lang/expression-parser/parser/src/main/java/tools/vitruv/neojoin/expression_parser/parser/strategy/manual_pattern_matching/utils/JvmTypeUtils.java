@@ -4,13 +4,11 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import org.eclipse.xtext.common.types.JvmField;
-import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.xbase.*;
 
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.JvmFieldData;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.JvmParameterData;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.SingleArgumentFlatMapCallData;
 
 import java.util.Optional;
@@ -102,20 +100,5 @@ public class JvmTypeUtils {
                         jvmField.getIdentifier(),
                         jvmField.getType().getType().getIdentifier(),
                         nextMemberCallTarget));
-    }
-
-    public static Optional<JvmParameterData> getJvmParameterData(XExpression expression) {
-        if (!(expression instanceof XFeatureCall featureCall)) {
-            return Optional.empty();
-        }
-
-        if (!(featureCall.getFeature() instanceof JvmFormalParameter jvmFormalParameter)) {
-            return Optional.empty();
-        }
-
-        return Optional.of(
-                new JvmParameterData(
-                        jvmFormalParameter.getParameterType().getType().getIdentifier(),
-                        jvmFormalParameter.getParameterType().getType().getSimpleName()));
     }
 }

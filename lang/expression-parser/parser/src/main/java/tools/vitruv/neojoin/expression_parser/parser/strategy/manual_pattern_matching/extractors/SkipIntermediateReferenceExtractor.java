@@ -8,9 +8,9 @@ import org.eclipse.xtext.xbase.XExpression;
 
 import tools.vitruv.neojoin.expression_parser.model.SkipIntermediateReference;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.JvmFieldData;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.JvmParameterData;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextCallTarget;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.SingleArgumentFlatMapCallData;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmParameterUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmTypeUtils;
 
 import java.util.ArrayList;
@@ -52,8 +52,8 @@ public class SkipIntermediateReferenceExtractor {
             nextIntermediateReferenceExpression = flatMapCallData.get().getNextFeatureCall();
         }
 
-        Optional<JvmParameterData> lastParameterData =
-                JvmTypeUtils.getJvmParameterData(lastFieldData.get().getNextFeatureCall());
+        Optional<JvmParameterUtils.JvmParameterData> lastParameterData =
+                JvmParameterUtils.getJvmParameterData(lastFieldData.get().getNextFeatureCall());
         if (lastParameterData.isEmpty()) {
             return Optional.empty();
         }
