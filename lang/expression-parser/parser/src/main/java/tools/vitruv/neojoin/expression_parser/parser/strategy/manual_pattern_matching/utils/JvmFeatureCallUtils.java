@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 
 import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XExpression;
+import org.eclipse.xtext.xbase.XFeatureCall;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 
 import java.util.Optional;
@@ -19,11 +20,25 @@ public class JvmFeatureCallUtils {
         return Optional.of(memberFeatureCall);
     }
 
-    public static Optional<XAbstractFeatureCall> getNextFeatureCallTarget(XExpression expression) {
-        if (!(expression instanceof XAbstractFeatureCall nextMemberCallTarget)) {
+    public static Optional<XFeatureCall> getAsFeatureCall(XExpression expression) {
+        if (!(expression instanceof XFeatureCall featureCall)) {
             return Optional.empty();
         }
 
-        return Optional.of(nextMemberCallTarget);
+        return Optional.of(featureCall);
+    }
+
+    public static Optional<XAbstractFeatureCall> getAsAbstractFeatureCall(XExpression expression) {
+        if (!(expression instanceof XAbstractFeatureCall abstractFeatureCall)) {
+            return Optional.empty();
+        }
+
+        return Optional.of(abstractFeatureCall);
+    }
+
+    public static Optional<XAbstractFeatureCall> getNextFeatureCallTarget(XExpression expression) {
+        return getAsMemberFeatureCall(expression)
+                .map(XMemberFeatureCall::getMemberCallTarget)
+                .flatMap(JvmFeatureCallUtils::getAsAbstractFeatureCall);
     }
 }

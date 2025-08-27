@@ -11,8 +11,8 @@ public class JvmToListUtils {
     private static final String toListSimpleName = "toList";
 
     public static boolean isToListOperation(XExpression expression) {
-        return JvmTypeUtils.getFeature(expression)
-                .filter(JvmTypeUtils::isJvmOperation)
+        return JvmFeatureUtils.getFeature(expression)
+                .filter(JvmOperationUtils::isJvmOperation)
                 .map(JvmToListUtils::isToListCall)
                 .orElse(false);
     }
