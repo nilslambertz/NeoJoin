@@ -8,7 +8,6 @@ import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.xbase.*;
 
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.JvmFieldData;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.SingleArgumentFlatMapCallData;
 
 import java.util.Optional;
@@ -74,28 +73,6 @@ public class JvmTypeUtils {
 
         return Optional.of(
                 new SingleArgumentFlatMapCallData(
-                        jvmField.getSimpleName(),
-                        jvmField.getIdentifier(),
-                        jvmField.getType().getType().getIdentifier(),
-                        nextMemberCallTarget));
-    }
-
-    public static Optional<JvmFieldData> getJvmFieldData(XExpression expression) {
-        if (!(expression instanceof XMemberFeatureCall memberFeatureCall)) {
-            return Optional.empty();
-        }
-
-        if (!(memberFeatureCall.getFeature() instanceof JvmField jvmField)) {
-            return Optional.empty();
-        }
-
-        if (!(memberFeatureCall.getMemberCallTarget()
-                instanceof XAbstractFeatureCall nextMemberCallTarget)) {
-            return Optional.empty();
-        }
-
-        return Optional.of(
-                new JvmFieldData(
                         jvmField.getSimpleName(),
                         jvmField.getIdentifier(),
                         jvmField.getType().getType().getIdentifier(),

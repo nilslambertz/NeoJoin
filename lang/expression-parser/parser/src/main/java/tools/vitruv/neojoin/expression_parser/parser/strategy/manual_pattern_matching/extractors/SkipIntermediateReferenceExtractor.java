@@ -7,9 +7,9 @@ import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XExpression;
 
 import tools.vitruv.neojoin.expression_parser.model.SkipIntermediateReference;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.JvmFieldData;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextCallTarget;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.SingleArgumentFlatMapCallData;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFieldUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmParameterUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmTypeUtils;
 
@@ -24,7 +24,7 @@ public class SkipIntermediateReferenceExtractor {
                 intermediateReferenceInformation = new ArrayList<>();
 
         XExpression nextIntermediateReferenceExpression = expression;
-        Optional<JvmFieldData> lastFieldData = Optional.empty();
+        Optional<JvmFieldUtils.JvmFieldData> lastFieldData = Optional.empty();
         String childFeatureSimpleName = null;
         XAbstractFeatureCall lastFeatureCall = null;
         while (nextIntermediateReferenceExpression != null) {
@@ -43,7 +43,7 @@ public class SkipIntermediateReferenceExtractor {
                             flatMapCallData.get().getFeatureIdentifier()));
 
             lastFieldData =
-                    JvmTypeUtils.getJvmFieldData(flatMapCallData.get().getNextFeatureCall());
+                    JvmFieldUtils.getJvmFieldData(flatMapCallData.get().getNextFeatureCall());
             if (lastFieldData.isPresent()) {
                 lastFeatureCall = flatMapCallData.get().getNextFeatureCall();
                 break;

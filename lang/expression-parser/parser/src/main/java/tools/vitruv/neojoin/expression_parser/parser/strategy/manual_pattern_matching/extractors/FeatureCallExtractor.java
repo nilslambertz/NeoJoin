@@ -14,7 +14,7 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FeatureCallExtractor {
     public static Optional<ReferenceOperatorWithNextCallTarget> extract(XExpression expression) {
-        return JvmFeatureCallUtils.getNextFeatureCallTarget(expression)
+        return JvmFeatureCallUtils.getNextMemberCallTarget(expression)
                 .flatMap(JvmFeatureCallUtils::asFeatureCall)
                 .map(
                         nextCallTarget ->

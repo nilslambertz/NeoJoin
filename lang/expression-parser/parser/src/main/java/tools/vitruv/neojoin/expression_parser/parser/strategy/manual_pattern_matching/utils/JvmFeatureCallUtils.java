@@ -30,7 +30,7 @@ public class JvmFeatureCallUtils {
                 .map(XAbstractFeatureCall.class::cast);
     }
 
-    public static Optional<XAbstractFeatureCall> getNextFeatureCallTarget(XExpression expression) {
+    public static Optional<XAbstractFeatureCall> getNextMemberCallTarget(XExpression expression) {
         return asMemberFeatureCall(expression)
                 .map(XMemberFeatureCall::getMemberCallTarget)
                 .flatMap(JvmFeatureCallUtils::asAbstractFeatureCall);

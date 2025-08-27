@@ -17,7 +17,7 @@ public class ToListExtractor {
     public static Optional<ReferenceOperatorWithNextCallTarget> extract(XExpression expression) {
         return JvmFeatureCallUtils.asMemberFeatureCall(expression)
                 .filter(JvmToListUtils::isToListOperation)
-                .flatMap(JvmFeatureCallUtils::getNextFeatureCallTarget)
+                .flatMap(JvmFeatureCallUtils::getNextMemberCallTarget)
                 .map(
                         nextCallTarget ->
                                 new ReferenceOperatorWithNextCallTarget(
