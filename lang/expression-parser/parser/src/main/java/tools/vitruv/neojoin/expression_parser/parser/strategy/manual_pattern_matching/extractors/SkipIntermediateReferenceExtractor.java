@@ -2,16 +2,21 @@ package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_ma
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.Value;
 
 import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XExpression;
+import org.eclipse.xtext.xbase.XMemberFeatureCall;
 
 import tools.vitruv.neojoin.expression_parser.model.SkipIntermediateReference;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextCallTarget;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.SingleArgumentFlatMapCallData;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.BlockExpressionUtils;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.ClosureUtils;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFieldUtils;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFlatMapUtils;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmMemberCallUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmParameterUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmTypeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +34,7 @@ public class SkipIntermediateReferenceExtractor {
         XAbstractFeatureCall lastFeatureCall = null;
         while (nextIntermediateReferenceExpression != null) {
             final Optional<SingleArgumentFlatMapCallData> flatMapCallData =
-                    JvmTypeUtils.getSingleArgumentFlatMapCallData(
-                            nextIntermediateReferenceExpression);
+                    getSingleArgumentFlatMapCallData(nextIntermediateReferenceExpression);
             if (flatMapCallData.isEmpty()) {
                 return Optional.empty();
             } else if (childFeatureSimpleName == null) {
@@ -66,5 +70,43 @@ public class SkipIntermediateReferenceExtractor {
                                 lastFieldData.get().getFeatureSimpleName(),
                                 null),
                         lastFeatureCall));
+    }
+
+    @Value
+    private static class SingleArgumentFlatMapCallData {
+        String featureSimpleName;
+        String featureIdentifier;
+        String returnTypeIdentifier;
+
+        XAbstractFeatureCall nextFeatureCall;
+    }
+
+    private static Optional<SingleArgumentFlatMapCallData> getSingleArgumentFlatMapCallData(
+            XExpression expression) {
+        final Optional<XMemberFeatureCall> memberFeatureCall =
+                JvmFeatureCallUtils.asMemberFeatureCall(expression);
+        if (memberFeatureCall.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return memberFeatureCall
+                .filter(JvmFlatMapUtils::isFlatMapOperation)
+                .filter(JvmMemberCallUtils::hasExactlyOneMemberCallArgument)
+                .flatMap(JvmMemberCallUtils::getFirstArgument)
+                .flatMap(ClosureUtils::asClosure)
+                .flatMap(ClosureUtils::getExpression)
+                .flatMap(BlockExpressionUtils::asBlockExpression)
+                .filter(BlockExpressionUtils::hasExactlyOneExpression)
+                .flatMap(JvmFeatureCallUtils::asMemberFeatureCall)
+                .flatMap(JvmFieldUtils::getJvmFieldData)
+                // TODO: We probably don't need SingleArgumentFlatMapCallData if we have
+                // JvmFieldData?
+                .map(
+                        fieldData ->
+                                new SingleArgumentFlatMapCallData(
+                                        fieldData.getFeatureSimpleName(),
+                                        fieldData.getFeatureIdentifier(),
+                                        fieldData.getReturnTypeIdentifier(),
+                                        fieldData.getNextFeatureCall()));
     }
 }

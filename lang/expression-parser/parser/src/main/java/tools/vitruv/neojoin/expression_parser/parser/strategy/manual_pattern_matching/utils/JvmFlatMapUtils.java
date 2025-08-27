@@ -7,17 +7,17 @@ import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class JvmToListUtils {
-    private static final String toListSimpleName = "toList";
+public class JvmFlatMapUtils {
+    private static final String flatMapSimpleName = "flatMap";
 
-    public static boolean isToListOperation(XMemberFeatureCall featureCall) {
+    public static boolean isFlatMapOperation(XMemberFeatureCall featureCall) {
         return JvmFeatureUtils.getFeature(featureCall)
                 .filter(JvmOperationUtils::isJvmOperation)
-                .map(JvmToListUtils::isToListCall)
+                .map(JvmFlatMapUtils::isFlatMapCall)
                 .orElse(false);
     }
 
-    private static boolean isToListCall(JvmIdentifiableElement jvmIdentifiableElement) {
-        return toListSimpleName.equals(jvmIdentifiableElement.getSimpleName());
+    private static boolean isFlatMapCall(JvmIdentifiableElement jvmIdentifiableElement) {
+        return flatMapSimpleName.equals(jvmIdentifiableElement.getSimpleName());
     }
 }
