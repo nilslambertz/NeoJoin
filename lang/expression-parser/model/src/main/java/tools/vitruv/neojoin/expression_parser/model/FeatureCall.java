@@ -9,7 +9,10 @@ import org.jspecify.annotations.Nullable;
 @AllArgsConstructor
 public class FeatureCall implements ReferenceOperator {
     String parentClass;
-    String featureName;
+    String parentIdentifier;
+
+    String featureSimpleName;
+    String featureIdentifierName;
 
     @Nullable ReferenceOperator followingOperator;
 

@@ -12,7 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 public class SkipIntermediateReference implements ReferenceOperator {
     List<IntermediateReferenceInformation> intermediateReferenceInformation;
-    String childReference;
 
     @Nullable ReferenceOperator followingOperator;
 
@@ -23,7 +22,7 @@ public class SkipIntermediateReference implements ReferenceOperator {
 
     @Value
     public static class IntermediateReferenceInformation {
-        String skippedReference;
-        String childClass;
+        String referenceSimpleName;
+        String referenceIdentifier;
     }
 }

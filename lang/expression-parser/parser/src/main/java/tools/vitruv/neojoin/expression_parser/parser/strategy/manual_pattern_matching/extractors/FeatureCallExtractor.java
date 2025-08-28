@@ -4,24 +4,49 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import org.eclipse.xtext.xbase.XExpression;
+import org.eclipse.xtext.xbase.XMemberFeatureCall;
 
 import tools.vitruv.neojoin.expression_parser.model.FeatureCall;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextCallTarget;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureUtils;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFieldUtils;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmParameterUtils;
 
 import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FeatureCallExtractor {
     public static Optional<ReferenceOperatorWithNextCallTarget> extract(XExpression expression) {
-        return JvmFeatureCallUtils.getNextMemberCallTarget(expression)
+        final Optional<XMemberFeatureCall> memberFeatureCall =
+                JvmFeatureCallUtils.asMemberFeatureCall(expression);
+        if (memberFeatureCall.isEmpty()) {
+            return Optional.empty();
+        }
+
+        final Optional<JvmFieldUtils.JvmFieldData> memberFeatureCallFieldData =
+                memberFeatureCall.flatMap(JvmFieldUtils::getJvmFieldData);
+        if (memberFeatureCallFieldData.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return memberFeatureCall
+                .flatMap(JvmFeatureCallUtils::getNextMemberCallTarget)
                 .flatMap(JvmFeatureCallUtils::asFeatureCall)
+                .flatMap(JvmFeatureUtils::getFeature)
+                .flatMap(JvmParameterUtils::asJvmFormalParameter)
                 .map(
                         nextCallTarget ->
                                 new ReferenceOperatorWithNextCallTarget(
                                         new FeatureCall(
-                                                nextCallTarget.getFeature().getSimpleName(),
-                                                nextCallTarget.getFeature().getSimpleName(),
+                                                nextCallTarget.getName(),
+                                                nextCallTarget.getIdentifier(),
+                                                memberFeatureCallFieldData
+                                                        .get()
+                                                        .getFeatureSimpleName(),
+                                                memberFeatureCallFieldData
+                                                        .get()
+                                                        .getFeatureIdentifier(),
                                                 null),
                                         null));
     }

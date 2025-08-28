@@ -24,53 +24,44 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SkipIntermediateReferenceExtractor {
     public static Optional<ReferenceOperatorWithNextCallTarget> extract(XExpression expression) {
-        XExpression nextIntermediateReferenceExpression = expression;
-        if (nextIntermediateReferenceExpression == null) {
+        XAbstractFeatureCall nextFeatureCall =
+                Optional.ofNullable(expression)
+                        .flatMap(JvmFeatureCallUtils::asAbstractFeatureCall)
+                        .orElse(null);
+        if (nextFeatureCall == null) {
             return Optional.empty();
         }
 
-        String childFeatureSimpleName = null;
-        XAbstractFeatureCall lastFeatureCall = null;
         final List<SkipIntermediateReference.IntermediateReferenceInformation>
                 intermediateReferenceInformation = new ArrayList<>();
-        while (nextIntermediateReferenceExpression != null) {
+        while (nextFeatureCall != null) {
             final Optional<SingleArgumentFlatMapCallData> flatMapCallData =
-                    getSingleArgumentFlatMapCallData(nextIntermediateReferenceExpression);
+                    getSingleArgumentFlatMapCallData(nextFeatureCall);
             if (flatMapCallData.isEmpty()) {
                 // No flatMap operation is found, no match
-                return Optional.empty();
-            } else if (childFeatureSimpleName == null) {
-                // We are in the first iteration, the data is the child of all flatMaps
-                childFeatureSimpleName = flatMapCallData.get().getFeatureSimpleName();
-            } else {
-                // We are not in the first iteration, the data is an intermediate flatMap
-                intermediateReferenceInformation.add(
-                        new SkipIntermediateReference.IntermediateReferenceInformation(
-                                flatMapCallData.get().getFeatureSimpleName(),
-                                flatMapCallData.get().getFeatureIdentifier()));
-            }
-
-            final Optional<JvmFieldUtils.JvmFieldData> lastFieldData =
-                    JvmFieldUtils.getJvmFieldData(flatMapCallData.get().getNextFeatureCall());
-            if (lastFieldData.isPresent()) {
-                intermediateReferenceInformation.add(
-                        new SkipIntermediateReference.IntermediateReferenceInformation(
-                                lastFieldData.get().getFeatureSimpleName(),
-                                lastFieldData.get().getFeatureIdentifier()));
-                lastFeatureCall = flatMapCallData.get().getNextFeatureCall();
                 break;
             }
 
-            nextIntermediateReferenceExpression = flatMapCallData.get().getNextFeatureCall();
+            // Add the next intermediate reference data
+            intermediateReferenceInformation.add(
+                    new SkipIntermediateReference.IntermediateReferenceInformation(
+                            flatMapCallData.get().getFeatureSimpleName(),
+                            flatMapCallData.get().getFeatureIdentifier()));
+
+            nextFeatureCall = flatMapCallData.get().getNextFeatureCall();
         }
 
+        // If there are no flatMap-operations found, no match
+        if (intermediateReferenceInformation.isEmpty()) {
+            return Optional.empty();
+        }
+
+        // At least one flatMap-operation is found
         return Optional.of(
                 new ReferenceOperatorWithNextCallTarget(
                         new SkipIntermediateReference(
-                                intermediateReferenceInformation.reversed(),
-                                childFeatureSimpleName,
-                                null),
-                        lastFeatureCall));
+                                intermediateReferenceInformation.reversed(), null),
+                        nextFeatureCall));
     }
 
     @Value
