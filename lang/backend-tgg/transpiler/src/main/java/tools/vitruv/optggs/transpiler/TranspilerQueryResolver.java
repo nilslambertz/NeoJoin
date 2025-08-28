@@ -4,6 +4,7 @@ import tools.vitruv.optggs.operators.*;
 import tools.vitruv.optggs.operators.filters.ConstantFilter;
 import tools.vitruv.optggs.operators.filters.FunctionFilter;
 import tools.vitruv.optggs.operators.projections.DerivedProjection;
+import tools.vitruv.optggs.operators.projections.ReferenceOperatorProjection;
 import tools.vitruv.optggs.operators.projections.SimpleProjection;
 import tools.vitruv.optggs.operators.selection.*;
 import tools.vitruv.optggs.transpiler.operators.*;
@@ -11,6 +12,7 @@ import tools.vitruv.optggs.transpiler.operators.filters.ResolvedConstantFilter;
 import tools.vitruv.optggs.transpiler.operators.filters.ResolvedFunctionFilter;
 import tools.vitruv.optggs.transpiler.operators.patterns.*;
 import tools.vitruv.optggs.transpiler.operators.projections.ResolvedDerivedProjection;
+import tools.vitruv.optggs.transpiler.operators.projections.ResolvedReferenceOperatorProjection;
 import tools.vitruv.optggs.transpiler.operators.projections.ResolvedSimpleProjection;
 
 import java.util.List;
@@ -42,6 +44,8 @@ public class TranspilerQueryResolver extends QueryResolver<ResolvedView, Resolve
             return new ResolvedSimpleProjection(resolvePattern(sp.source()), sp.target(), sp.sourceProperty(), sp.targetProperty());
         } else if (projection instanceof DerivedProjection dp) {
             return new ResolvedDerivedProjection(dp);
+        } else if (projection instanceof ReferenceOperatorProjection rop) {
+            return new ResolvedReferenceOperatorProjection(rop);
         } else {
             throw new RuntimeException("Unknown projection type while resolving");
         }

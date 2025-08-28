@@ -1,9 +1,11 @@
 package tools.vitruv.optggs.operators.traits;
 
+import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.operators.FunctionInvocation;
 import tools.vitruv.optggs.operators.Projection;
 import tools.vitruv.optggs.operators.projections.DerivedProjection;
+import tools.vitruv.optggs.operators.projections.ReferenceOperatorProjection;
 import tools.vitruv.optggs.operators.projections.SimpleProjection;
 import tools.vitruv.optggs.operators.selection.Pattern;
 
@@ -68,5 +70,10 @@ public interface Projectable<T> {
     default T project(FunctionInvocation function, String targetProperty) {
         function.setConstrainedArgument("return", defaultTargetElement(), targetProperty);
         return project(new DerivedProjection(function));
+    }
+
+    /** TODO: Project ReferenceOperator */
+    default T project(ReferenceOperator referenceOperator) {
+        return project(new ReferenceOperatorProjection(referenceOperator));
     }
 }

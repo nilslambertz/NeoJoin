@@ -100,11 +100,12 @@ public class ViewExtractor {
                 query.project(feature.name());
             } else if (feature instanceof AQRFeature.Reference
                     && feature.kind().expression() != null) {
+                // TODO: Make pretty
                 final ReferenceOperator operator =
                         patternMatchingStrategy.extractReferenceOperator(
                                 feature.kind().expression());
                 log.info("Found reference operator: " + operator);
-                // TODO: Reference operators
+                query.project(operator);
             } else if (feature instanceof AQRFeature.Reference
                     && feature.kind().expression() == null) {
                 log.info("TODO: " + feature);
