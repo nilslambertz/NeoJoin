@@ -35,7 +35,7 @@ public class SkipIntermediateReferenceExtractor {
         final List<SkipIntermediateReference.IntermediateReferenceInformation>
                 intermediateReferenceInformation = new ArrayList<>();
         while (nextFeatureCall != null) {
-            final Optional<SingleArgumentFlatMapCallData> flatMapCallData =
+            final Optional<FieldDataWithNextFeatureCall> flatMapCallData =
                     getSingleArgumentFlatMapCallData(nextFeatureCall);
             if (flatMapCallData.isEmpty()) {
                 // No flatMap operation is found, no match
@@ -43,10 +43,10 @@ public class SkipIntermediateReferenceExtractor {
             }
 
             // Add the next intermediate reference data
+            final JvmFieldUtils.JvmFieldData fieldData = flatMapCallData.get().getFieldData();
             intermediateReferenceInformation.add(
                     new SkipIntermediateReference.IntermediateReferenceInformation(
-                            flatMapCallData.get().getFeatureSimpleName(),
-                            flatMapCallData.get().getFeatureIdentifier()));
+                            fieldData.getFeatureSimpleName(), fieldData.getFeatureIdentifier()));
 
             nextFeatureCall = flatMapCallData.get().getNextFeatureCall();
         }
@@ -65,15 +65,12 @@ public class SkipIntermediateReferenceExtractor {
     }
 
     @Value
-    private static class SingleArgumentFlatMapCallData {
-        String featureSimpleName;
-        String featureIdentifier;
-        String returnTypeIdentifier;
-
+    private static class FieldDataWithNextFeatureCall {
+        JvmFieldUtils.JvmFieldData fieldData;
         XAbstractFeatureCall nextFeatureCall;
     }
 
-    private static Optional<SingleArgumentFlatMapCallData> getSingleArgumentFlatMapCallData(
+    private static Optional<FieldDataWithNextFeatureCall> getSingleArgumentFlatMapCallData(
             XExpression expression) {
         final Optional<XMemberFeatureCall> memberFeatureCall =
                 JvmFeatureCallUtils.asMemberFeatureCall(expression);
@@ -98,14 +95,9 @@ public class SkipIntermediateReferenceExtractor {
                 .flatMap(BlockExpressionUtils::getFirstExpression)
                 .flatMap(JvmFeatureCallUtils::asMemberFeatureCall)
                 .flatMap(JvmFieldUtils::getJvmFieldData)
-                // TODO: We probably don't need SingleArgumentFlatMapCallData if we have
-                // JvmFieldData?
                 .map(
                         fieldData ->
-                                new SingleArgumentFlatMapCallData(
-                                        fieldData.getFeatureSimpleName(),
-                                        fieldData.getFeatureIdentifier(),
-                                        fieldData.getReturnTypeIdentifier(),
-                                        nextMemberCallTarget.get()));
+                                new FieldDataWithNextFeatureCall(
+                                        fieldData, nextMemberCallTarget.get()));
     }
 }
