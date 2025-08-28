@@ -5,8 +5,8 @@ import org.jspecify.annotations.NonNull;
 
 import tools.vitruv.neojoin.aqr.*;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
 import tools.vitruv.optggs.operators.selection.Pattern;
 
 import java.util.HashMap;
@@ -98,12 +98,16 @@ public class ViewExtractor {
             if (feature instanceof AQRFeature.Attribute
                     && feature.kind() instanceof AQRFeature.Kind.Copy) {
                 query.project(feature.name());
-            } else if (feature instanceof AQRFeature.Reference) {
+            } else if (feature instanceof AQRFeature.Reference
+                    && feature.kind().expression() != null) {
                 final ReferenceOperator operator =
                         patternMatchingStrategy.extractReferenceOperator(
                                 feature.kind().expression());
                 log.info("Found reference operator: " + operator);
                 // TODO: Reference operators
+            } else if (feature instanceof AQRFeature.Reference
+                    && feature.kind().expression() == null) {
+                log.info("TODO: " + feature);
             } else {
                 throw new RuntimeException("Invalid projection: " + feature);
             }
