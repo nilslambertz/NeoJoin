@@ -199,13 +199,24 @@ public class Main implements Callable<Integer> {
         }
 
         if (tggRuleGeneration != null) {
+            if(generate == null) {
+                printError("TGG rule generation requires executing the Metamodel generation (--generate) too");
+                return 1;
+            }
+
             // Generate metamodel(s) for eMoflon
             final Path sourceMetamodelPath = Path.of("target/emsl-source-metamodel.msl");
             EmslMetamodelGenerator.generateMetamodels(sourceMetaModelResourceSet, sourceMetamodelPath);
 
+            final ResourceSet targetMetaModelResourceSet = new ResourceSetImpl();
+            targetMetaModelResourceSet.getResources().add(targetMetaModel.pack().eResource());
+            final Path targetMetamodelPath = Path.of("target/emsl-target-metamodel.msl");
+            EmslMetamodelGenerator.generateMetamodels(targetMetaModelResourceSet, targetMetamodelPath);
+
             // TODO: How to choose Project name?
             final Project project = new Project("TestTGGProject");
             project.addSourceMetamodel(new Metamodel(sourceMetamodelPath));
+            project.addTargetMetamodel(new Metamodel(targetMetamodelPath));
             final View view = ViewExtractor.viewFromAQR(aqr, new ManualPatternMatchingStrategy());
 
             API.generateProjectForView(
