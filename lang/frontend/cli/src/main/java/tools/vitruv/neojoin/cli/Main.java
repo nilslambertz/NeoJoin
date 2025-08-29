@@ -1,6 +1,5 @@
 package tools.vitruv.neojoin.cli;
 
-import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
@@ -32,9 +31,12 @@ import tools.vitruv.neojoin.transformation.Transformator;
 import tools.vitruv.neojoin.transformation.TransformatorException;
 import tools.vitruv.neojoin.utils.EMFUtils;
 import tools.vitruv.neojoin.utils.Utils;
+import tools.vitruv.optggs.driver.API;
+import tools.vitruv.optggs.driver.Metamodel;
 import tools.vitruv.optggs.driver.Project;
 import tools.vitruv.optggs.operators.View;
 import tools.vitruv.optggs.operators.ViewExtractor;
+import tools.vitruv.optggs.transpiler.LocalNameResolver;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -150,6 +152,12 @@ public class Main implements Callable<Integer> {
     private int execute() throws IOException, UnsupportedReferenceExpressionException {
         // collect available meta-models
         EPackage.Registry registry = new PackageModelCollector(metaModelPath).collect();
+        ResourceSet sourceMetaModelResourceSet = new ResourceSetImpl();
+        registry.values().stream()
+            .filter(EPackage.class::isInstance)
+            .map(EPackage.class::cast)
+            .map(EPackage::eResource)
+            .forEach(sourceMetaModelResourceSet.getResources()::add);
 
         // parse query
         var setup = new NeoJoinStandaloneSetup(registry);
@@ -191,23 +199,17 @@ public class Main implements Callable<Integer> {
         }
 
         if (tggRuleGeneration != null) {
-            ResourceSet rs = new ResourceSetImpl();
-            registry.values().stream()
-                    .filter(EPackage.class::isInstance)
-                    .map(EPackage.class::cast)
-                    .map(EPackage::eResource)
-                    .forEach(rs.getResources()::add);
-
-            // Generate metamodel(s) for emoflon
-            EmslMetamodelGenerator.generateMetamodels(rs, Path.of("src/test-generated-metamodels.msl"));
+            // Generate metamodel(s) for eMoflon
+            final Path sourceMetamodelPath = Path.of("target/emsl-source-metamodel.msl");
+            EmslMetamodelGenerator.generateMetamodels(sourceMetaModelResourceSet, sourceMetamodelPath);
 
             // TODO: How to choose Project name?
             final Project project = new Project("TestTGGProject");
+            project.addSourceMetamodel(new Metamodel(sourceMetamodelPath));
             final View view = ViewExtractor.viewFromAQR(aqr, new ManualPatternMatchingStrategy());
 
-            // TODO: Don't run full TGG generation for now
-            // API.generateProjectForView(project, view, tggRuleGeneration.output, new
-            // LocalNameResolver());
+            API.generateProjectForView(
+                    project, view, tggRuleGeneration.output, new LocalNameResolver());
         }
 
         return 0;
