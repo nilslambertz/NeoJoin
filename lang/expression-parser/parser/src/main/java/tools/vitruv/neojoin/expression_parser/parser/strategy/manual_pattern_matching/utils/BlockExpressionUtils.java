@@ -12,9 +12,7 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BlockExpressionUtils {
     public static Optional<XBlockExpression> asBlockExpression(XExpression expression) {
-        return Optional.ofNullable(expression)
-                .filter(XBlockExpression.class::isInstance)
-                .map(XBlockExpression.class::cast);
+        return CastingUtils.cast(expression, XBlockExpression.class);
     }
 
     public static boolean hasExactlyOneExpression(XBlockExpression blockExpression) {

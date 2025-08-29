@@ -13,21 +13,15 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JvmFeatureCallUtils {
     public static Optional<XMemberFeatureCall> asMemberFeatureCall(XExpression expression) {
-        return Optional.ofNullable(expression)
-                .filter(XMemberFeatureCall.class::isInstance)
-                .map(XMemberFeatureCall.class::cast);
+        return CastingUtils.cast(expression, XMemberFeatureCall.class);
     }
 
     public static Optional<XFeatureCall> asFeatureCall(XExpression expression) {
-        return Optional.ofNullable(expression)
-                .filter(XFeatureCall.class::isInstance)
-                .map(XFeatureCall.class::cast);
+        return CastingUtils.cast(expression, XFeatureCall.class);
     }
 
     public static Optional<XAbstractFeatureCall> asAbstractFeatureCall(XExpression expression) {
-        return Optional.ofNullable(expression)
-                .filter(XAbstractFeatureCall.class::isInstance)
-                .map(XAbstractFeatureCall.class::cast);
+        return CastingUtils.cast(expression, XAbstractFeatureCall.class);
     }
 
     public static Optional<XAbstractFeatureCall> getNextMemberCallTarget(XExpression expression) {

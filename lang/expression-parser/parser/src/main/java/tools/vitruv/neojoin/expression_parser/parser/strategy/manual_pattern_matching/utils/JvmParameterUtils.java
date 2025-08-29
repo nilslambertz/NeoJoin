@@ -12,8 +12,6 @@ import java.util.Optional;
 public class JvmParameterUtils {
     public static Optional<JvmFormalParameter> asJvmFormalParameter(
             JvmIdentifiableElement jvmIdentifiableElement) {
-        return Optional.ofNullable(jvmIdentifiableElement)
-                .filter(JvmFormalParameter.class::isInstance)
-                .map(JvmFormalParameter.class::cast);
+        return CastingUtils.cast(jvmIdentifiableElement, JvmFormalParameter.class);
     }
 }

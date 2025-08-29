@@ -11,9 +11,7 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClosureUtils {
     public static Optional<XClosure> asClosure(XExpression expression) {
-        return Optional.ofNullable(expression)
-                .filter(XClosure.class::isInstance)
-                .map(XClosure.class::cast);
+        return CastingUtils.cast(expression, XClosure.class);
     }
 
     public static Optional<XExpression> getExpression(XClosure closure) {

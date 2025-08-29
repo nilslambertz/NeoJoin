@@ -32,8 +32,6 @@ public class JvmFieldUtils {
     }
 
     private static Optional<JvmField> asJvmField(JvmIdentifiableElement jvmIdentifiableElement) {
-        return Optional.ofNullable(jvmIdentifiableElement)
-                .filter(JvmField.class::isInstance)
-                .map(JvmField.class::cast);
+        return CastingUtils.cast(jvmIdentifiableElement, JvmField.class);
     }
 }
