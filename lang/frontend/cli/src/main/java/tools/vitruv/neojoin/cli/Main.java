@@ -6,15 +6,19 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.Diagnostician;
 import org.eclipse.xtext.validation.Issue;
 import org.jspecify.annotations.NullUnmarked;
 import org.jspecify.annotations.Nullable;
+
 import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
+
 import tools.vitruv.neojoin.NeoJoinStandaloneSetup;
 import tools.vitruv.neojoin.Parser;
 import tools.vitruv.neojoin.SourceLocation;
@@ -23,15 +27,14 @@ import tools.vitruv.neojoin.collector.PackageModelCollector;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.ManualPatternMatchingStrategy;
 import tools.vitruv.neojoin.generation.MetaModelGenerator;
+import tools.vitruv.neojoin.tgg.emsl_metamodel_generator.EmslMetamodelGenerator;
 import tools.vitruv.neojoin.transformation.Transformator;
 import tools.vitruv.neojoin.transformation.TransformatorException;
 import tools.vitruv.neojoin.utils.EMFUtils;
 import tools.vitruv.neojoin.utils.Utils;
-import tools.vitruv.optggs.driver.API;
 import tools.vitruv.optggs.driver.Project;
 import tools.vitruv.optggs.operators.View;
 import tools.vitruv.optggs.operators.ViewExtractor;
-import tools.vitruv.optggs.transpiler.LocalNameResolver;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -54,8 +57,6 @@ import java.util.concurrent.Callable;
         "  - Windows: C:\\path\\to\\directory;C:/path/to/file.ecore",
     })
 public class Main implements Callable<Integer> {
-
-    private static final Logger log = Logger.getLogger(Main.class);
     @Parameters(index = "0", paramLabel = "QUERY", description = "Path to the query file.")
     Path queryFile;
 
@@ -190,12 +191,23 @@ public class Main implements Callable<Integer> {
         }
 
         if (tggRuleGeneration != null) {
+            ResourceSet rs = new ResourceSetImpl();
+            registry.values().stream()
+                    .filter(EPackage.class::isInstance)
+                    .map(EPackage.class::cast)
+                    .map(EPackage::eResource)
+                    .forEach(rs.getResources()::add);
+
+            // Generate metamodel(s) for emoflon
+            EmslMetamodelGenerator.generateMetamodels(rs, Path.of("src/test-generated-metamodels.msl"));
+
             // TODO: How to choose Project name?
             final Project project = new Project("TestTGGProject");
             final View view = ViewExtractor.viewFromAQR(aqr, new ManualPatternMatchingStrategy());
 
             // TODO: Don't run full TGG generation for now
-           // API.generateProjectForView(project, view, tggRuleGeneration.output, new LocalNameResolver());
+            // API.generateProjectForView(project, view, tggRuleGeneration.output, new
+            // LocalNameResolver());
         }
 
         return 0;

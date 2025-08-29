@@ -39,6 +39,11 @@
       <artifactId>tools.vitruv.neojoin.tgg.driver</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tools.vitruv.neojoin.tgg.emsl_metamodel_generator</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>info.picocli</groupId>
