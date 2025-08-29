@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.Value;
 
+import org.eclipse.xtext.common.types.JvmField;
+import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 
 import java.util.Optional;
@@ -19,7 +21,19 @@ public class JvmFieldUtils {
 
     public static Optional<JvmFieldData> getJvmFieldData(XAbstractFeatureCall featureCall) {
         return Optional.ofNullable(featureCall)
-                .flatMap(JvmFeatureCallUtils::asMemberFeatureCall)
-                .flatMap(JvmFieldUtils::getJvmFieldData);
+                .flatMap(JvmFeatureUtils::getFeature)
+                .flatMap(JvmFieldUtils::asJvmField)
+                .map(
+                        jvmField ->
+                                new JvmFieldData(
+                                        jvmField.getSimpleName(),
+                                        jvmField.getIdentifier(),
+                                        jvmField.getType().getType().getIdentifier()));
+    }
+
+    private static Optional<JvmField> asJvmField(JvmIdentifiableElement jvmIdentifiableElement) {
+        return Optional.ofNullable(jvmIdentifiableElement)
+                .filter(JvmField.class::isInstance)
+                .map(JvmField.class::cast);
     }
 }
