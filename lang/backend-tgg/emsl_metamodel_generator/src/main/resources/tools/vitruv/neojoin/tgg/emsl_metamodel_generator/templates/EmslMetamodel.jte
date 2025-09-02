@@ -18,7 +18,7 @@ metamodel ${ePackage.getName()} {
     @for(EReference ref : eclass.getEReferences())
         !{
             var refLowerBound = ref.getLowerBound();
-            String refUpperBound = ref.getLowerBound() == -1 ? "*" : ref.getLowerBound() + "";
+            String refUpperBound = ref.getUpperBound() == -1 ? "*" : ref.getUpperBound() + "";
             String boundsString = refLowerBound + ".." + refUpperBound;
             boolean isContainment = ref.isContainment();
             String operatorPrefix = isContainment ? "<>" : "";
