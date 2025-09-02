@@ -46,4 +46,9 @@ public class ResolvedDerivedProjection implements ResolvedProjection {
     public String toString() {
         return "Π(" + function + ")";
     }
+
+    @Override
+    public boolean containedInPrimaryRule() {
+        return true;
+    }
 }

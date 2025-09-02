@@ -34,4 +34,9 @@ public class ResolvedSimpleProjection implements ResolvedProjection {
     public String toString() {
         return "Π(" + source + "::" + sourceProperty + " => " + target.fqn() + "::" + targetProperty + ")";
     }
+
+    @Override
+    public boolean containedInPrimaryRule() {
+        return true;
+    }
 }

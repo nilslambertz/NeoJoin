@@ -14,7 +14,12 @@ public class ResolvedQuery {
     private final Optional<ResolvedContainment> container;
     private final List<ResolvedLink> links;
 
-    public ResolvedQuery(ResolvedSelection selection, List<ResolvedProjection> projections, List<ResolvedFilter> filters, Optional<ResolvedContainment> container, List<ResolvedLink> links) {
+    public ResolvedQuery(
+            ResolvedSelection selection,
+            List<ResolvedProjection> projections,
+            List<ResolvedFilter> filters,
+            Optional<ResolvedContainment> container,
+            List<ResolvedLink> links) {
         this.selection = selection;
         this.projections = projections;
         this.filters = filters;
@@ -25,6 +30,16 @@ public class ResolvedQuery {
     public Collection<TripleRule> toRules() {
         var rules = new ArrayList<TripleRule>();
         rules.add(createPrimaryRule());
+
+        final List<ResolvedProjection> projectionsWithAdditionalRules =
+                projections.stream()
+                        .filter(projection -> !projection.containedInPrimaryRule())
+                        .toList();
+        rules.addAll(
+                projectionsWithAdditionalRules.stream()
+                        .map(this::createAdditionalProjectionRules)
+                        .flatMap(List::stream)
+                        .toList());
         rules.addAll(links.stream().map(this::createLinkRule).toList());
         return rules;
     }
@@ -37,11 +52,26 @@ public class ResolvedQuery {
         for (var filter : filters) {
             filter.extendRule(rule);
         }
-        for (var projection : projections) {
+
+        final List<ResolvedProjection> projectionsInPrimaryRule =
+                projections.stream().filter(ResolvedProjection::containedInPrimaryRule).toList();
+        for (var projection : projectionsInPrimaryRule) {
             projection.extendRule(rule);
         }
         container.ifPresent(value -> value.extendRule(rule));
         return rule;
+    }
+
+    public List<TripleRule> createAdditionalProjectionRules(ResolvedProjection projection) {
+        if (projection.containedInPrimaryRule()) {
+            throw new RuntimeException("Projection should be contained in primary rule");
+        }
+
+        var rule = new TripleRule();
+        selection.extendRule(rule);
+        projection.extendRule(rule);
+
+        return List.of(rule);
     }
 
     public TripleRule createLinkRule(ResolvedLink link) {

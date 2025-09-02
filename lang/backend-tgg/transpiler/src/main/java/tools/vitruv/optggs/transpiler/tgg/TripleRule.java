@@ -51,46 +51,54 @@ public class TripleRule {
         return constraint;
     }
 
-    public Slice addSourceSlice(Collection<Node> initialNodes, Collection<Correspondence> initialCorrespondences) {
-        return new Slice(new RuleExtender() {
-            @Override
-            public Node addNode(FQN type) {
-                return addSourceNode(type);
-            }
+    public Slice addSourceSlice(
+            Collection<Node> initialNodes, Collection<Correspondence> initialCorrespondences) {
+        return new Slice(
+                new RuleExtender() {
+                    @Override
+                    public Node addNode(FQN type) {
+                        return addSourceNode(type);
+                    }
 
-            @Override
-            public Correspondence addCorrespondence(Node source, Node target) {
-                return addCorrespondenceRule(source, target);
-            }
+                    @Override
+                    public Correspondence addCorrespondence(Node source, Node target) {
+                        return addCorrespondenceRule(source, target);
+                    }
 
-            @Override
-            public AttributeConstraint addConstraint(AttributeConstraint constraint) {
-                return addConstraintRule(constraint);
-            }
-        }, initialNodes, initialCorrespondences);
+                    @Override
+                    public AttributeConstraint addConstraint(AttributeConstraint constraint) {
+                        return addConstraintRule(constraint);
+                    }
+                },
+                initialNodes,
+                initialCorrespondences);
     }
 
     public Slice addSourceSlice() {
         return addSourceSlice(List.of(), List.of());
     }
 
-    public Slice addTargetSlice(Collection<Node> initialNodes, Collection<Correspondence> initalCorrespondences) {
-        return new Slice(new RuleExtender() {
-            @Override
-            public Node addNode(FQN type) {
-                return addTargetNode(type);
-            }
+    public Slice addTargetSlice(
+            Collection<Node> initialNodes, Collection<Correspondence> initalCorrespondences) {
+        return new Slice(
+                new RuleExtender() {
+                    @Override
+                    public Node addNode(FQN type) {
+                        return addTargetNode(type);
+                    }
 
-            @Override
-            public Correspondence addCorrespondence(Node source, Node target) {
-                return addCorrespondenceRule(source, target);
-            }
+                    @Override
+                    public Correspondence addCorrespondence(Node source, Node target) {
+                        return addCorrespondenceRule(source, target);
+                    }
 
-            @Override
-            public AttributeConstraint addConstraint(AttributeConstraint constraint) {
-                return addConstraintRule(constraint);
-            }
-        }, initialNodes, initalCorrespondences);
+                    @Override
+                    public AttributeConstraint addConstraint(AttributeConstraint constraint) {
+                        return addConstraintRule(constraint);
+                    }
+                },
+                initialNodes,
+                initalCorrespondences);
     }
 
     public Slice addTargetSlice() {
@@ -98,21 +106,11 @@ public class TripleRule {
     }
 
     public Optional<Node> findSourceNodeByType(FQN type) {
-        for (var node : sourceNodes) {
-            if (node.type().equals(type)) {
-                return Optional.of(node);
-            }
-        }
-        return Optional.empty();
+        return sourceNodes.stream().filter(node -> node.type().equals(type)).findFirst();
     }
 
     public Optional<Node> findTargetNodeByType(FQN type) {
-        for (var node : targetNodes) {
-            if (node.type().equals(type)) {
-                return Optional.of(node);
-            }
-        }
-        return Optional.empty();
+        return targetNodes.stream().filter(node -> node.type().equals(type)).findFirst();
     }
 
     public Slice allSourcesAsSlice() {
