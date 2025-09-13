@@ -214,7 +214,7 @@ public class Main implements Callable<Integer> {
             EmslMetamodelGenerator.generateMetamodels(targetMetaModelResourceSet, targetMetamodelPath);
 
             // TODO: How to choose Project name?
-            final Project project = new Project("TestTGGProject");
+            final Project project = new Project("TestTGGProjectV2");
             project.addSourceMetamodel(new Metamodel(sourceMetamodelPath));
             project.addTargetMetamodel(new Metamodel(targetMetamodelPath));
             final View view = ViewExtractor.viewFromAQR(aqr, new ManualPatternMatchingStrategy());
