@@ -1,5 +1,6 @@
 package tools.vitruv.optggs.transpiler.operators;
 
+import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.transpiler.tgg.TripleRule;
 
 import java.util.ArrayList;
@@ -67,11 +68,8 @@ public class ResolvedQuery {
             throw new RuntimeException("Projection should be contained in primary rule");
         }
 
-        var rule = new TripleRule();
-        selection.extendRule(rule);
-        projection.extendRule(rule);
-
-        return List.of(rule);
+        // TODO!! We need the target class and target reference name
+        return projection.generateRules(new FQN("CarWithWheels"));
     }
 
     public TripleRule createLinkRule(ResolvedLink link) {
