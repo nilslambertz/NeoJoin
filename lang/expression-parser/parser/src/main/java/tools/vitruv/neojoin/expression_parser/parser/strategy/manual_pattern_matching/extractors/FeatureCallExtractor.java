@@ -36,17 +36,21 @@ public class FeatureCallExtractor {
                 .flatMap(JvmFeatureUtils::getFeature)
                 .flatMap(JvmParameterUtils::asJvmFormalParameter)
                 .map(
-                        nextCallTarget ->
+                        parameter ->
                                 new ReferenceOperatorWithNextCallTarget(
                                         new FeatureCall(
-                                                nextCallTarget.getName(),
-                                                nextCallTarget.getIdentifier(),
+                                                parameter
+                                                        .getParameterType()
+                                                        .getType()
+                                                        .getSimpleName(),
+                                                parameter
+                                                        .getParameterType()
+                                                        .getType()
+                                                        .getIdentifier(),
+                                                "TODO!!!",
                                                 memberFeatureCallFieldData
                                                         .get()
                                                         .getFeatureSimpleName(),
-                                                memberFeatureCallFieldData
-                                                        .get()
-                                                        .getFeatureIdentifier(),
                                                 null),
                                         null));
     }
