@@ -105,7 +105,7 @@ public class ViewExtractor {
                         patternMatchingStrategy.extractReferenceOperator(
                                 feature.kind().expression());
                 log.info("Found reference operator: " + operator);
-                query.project(operator);
+                query.project(feature.name(), operator);
             } else if (feature instanceof AQRFeature.Reference
                     && feature.kind().expression() == null) {
                 log.info("TODO: " + feature);

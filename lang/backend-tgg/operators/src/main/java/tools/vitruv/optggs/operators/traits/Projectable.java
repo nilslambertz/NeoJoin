@@ -73,7 +73,7 @@ public interface Projectable<T> {
     }
 
     /** TODO: Project ReferenceOperator */
-    default T project(ReferenceOperator referenceOperator) {
-        return project(new ReferenceOperatorProjection(referenceOperator));
+    default T project(String field, ReferenceOperator referenceOperator) {
+        return project(new ReferenceOperatorProjection(field, referenceOperator));
     }
 }

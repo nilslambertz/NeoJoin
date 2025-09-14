@@ -18,9 +18,11 @@ import java.util.List;
 public class ResolvedReferenceOperatorProjection implements ResolvedProjection {
     private static final Logger log = Logger.getLogger(ResolvedReferenceOperatorProjection.class);
     private final ReferenceOperator referenceOperator;
+    private final String field;
 
     public ResolvedReferenceOperatorProjection(ReferenceOperatorProjection projection) {
         this.referenceOperator = projection.referenceOperator();
+        this.field = projection.field();
     }
 
     @Override
