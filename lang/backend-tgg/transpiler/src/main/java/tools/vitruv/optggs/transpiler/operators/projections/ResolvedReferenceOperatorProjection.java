@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import tools.vitruv.neojoin.expression_parser.model.FeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
+import tools.vitruv.neojoin.expression_parser.model.SkipIntermediateReference;
 import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.operators.projections.ReferenceOperatorProjection;
 import tools.vitruv.optggs.transpiler.operators.ResolvedProjection;
@@ -35,21 +36,49 @@ public class ResolvedReferenceOperatorProjection implements ResolvedProjection {
 
         // TODO: If the only operator is a feature call, we need a rule that adds the nodes on
         // source and target
+        final TripleRule firstRule = generateTripleRuleForFeatureCall(source, firstOperator);
+        rules.add(firstRule);
+
+        TripleRule lastRule = firstRule;
+        ReferenceOperator nextOperator = firstOperator.getFollowingOperator();
+        while (nextOperator != null) {
+            final List<TripleRule> nextRules =
+                    generateTripleRuleForReferenceOperator(lastRule, nextOperator);
+            rules.addAll(nextRules);
+            if (!nextRules.isEmpty()) {
+                lastRule = nextRules.getLast();
+            }
+            nextOperator = nextOperator.getFollowingOperator();
+        }
+
+        return rules;
+    }
+
+    private List<TripleRule> generateTripleRuleForReferenceOperator(
+            TripleRule previousRule, ReferenceOperator operator) {
+        if (operator instanceof SkipIntermediateReference skipIntermediateReference) {
+            return generateTripleRuleForSkipIntermediateReference(
+                    previousRule, skipIntermediateReference);
+        }
+
+        return List.of();
+    }
+
+    private TripleRule generateTripleRuleForFeatureCall(FQN source, FeatureCall operator) {
         final TripleRule firstRule = new TripleRule();
         final Slice sourceSlice = firstRule.addSourceSlice();
         Node parentNode = sourceSlice.addNode(source);
         Node childNode = sourceSlice.addNode(new FQN("Axis"));
         childNode.makeGreen();
-        Link parentLinkToChild = Link.Green(firstOperator.getFeatureSimpleName(), childNode);
+        Link parentLinkToChild = Link.Green(operator.getFeatureSimpleName(), childNode);
         parentNode.addLink(parentLinkToChild);
         firstRule.addSourceSlice(List.of(parentNode, childNode), List.of());
+        return firstRule;
+    }
 
-        rules.add(firstRule);
-
-        log.info("Added Tripe rule nodes for " + referenceOperator);
-
-        // TODO: Generate TGG rule matching reference operators
-        return rules;
+    private List<TripleRule> generateTripleRuleForSkipIntermediateReference(
+            TripleRule previousRule, SkipIntermediateReference operator) {
+        return List.of();
     }
 
     @Override
