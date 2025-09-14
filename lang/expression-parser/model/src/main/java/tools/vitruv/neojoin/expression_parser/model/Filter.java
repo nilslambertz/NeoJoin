@@ -5,14 +5,12 @@ import lombok.Data;
 
 import org.jspecify.annotations.Nullable;
 
+import tools.vitruv.neojoin.expression_parser.model.binary_expression.BinaryExpression;
+
 @Data
 @AllArgsConstructor
-public class FeatureCall implements ReferenceOperator {
-    String parentSimpleName;
-    String parentIdentifier;
-
-    String featureClassSimpleName;
-    String featureSimpleName;
+public class Filter implements ReferenceOperator {
+    BinaryExpression binaryExpression;
 
     @Nullable ReferenceOperator followingOperator;
 }

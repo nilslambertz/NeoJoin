@@ -13,4 +13,5 @@ public class JvmFeatureUtils {
     public static Optional<JvmIdentifiableElement> getFeature(XAbstractFeatureCall featureCall) {
         return Optional.ofNullable(featureCall).map(XAbstractFeatureCall::getFeature);
     }
+
 }

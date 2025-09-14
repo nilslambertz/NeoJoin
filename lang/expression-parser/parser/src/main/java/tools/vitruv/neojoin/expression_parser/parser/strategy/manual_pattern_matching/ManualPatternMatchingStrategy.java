@@ -7,6 +7,7 @@ import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FeatureCallExtractor;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FilterExtractor;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.SkipIntermediateReferenceExtractor;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.ToListExtractor;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextCallTarget;
@@ -40,6 +41,7 @@ public class ManualPatternMatchingStrategy implements PatternMatchingStrategy {
             XExpression expression) {
         return ToListExtractor.extract(expression)
                 .or(() -> SkipIntermediateReferenceExtractor.extract(expression))
-                .or(() -> FeatureCallExtractor.extract(expression));
+                .or(() -> FeatureCallExtractor.extract(expression))
+                .or(() -> FilterExtractor.extract(expression));
     }
 }
