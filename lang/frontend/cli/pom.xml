@@ -31,7 +31,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>tools.vitruv.neojoin.expression-parser</artifactId>
+      <artifactId>tools.vitruv.neojoin.expression_parser</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
