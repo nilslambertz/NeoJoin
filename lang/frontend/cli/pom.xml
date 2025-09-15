@@ -31,9 +31,14 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>tools.vitruv.neojoin.expression_parser</artifactId>
+      <artifactId>tools.vitruv.neojoin.expression_parser.model</artifactId>
       <version>${project.version}</version>
     </dependency>
+      <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>tools.vitruv.neojoin.expression_parser.parser</artifactId>
+          <version>${project.version}</version>
+      </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>tools.vitruv.neojoin.tgg.driver</artifactId>
