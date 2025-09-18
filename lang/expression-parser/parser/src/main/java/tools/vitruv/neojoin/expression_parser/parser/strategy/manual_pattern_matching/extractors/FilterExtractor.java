@@ -1,8 +1,5 @@
 package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
 import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XBinaryOperation;
 import org.eclipse.xtext.xbase.XExpression;
@@ -18,9 +15,8 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 
 import java.util.Optional;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class FilterExtractor {
-    public static Optional<ReferenceOperatorWithNextCallTarget> extract(XExpression expression) {
+public class FilterExtractor implements ReferenceOperatorExtractor {
+    public Optional<ReferenceOperatorWithNextCallTarget> extract(XExpression expression) {
         XAbstractFeatureCall nextMemberCallTarget =
                 Optional.ofNullable(expression)
                         .flatMap(JvmFeatureCallUtils::getNextMemberCallTarget)

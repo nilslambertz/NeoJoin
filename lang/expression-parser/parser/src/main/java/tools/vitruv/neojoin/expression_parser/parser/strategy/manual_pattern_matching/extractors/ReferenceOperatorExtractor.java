@@ -3,9 +3,10 @@ package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_ma
 import org.eclipse.xtext.xbase.XExpression;
 
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextCallTarget;
 
 import java.util.Optional;
 
 public interface ReferenceOperatorExtractor {
-    <T extends ReferenceOperator> Optional<T> extract(XExpression expression);
+   Optional<ReferenceOperatorWithNextCallTarget> extract(XExpression expression);
 }
