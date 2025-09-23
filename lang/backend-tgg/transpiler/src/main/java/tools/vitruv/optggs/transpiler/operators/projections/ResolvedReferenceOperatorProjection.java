@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 
 import tools.vitruv.neojoin.expression_parser.model.FeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
-import tools.vitruv.neojoin.expression_parser.model.SkipIntermediateReference;
+import tools.vitruv.neojoin.expression_parser.model.FlatMap;
 import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.operators.projections.ReferenceOperatorProjection;
 import tools.vitruv.optggs.transpiler.operators.ResolvedProjection;
@@ -56,9 +56,9 @@ public class ResolvedReferenceOperatorProjection implements ResolvedProjection {
 
     private List<TripleRule> generateTripleRuleForReferenceOperator(
             TripleRule previousRule, ReferenceOperator operator) {
-        if (operator instanceof SkipIntermediateReference skipIntermediateReference) {
+        if (operator instanceof FlatMap flatMap) {
             return generateTripleRuleForSkipIntermediateReference(
-                    previousRule, skipIntermediateReference);
+                    previousRule, flatMap);
         }
 
         return List.of();
@@ -77,7 +77,7 @@ public class ResolvedReferenceOperatorProjection implements ResolvedProjection {
     }
 
     private List<TripleRule> generateTripleRuleForSkipIntermediateReference(
-            TripleRule previousRule, SkipIntermediateReference operator) {
+            TripleRule previousRule, FlatMap operator) {
         return List.of();
     }
 
