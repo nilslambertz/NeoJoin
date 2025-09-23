@@ -43,10 +43,10 @@ public class FeatureCallExtractor implements ReferenceOperatorExtractor {
                                                         .getParameterType()
                                                         .getType()
                                                         .getIdentifier(),
-                                                "TODO!!!",
                                                 memberFeatureCallFieldData
                                                         .get()
                                                         .getFeatureSimpleName(),
+                                                memberFeatureCallFieldData.get().getFeatureIdentifier(),
                                                 null),
                                         null));
     }
