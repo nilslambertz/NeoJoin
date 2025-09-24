@@ -12,7 +12,7 @@ public class JvmToListUtils {
 
     public static boolean isToListOperation(XMemberFeatureCall featureCall) {
         return JvmFeatureUtils.getFeature(featureCall)
-                .filter(JvmOperationUtils::isJvmOperation)
+                .flatMap(JvmOperationUtils::asJvmOperation)
                 .map(JvmToListUtils::isToListCall)
                 .orElse(false);
     }

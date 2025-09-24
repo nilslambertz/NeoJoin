@@ -12,7 +12,7 @@ public class JvmFlatMapUtils {
 
     public static boolean isFlatMapOperation(XMemberFeatureCall featureCall) {
         return JvmFeatureUtils.getFeature(featureCall)
-                .filter(JvmOperationUtils::isJvmOperation)
+                .flatMap(JvmOperationUtils::asJvmOperation)
                 .map(JvmFlatMapUtils::isFlatMapCall)
                 .orElse(false);
     }

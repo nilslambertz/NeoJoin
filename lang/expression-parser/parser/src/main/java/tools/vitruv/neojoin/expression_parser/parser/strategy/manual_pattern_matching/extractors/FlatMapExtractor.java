@@ -8,6 +8,7 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.BlockExpressionUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.ClosureUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFieldUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFlatMapUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmMemberCallUtils;
@@ -34,7 +35,9 @@ public class FlatMapExtractor implements ReferenceOperatorExtractor {
                 .filter(BlockExpressionUtils::hasExactlyOneExpression)
                 .flatMap(BlockExpressionUtils::getFirstExpression)
                 .flatMap(JvmFeatureCallUtils::asMemberFeatureCall)
-                .flatMap(JvmFieldUtils::getJvmFieldData)
+                .flatMap(JvmFeatureUtils::getFeature)
+                .flatMap(JvmFieldUtils::asJvmField)
+                .flatMap(JvmFieldUtils::getData)
                 .map(
                         fieldData ->
                                 new ReferenceOperatorWithNextCallTarget(

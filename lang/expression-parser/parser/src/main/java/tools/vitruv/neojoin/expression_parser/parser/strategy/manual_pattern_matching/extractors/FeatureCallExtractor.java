@@ -21,7 +21,10 @@ public class FeatureCallExtractor implements ReferenceOperatorExtractor {
         }
 
         final Optional<JvmFieldUtils.JvmFieldData> memberFeatureCallFieldData =
-                memberFeatureCall.flatMap(JvmFieldUtils::getJvmFieldData);
+                memberFeatureCall
+                        .flatMap(JvmFeatureUtils::getFeature)
+                        .flatMap(JvmFieldUtils::asJvmField)
+                        .flatMap(JvmFieldUtils::getData);
         if (memberFeatureCallFieldData.isEmpty()) {
             return Optional.empty();
         }
@@ -46,7 +49,9 @@ public class FeatureCallExtractor implements ReferenceOperatorExtractor {
                                                 memberFeatureCallFieldData
                                                         .get()
                                                         .getFeatureSimpleName(),
-                                                memberFeatureCallFieldData.get().getFeatureIdentifier(),
+                                                memberFeatureCallFieldData
+                                                        .get()
+                                                        .getFeatureIdentifier(),
                                                 null),
                                         null));
     }

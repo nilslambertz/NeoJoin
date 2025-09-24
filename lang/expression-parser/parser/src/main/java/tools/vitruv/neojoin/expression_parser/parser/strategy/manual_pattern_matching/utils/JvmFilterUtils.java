@@ -12,7 +12,7 @@ public class JvmFilterUtils {
 
     public static boolean isFilterOperation(XMemberFeatureCall featureCall) {
         return JvmFeatureUtils.getFeature(featureCall)
-                .filter(JvmOperationUtils::isJvmOperation)
+                .flatMap(JvmOperationUtils::asJvmOperation)
                 .map(JvmFilterUtils::isFilterCall)
                 .orElse(false);
     }

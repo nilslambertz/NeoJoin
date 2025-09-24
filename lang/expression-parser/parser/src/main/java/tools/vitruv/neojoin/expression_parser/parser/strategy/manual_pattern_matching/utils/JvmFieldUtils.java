@@ -6,7 +6,6 @@ import lombok.Value;
 
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
-import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 
 import java.util.Optional;
 
@@ -19,19 +18,17 @@ public class JvmFieldUtils {
         String returnTypeIdentifier;
     }
 
-    public static Optional<JvmFieldData> getJvmFieldData(XAbstractFeatureCall featureCall) {
-        return Optional.ofNullable(featureCall)
-                .flatMap(JvmFeatureUtils::getFeature)
-                .flatMap(JvmFieldUtils::asJvmField)
+    public static Optional<JvmFieldData> getData(JvmField jvmField) {
+        return Optional.ofNullable(jvmField)
                 .map(
-                        jvmField ->
+                        field ->
                                 new JvmFieldData(
-                                        jvmField.getSimpleName(),
-                                        jvmField.getIdentifier(),
-                                        jvmField.getType().getType().getIdentifier()));
+                                        field.getSimpleName(),
+                                        field.getIdentifier(),
+                                        field.getType().getType().getIdentifier()));
     }
 
-    private static Optional<JvmField> asJvmField(JvmIdentifiableElement jvmIdentifiableElement) {
+    public static Optional<JvmField> asJvmField(JvmIdentifiableElement jvmIdentifiableElement) {
         return CastingUtils.cast(jvmIdentifiableElement, JvmField.class);
     }
 }
