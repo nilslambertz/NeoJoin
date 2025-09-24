@@ -26,7 +26,7 @@ import tools.vitruv.neojoin.collector.PackageModelCollector;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.ManualPatternMatchingStrategy;
 import tools.vitruv.neojoin.generation.MetaModelGenerator;
-import tools.vitruv.neojoin.tgg.emsl_metamodel_generator.EmslMetamodelGenerator;
+import tools.vitruv.neojoin.tgg.emsl_utils.EmslMetamodelGenerator;
 import tools.vitruv.neojoin.transformation.Transformator;
 import tools.vitruv.neojoin.transformation.TransformatorException;
 import tools.vitruv.neojoin.utils.EMFUtils;

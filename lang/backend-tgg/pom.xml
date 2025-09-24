@@ -20,6 +20,6 @@
     <module>driver</module>
     <module>operators</module>
     <module>transpiler</module>
-    <module>emsl_metamodel_generator</module>
+    <module>emsl_utils</module>
   </modules>
 </project>

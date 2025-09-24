@@ -46,7 +46,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>tools.vitruv.neojoin.tgg.emsl_metamodel_generator</artifactId>
+      <artifactId>tools.vitruv.neojoin.tgg.emsl_utils</artifactId>
       <version>${project.version}</version>
     </dependency>
 

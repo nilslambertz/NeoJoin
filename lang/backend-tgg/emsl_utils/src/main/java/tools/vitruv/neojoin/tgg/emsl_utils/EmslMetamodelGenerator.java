@@ -1,4 +1,4 @@
-package tools.vitruv.neojoin.tgg.emsl_metamodel_generator;
+package tools.vitruv.neojoin.tgg.emsl_utils;
 
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
