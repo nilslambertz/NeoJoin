@@ -8,6 +8,7 @@ import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedRefere
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FeatureCallExtractor;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FilterExtractor;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.MapExtractor;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.ReferenceOperatorExtractor;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FlatMapExtractor;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.ToListExtractor;
@@ -22,7 +23,8 @@ public class ManualPatternMatchingStrategy implements PatternMatchingStrategy {
                     new FeatureCallExtractor(),
                     new FilterExtractor(),
                     new ToListExtractor(),
-                    new FlatMapExtractor());
+                    new FlatMapExtractor(),
+                    new MapExtractor());
 
     @Override
     public @NonNull ReferenceOperator extractReferenceOperator(@NonNull XExpression expression)
