@@ -64,12 +64,14 @@ public class ResolvedQuery {
     }
 
     public List<TripleRule> createAdditionalProjectionRules(ResolvedProjection projection) {
-        if (projection.containedInPrimaryRule()) {
-            throw new RuntimeException("Projection should be contained in primary rule");
-        }
+        return List.of();
 
-        // TODO!! We need the target class and target reference name
-        return projection.generateRules(new FQN("CarWithWheels"));
+//        if (projection.containedInPrimaryRule()) {
+//            throw new RuntimeException("Projection should be contained in primary rule");
+//        }
+//
+//        // TODO!! We need the target class and target reference name
+//        return projection.generateRules(new FQN("CarWithWheels"));
     }
 
     public TripleRule createLinkRule(ResolvedLink link) {
