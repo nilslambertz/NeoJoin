@@ -1,18 +1,23 @@
 @import org.eclipse.emf.ecore.EAttribute
 @import org.eclipse.emf.ecore.EClass
+@import org.eclipse.emf.ecore.EEnum
+@import org.eclipse.emf.ecore.EEnumLiteral
 @import org.eclipse.emf.ecore.EReference
 @import java.util.stream.Collectors
+@import static tools.vitruv.neojoin.tgg.emsl_utils.EmslUtils.escapeKeywords
+@import static tools.vitruv.neojoin.tgg.emsl_utils.EmslUtils.registerEnum
 @param org.eclipse.emf.ecore.EPackage ePackage
+@param java.util.Map<String, EEnum> metaModelEnum
 
 !{var eClasses = ePackage.getEClassifiers().stream().filter(EClass.class::isInstance).map(EClass.class::cast).toList();}
 
-metamodel ${ePackage.getName()} {
+metamodel ${escapeKeywords(ePackage.getName())} {
 @for(EClass eclass : eClasses)
     !{var superTypeNames = eclass.getESuperTypes().stream().map(EClass::getName).collect(Collectors.joining(", "));}
 
-    ${eclass.getName()} @if(!superTypeNames.isEmpty()) : ${superTypeNames} @endif {
+    ${escapeKeywords(eclass.getName())} @if(!superTypeNames.isEmpty()) : ${superTypeNames} @endif {
     @for(EAttribute attr : eclass.getEAttributes())
-        .${attr.getName()} : ${attr.getEType().getName()}
+        .${escapeKeywords(attr.getName())} : ${escapeKeywords(attr.getEType().getName())}
     @endfor
 
     @for(EReference ref : eclass.getEReferences())
@@ -23,7 +28,16 @@ metamodel ${ePackage.getName()} {
             boolean isContainment = ref.isContainment();
             String operatorPrefix = isContainment ? "<>" : "";
         }
-        ${operatorPrefix}-${ref.getName()}(${boundsString})->${ref.getEType().getName()}
+        ${operatorPrefix}-${escapeKeywords(ref.getName())}(${boundsString})->${escapeKeywords(ref.getEType().getName())}
+    @endfor
+    }
+@endfor
+
+
+@for(EEnum eenum : ePackage.getEClassifiers().stream().filter(EEnum.class::isInstance).map(EEnum.class::cast).toList())
+    enum ${escapeKeywords(registerEnum(metaModelEnum, eenum))} {
+    @for(EEnumLiteral literal : eenum.getELiterals())
+        ${escapeKeywords(literal.getName())}
     @endfor
     }
 @endfor

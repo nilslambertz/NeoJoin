@@ -8,6 +8,8 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EmslMetamodelGenerator {
     private static final String EMSL_METAMODEL_COLLECTION_TEMPLATE = "EmslMetamodelCollection.jte";
@@ -15,7 +17,10 @@ public class EmslMetamodelGenerator {
     public static void generateMetamodels(ResourceSet set, Path output) {
         TemplateEngine engine = TemplateEngine.createPrecompiled(ContentType.Plain);
         try (FileOutput out = new FileOutput(output)) {
-            engine.render(EMSL_METAMODEL_COLLECTION_TEMPLATE, set, out);
+            engine.render(
+                    EMSL_METAMODEL_COLLECTION_TEMPLATE,
+                    Map.of("rs", set, "metaModelEnum", new HashMap<>()),
+                    out);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
