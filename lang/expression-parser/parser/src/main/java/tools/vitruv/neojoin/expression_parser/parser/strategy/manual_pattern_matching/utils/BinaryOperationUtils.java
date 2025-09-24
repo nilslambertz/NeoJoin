@@ -45,10 +45,13 @@ public class BinaryOperationUtils {
     }
 
     private static Optional<OperationExpression> getOperationExpression(XExpression expression) {
+        // If the operation is a feature call
         final Optional<OperationExpression> featureCallExpression =
                 Optional.ofNullable(expression)
                         .flatMap(JvmFeatureCallUtils::asMemberFeatureCall)
-                        .flatMap(JvmFieldUtils::getJvmFieldData)
+                        .flatMap(JvmFeatureUtils::getFeature)
+                        .flatMap(JvmFieldUtils::asJvmField)
+                        .flatMap(JvmFieldUtils::getData)
                         .map(
                                 fieldData ->
                                         new FieldExpression(
@@ -58,8 +61,10 @@ public class BinaryOperationUtils {
             return featureCallExpression;
         }
 
+        // Otherwise, check if it's a supported constant expression
         final Optional<OperationExpression> constantValueExpression =
-                Optional.of(expression).flatMap(ConstantExpressionUtils::getConstantExpression);
+                Optional.ofNullable(expression)
+                        .flatMap(ConstantExpressionUtils::getConstantExpression);
         if (constantValueExpression.isPresent()) {
             return constantValueExpression;
         }
