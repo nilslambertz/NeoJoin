@@ -46,6 +46,6 @@ public class FilterExtractor implements ReferenceOperatorExtractor {
                 .map(
                         binaryExpression ->
                                 new ReferenceOperatorWithNextCallTarget(
-                                        new Filter(binaryExpression, null), nextMemberCallTarget));
+                                        new Filter(binaryExpression), nextMemberCallTarget));
     }
 }

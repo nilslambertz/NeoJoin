@@ -43,8 +43,7 @@ public class MapExtractor implements ReferenceOperatorExtractor {
                                 new ReferenceOperatorWithNextCallTarget(
                                         new Map(
                                                 fieldData.getFeatureSimpleName(),
-                                                fieldData.getFeatureIdentifier(),
-                                                null),
+                                                fieldData.getFeatureIdentifier()),
                                         nextMemberCallTarget));
     }
 }

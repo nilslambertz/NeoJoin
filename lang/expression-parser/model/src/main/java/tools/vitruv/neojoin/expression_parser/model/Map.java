@@ -1,15 +1,15 @@
 package tools.vitruv.neojoin.expression_parser.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import org.jspecify.annotations.Nullable;
 
 @Data
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class Map implements ReferenceOperator {
-    String referenceSimpleName;
-    String referenceIdentifier;
+    final String referenceSimpleName;
+    final String referenceIdentifier;
 
     @Nullable ReferenceOperator followingOperator;
 }

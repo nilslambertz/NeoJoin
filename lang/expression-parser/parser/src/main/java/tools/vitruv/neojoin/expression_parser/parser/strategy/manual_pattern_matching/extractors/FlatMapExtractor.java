@@ -43,8 +43,7 @@ public class FlatMapExtractor implements ReferenceOperatorExtractor {
                                 new ReferenceOperatorWithNextCallTarget(
                                         new FlatMap(
                                                 fieldData.getFeatureSimpleName(),
-                                                fieldData.getFeatureIdentifier(),
-                                                null),
+                                                fieldData.getFeatureIdentifier()),
                                         nextMemberCallTarget));
     }
 }

@@ -17,6 +17,6 @@ public class ToListExtractor implements ReferenceOperatorExtractor {
                 .map(
                         nextCallTarget ->
                                 new ReferenceOperatorWithNextCallTarget(
-                                        ToList.empty(), nextCallTarget));
+                                        new ToList(), nextCallTarget));
     }
 }
