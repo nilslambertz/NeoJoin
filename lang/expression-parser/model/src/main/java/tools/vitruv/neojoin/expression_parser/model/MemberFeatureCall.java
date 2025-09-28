@@ -7,9 +7,9 @@ import org.jspecify.annotations.Nullable;
 
 @Data
 @RequiredArgsConstructor
-public class FeatureCall implements ReferenceOperator {
-    final String identifier;
-    final String simpleName;
+public class MemberFeatureCall implements ReferenceOperator {
+    final String featureClassSimpleName;
+    final String featureSimpleName;
 
     @Nullable ReferenceOperator followingOperator;
 }

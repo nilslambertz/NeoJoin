@@ -8,9 +8,11 @@ import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedRefere
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FeatureCallExtractor;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FilterExtractor;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.MapExtractor;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.ReferenceOperatorExtractor;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FindAnyExtractor;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FlatMapExtractor;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.MapExtractor;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.MemberFeatureCallExtractor;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.ReferenceOperatorExtractor;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.ToListExtractor;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextCallTarget;
 
@@ -21,10 +23,12 @@ public class ManualPatternMatchingStrategy implements PatternMatchingStrategy {
     private static final List<ReferenceOperatorExtractor> EXTRACTORS =
             List.of(
                     new FeatureCallExtractor(),
+                    new MemberFeatureCallExtractor(),
                     new FilterExtractor(),
                     new ToListExtractor(),
                     new FlatMapExtractor(),
-                    new MapExtractor());
+                    new MapExtractor(),
+                    new FindAnyExtractor());
 
     @Override
     public @NonNull ReferenceOperator extractReferenceOperator(@NonNull XExpression expression)

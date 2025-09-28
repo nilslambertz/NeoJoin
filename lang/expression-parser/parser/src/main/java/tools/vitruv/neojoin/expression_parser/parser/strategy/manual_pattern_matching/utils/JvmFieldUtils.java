@@ -6,6 +6,7 @@ import lombok.Value;
 
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
+import org.eclipse.xtext.common.types.JvmType;
 
 import java.util.Optional;
 
@@ -15,17 +16,21 @@ public class JvmFieldUtils {
     public static class JvmFieldData {
         String featureSimpleName;
         String featureIdentifier;
+        String returnTypeSimpleName;
         String returnTypeIdentifier;
     }
 
     public static Optional<JvmFieldData> getData(JvmField jvmField) {
         return Optional.ofNullable(jvmField)
                 .map(
-                        field ->
-                                new JvmFieldData(
-                                        field.getSimpleName(),
-                                        field.getIdentifier(),
-                                        field.getType().getType().getIdentifier()));
+                        field -> {
+                            final JvmType parentType = field.getType().getType();
+                            return new JvmFieldData(
+                                    field.getSimpleName(),
+                                    field.getIdentifier(),
+                                    parentType.getSimpleName(),
+                                    parentType.getIdentifier());
+                        });
     }
 
     public static Optional<JvmField> asJvmField(JvmIdentifiableElement jvmIdentifiableElement) {
