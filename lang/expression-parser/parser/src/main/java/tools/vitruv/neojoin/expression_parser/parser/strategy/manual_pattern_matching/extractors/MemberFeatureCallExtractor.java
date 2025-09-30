@@ -5,15 +5,16 @@ import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 
 import tools.vitruv.neojoin.expression_parser.model.MemberFeatureCall;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextCallTarget;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextFeatureCall;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFieldUtils;
 
 import java.util.Optional;
 
-public class MemberFeatureCallExtractor implements ReferenceOperatorExtractor {
-    public Optional<ReferenceOperatorWithNextCallTarget> extract(XExpression expression) {
+public class MemberFeatureCallExtractor implements ReferenceOperatorExtractor<MemberFeatureCall> {
+    public Optional<ReferenceOperatorWithNextFeatureCall<MemberFeatureCall>> extract(
+            XExpression expression) {
         final Optional<XMemberFeatureCall> memberFeatureCall =
                 JvmFeatureCallUtils.asMemberFeatureCall(expression);
         if (memberFeatureCall.isEmpty()) {
@@ -32,7 +33,7 @@ public class MemberFeatureCallExtractor implements ReferenceOperatorExtractor {
                 .flatMap(JvmFieldUtils::getData)
                 .map(
                         parameter ->
-                                new ReferenceOperatorWithNextCallTarget(
+                                new ReferenceOperatorWithNextFeatureCall<>(
                                         new MemberFeatureCall(
                                                 parameter.getFeatureSimpleName(),
                                                 parameter.getFeatureIdentifier()),

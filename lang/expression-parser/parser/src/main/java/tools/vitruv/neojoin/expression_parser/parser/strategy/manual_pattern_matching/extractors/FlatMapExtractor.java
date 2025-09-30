@@ -4,7 +4,7 @@ import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XExpression;
 
 import tools.vitruv.neojoin.expression_parser.model.FlatMap;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextCallTarget;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextFeatureCall;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.BlockExpressionUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.ClosureUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
@@ -15,8 +15,8 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 
 import java.util.Optional;
 
-public class FlatMapExtractor implements ReferenceOperatorExtractor {
-    public Optional<ReferenceOperatorWithNextCallTarget> extract(XExpression expression) {
+public class FlatMapExtractor implements ReferenceOperatorExtractor<FlatMap> {
+    public Optional<ReferenceOperatorWithNextFeatureCall<FlatMap>> extract(XExpression expression) {
         XAbstractFeatureCall nextMemberCallTarget =
                 Optional.ofNullable(expression)
                         .flatMap(JvmFeatureCallUtils::getNextMemberCallTarget)
@@ -40,7 +40,7 @@ public class FlatMapExtractor implements ReferenceOperatorExtractor {
                 .flatMap(JvmFieldUtils::getData)
                 .map(
                         fieldData ->
-                                new ReferenceOperatorWithNextCallTarget(
+                                new ReferenceOperatorWithNextFeatureCall<>(
                                         new FlatMap(
                                                 fieldData.getFeatureSimpleName(),
                                                 fieldData.getFeatureIdentifier()),

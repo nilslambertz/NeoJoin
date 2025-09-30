@@ -14,13 +14,13 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.MemberFeatureCallExtractor;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.ReferenceOperatorExtractor;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.ToListExtractor;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextCallTarget;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextFeatureCall;
 
 import java.util.List;
 import java.util.Optional;
 
 public class ManualPatternMatchingStrategy implements PatternMatchingStrategy {
-    private static final List<ReferenceOperatorExtractor> EXTRACTORS =
+    private static final List<ReferenceOperatorExtractor<? extends ReferenceOperator>> EXTRACTORS =
             List.of(
                     new FeatureCallExtractor(),
                     new MemberFeatureCallExtractor(),
@@ -36,8 +36,8 @@ public class ManualPatternMatchingStrategy implements PatternMatchingStrategy {
         XExpression currentExpression = expression;
         ReferenceOperator lastOperator = null;
         while (currentExpression != null) {
-            final Optional<ReferenceOperatorWithNextCallTarget> nextReferenceOperator =
-                    getNextReferenceOperator(currentExpression);
+            Optional<? extends ReferenceOperatorWithNextFeatureCall<? extends ReferenceOperator>>
+                    nextReferenceOperator = getNextReferenceOperator(currentExpression);
             if (nextReferenceOperator.isEmpty()) {
                 throw new UnsupportedReferenceExpressionException(currentExpression);
             }
@@ -52,8 +52,9 @@ public class ManualPatternMatchingStrategy implements PatternMatchingStrategy {
         return lastOperator;
     }
 
-    private static Optional<ReferenceOperatorWithNextCallTarget> getNextReferenceOperator(
-            XExpression expression) {
+    private static Optional<
+                    ? extends ReferenceOperatorWithNextFeatureCall<? extends ReferenceOperator>>
+            getNextReferenceOperator(XExpression expression) {
         return EXTRACTORS.stream()
                 .map(extractor -> extractor.extract(expression))
                 .flatMap(Optional::stream)

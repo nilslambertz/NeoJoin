@@ -9,8 +9,8 @@ import org.jspecify.annotations.Nullable;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 
 @Value
-public class ReferenceOperatorWithNextCallTarget {
-    @NonNull ReferenceOperator referenceOperator;
+public class ReferenceOperatorWithNextFeatureCall<T extends ReferenceOperator> {
+    @NonNull T referenceOperator;
 
     @Nullable XAbstractFeatureCall nextFeatureCall;
 }
