@@ -19,11 +19,11 @@ import java.util.List;
 public class ResolvedReferenceOperator implements RuleAdder {
     private static final Logger log = Logger.getLogger(ResolvedReferenceOperator.class);
     private final ReferenceOperator referenceOperator;
-    private final String field;
+    private final String targetField;
 
     public ResolvedReferenceOperator(NeojoinReferenceOperator projection) {
         this.referenceOperator = projection.referenceOperator();
-        this.field = projection.field();
+        this.targetField = projection.targetField();
     }
 
     @Override
