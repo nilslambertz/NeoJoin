@@ -1,5 +1,7 @@
 package tools.vitruv.optggs.transpiler.operators;
 
+import lombok.Value;
+
 import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.transpiler.tgg.TripleRule;
 
@@ -8,37 +10,22 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+@Value
 public class ResolvedQuery {
-    private final ResolvedSelection selection;
-    private final List<ResolvedProjection> projections;
-    private final List<ResolvedFilter> filters;
-    private final Optional<ResolvedContainment> container;
-    private final List<ResolvedLink> links;
-
-    public ResolvedQuery(
-            ResolvedSelection selection,
-            List<ResolvedProjection> projections,
-            List<ResolvedFilter> filters,
-            Optional<ResolvedContainment> container,
-            List<ResolvedLink> links) {
-        this.selection = selection;
-        this.projections = projections;
-        this.filters = filters;
-        this.container = container;
-        this.links = links;
-    }
+    ResolvedSelection selection;
+    List<ResolvedProjection> projections;
+    List<ResolvedReferenceOperator> referenceOperators;
+    List<ResolvedFilter> filters;
+    Optional<ResolvedContainment> container;
+    List<ResolvedLink> links;
 
     public Collection<TripleRule> toRules() {
         var rules = new ArrayList<TripleRule>();
         rules.add(createPrimaryRule());
 
-        final List<ResolvedProjection> projectionsWithAdditionalRules =
-                projections.stream()
-                        .filter(projection -> !projection.containedInPrimaryRule())
-                        .toList();
         rules.addAll(
-                projectionsWithAdditionalRules.stream()
-                        .map(this::createAdditionalProjectionRules)
+                referenceOperators.stream()
+                        .map(this::createReferenceOperatorRules)
                         .flatMap(List::stream)
                         .toList());
         rules.addAll(links.stream().map(this::createLinkRule).toList());
@@ -53,25 +40,17 @@ public class ResolvedQuery {
         for (var filter : filters) {
             filter.extendRule(rule);
         }
-
-        final List<ResolvedProjection> projectionsInPrimaryRule =
-                projections.stream().filter(ResolvedProjection::containedInPrimaryRule).toList();
-        for (var projection : projectionsInPrimaryRule) {
+        for (var projection : projections) {
             projection.extendRule(rule);
         }
         container.ifPresent(value -> value.extendRule(rule));
         return rule;
     }
 
-    public List<TripleRule> createAdditionalProjectionRules(ResolvedProjection projection) {
-        return List.of();
-
-//        if (projection.containedInPrimaryRule()) {
-//            throw new RuntimeException("Projection should be contained in primary rule");
-//        }
-//
-//        // TODO!! We need the target class and target reference name
-//        return projection.generateRules(new FQN("CarWithWheels"));
+    public List<TripleRule> createReferenceOperatorRules(
+            ResolvedReferenceOperator referenceOperator) {
+        // TODO!! We need the target class and target reference name
+        return referenceOperator.addRules(new FQN("CarWithWheels"));
     }
 
     public TripleRule createLinkRule(ResolvedLink link) {

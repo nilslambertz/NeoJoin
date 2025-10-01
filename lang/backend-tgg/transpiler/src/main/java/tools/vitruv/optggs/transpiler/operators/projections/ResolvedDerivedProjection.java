@@ -27,16 +27,37 @@ public class ResolvedDerivedProjection implements ResolvedProjection {
             var argument = function.argument(parameter);
             if (parameter.equals("return")) {
                 if (argument instanceof FunctionInvocation.ConstrainedArgument arg) {
-                    Node node = rule.allTargetsAsSlice().findByType(arg.node()).orElseThrow(() -> new RuntimeException("Derive projection: node " + arg.node().fqn() + " not found in target graph"));
-                    constraint.addParameter(parameter, node.addVariableAttribute(arg.attribute(), LogicOperator.Equals));
+                    Node node =
+                            rule.allTargetsAsSlice()
+                                    .findByType(arg.node())
+                                    .orElseThrow(
+                                            () ->
+                                                    new RuntimeException(
+                                                            "Derive projection: node "
+                                                                    + arg.node().fqn()
+                                                                    + " not found in target graph"));
+                    constraint.addParameter(
+                            parameter,
+                            node.addVariableAttribute(arg.attribute(), LogicOperator.Equals));
                 } else {
-                    throw new RuntimeException("Derive projection: return attribute must be constrained argument in target graph");
+                    throw new RuntimeException(
+                            "Derive projection: return attribute must be constrained argument in target graph");
                 }
             } else if (argument instanceof FunctionInvocation.ConstantArgument c) {
                 constraint.addParameter(parameter, new ConstantExpression(c.value()));
             } else if (argument instanceof FunctionInvocation.ConstrainedArgument arg) {
-                Node node = rule.allSourcesAsSlice().findByType(arg.node()).orElseThrow(() -> new RuntimeException("Derive projection: node " + arg.node().fqn() + " not found in source graph"));
-                constraint.addParameter(parameter, node.addVariableAttribute(arg.attribute(), LogicOperator.Equals));
+                Node node =
+                        rule.allSourcesAsSlice()
+                                .findByType(arg.node())
+                                .orElseThrow(
+                                        () ->
+                                                new RuntimeException(
+                                                        "Derive projection: node "
+                                                                + arg.node().fqn()
+                                                                + " not found in source graph"));
+                constraint.addParameter(
+                        parameter,
+                        node.addVariableAttribute(arg.attribute(), LogicOperator.Equals));
             }
         }
         rule.addConstraintRule(constraint);
@@ -45,10 +66,5 @@ public class ResolvedDerivedProjection implements ResolvedProjection {
     @Override
     public String toString() {
         return "Π(" + function + ")";
-    }
-
-    @Override
-    public boolean containedInPrimaryRule() {
-        return true;
     }
 }
