@@ -2,7 +2,6 @@ package tools.vitruv.optggs.transpiler.operators;
 
 import lombok.Value;
 
-import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.transpiler.tgg.TripleRule;
 
 import java.util.ArrayList;
@@ -49,8 +48,7 @@ public class ResolvedQuery {
 
     public List<TripleRule> createReferenceOperatorRules(
             ResolvedReferenceOperator referenceOperator) {
-        // TODO!! We need the target class and target reference name
-        return referenceOperator.addRules(new FQN("CarWithWheels"));
+        return referenceOperator.addRules(selection.getTargetTop());
     }
 
     public TripleRule createLinkRule(ResolvedLink link) {

@@ -1,5 +1,6 @@
 package tools.vitruv.optggs.transpiler.operators;
 
+import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.operators.Mapping;
 import tools.vitruv.optggs.transpiler.operators.patterns.ResolvedPattern;
 import tools.vitruv.optggs.transpiler.tgg.Slice;
@@ -51,6 +52,10 @@ public class ResolvedSelection implements RuleGenerator {
             var targetNode = targetSlice.findByType(mapping.target()).orElseThrow();
             sourceSlice.addCorrespondence(sourceNode, targetNode);
         }
+    }
+
+    public FQN getTargetTop() {
+        return target.top();
     }
 
     @Override
