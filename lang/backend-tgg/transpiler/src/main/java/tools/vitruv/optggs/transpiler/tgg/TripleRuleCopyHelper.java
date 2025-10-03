@@ -15,6 +15,12 @@ public class TripleRuleCopyHelper {
     }
 
     public Node getCopiedNode(Node oldNode) {
-        return oldToNewNodes.putIfAbsent(oldNode, oldNode.deepCopy(this));
+        if (oldToNewNodes.containsKey(oldNode)) {
+            return oldToNewNodes.get(oldNode);
+        }
+
+        final Node copiedNode = oldNode.deepCopy(this);
+        oldToNewNodes.put(oldNode, copiedNode);
+        return copiedNode;
     }
 }
