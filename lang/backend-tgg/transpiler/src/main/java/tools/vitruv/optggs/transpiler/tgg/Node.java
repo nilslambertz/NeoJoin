@@ -171,7 +171,7 @@ public class Node {
                 id,
                 type.deepCopy(),
                 green,
-                nameRepository.deepCopy(),
+                copyHelper.getCopiedNameRepository(),
                 copiedProperties,
                 copiedLinks,
                 copiedAttributes);
