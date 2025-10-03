@@ -12,6 +12,7 @@ public class VariableExpression implements ValueExpression {
 
     /**
      * Creates a variable with the given name
+     *
      * @param name Name of the variable
      */
     public VariableExpression(String name) {
@@ -25,5 +26,10 @@ public class VariableExpression implements ValueExpression {
     @Override
     public String toString() {
         return "<" + name + ">";
+    }
+
+    @Override
+    public ValueExpression deepCopy() {
+        return new VariableExpression(name);
     }
 }

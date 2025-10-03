@@ -29,4 +29,10 @@ public class NameRepository {
     public String getLower(FQN preference) {
         return get(preference.localName().toLowerCase());
     }
+
+    public NameRepository deepCopy() {
+        final NameRepository clone = new NameRepository();
+        clone.names.addAll(names);
+        return clone;
+    }
 }

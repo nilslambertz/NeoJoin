@@ -6,8 +6,13 @@ public record VariableProperty(String name, String value) implements Property {
     public String toExpression(Node node) {
         if (node.isGreen()) {
             return "." + name + " := <" + value + ">";
-        }else {
+        } else {
             return "." + name + " : <" + value + ">";
         }
+    }
+
+    @Override
+    public Property deepCopy() {
+        return new VariableProperty(name, value);
     }
 }

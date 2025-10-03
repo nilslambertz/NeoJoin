@@ -35,6 +35,10 @@ public final class Link {
         isGreen = true;
     }
 
+    public Link deepCopy(TripleRuleCopyHelper copyHelper) {
+        return new Link(name, copyHelper.getCopiedNode(target), isGreen);
+    }
+
     @Override
     public String toString() {
         return (isGreen ? "++" : "") + "-[" + name() + "]->" + target().id();

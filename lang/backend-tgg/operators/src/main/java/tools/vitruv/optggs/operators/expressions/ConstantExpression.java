@@ -33,4 +33,9 @@ public class ConstantExpression implements ValueExpression {
     public String toString() {
         return value;
     }
+
+    @Override
+    public ValueExpression deepCopy() {
+        return new ConstantExpression(value);
+    }
 }

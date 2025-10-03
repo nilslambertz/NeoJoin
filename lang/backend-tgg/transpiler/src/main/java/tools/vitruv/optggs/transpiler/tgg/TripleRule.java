@@ -16,12 +16,36 @@ public class TripleRule {
         AttributeConstraint addConstraint(AttributeConstraint constraint);
     }
 
-    private final NameRepository nameRepository = new NameRepository();
-    private final List<Node> sourceNodes = new ArrayList<>();
-    private final List<Node> targetNodes = new ArrayList<>();
-    private final List<Correspondence> correspondences = new ArrayList<>();
-    private final List<AttributeConstraint> constraints = new ArrayList<>();
-    private boolean isLinkRule = false;
+    private final NameRepository nameRepository;
+    private final List<Node> sourceNodes;
+    private final List<Node> targetNodes;
+    private final List<Correspondence> correspondences;
+    private final List<AttributeConstraint> constraints;
+    private boolean isLinkRule;
+
+    public TripleRule() {
+        nameRepository = new NameRepository();
+        sourceNodes = new ArrayList<>();
+        targetNodes = new ArrayList<>();
+        correspondences = new ArrayList<>();
+        constraints = new ArrayList<>();
+        isLinkRule = false;
+    }
+
+    private TripleRule(
+            NameRepository nameRepository,
+            List<Node> sourceNodes,
+            List<Node> targetNodes,
+            List<Correspondence> correspondences,
+            List<AttributeConstraint> constraints,
+            boolean isLinkRule) {
+        this.nameRepository = nameRepository;
+        this.sourceNodes = sourceNodes;
+        this.targetNodes = targetNodes;
+        this.correspondences = correspondences;
+        this.constraints = constraints;
+        this.isLinkRule = isLinkRule;
+    }
 
     private Node createNode(FQN type) {
         var name = nameRepository.getLower(type);
@@ -135,6 +159,40 @@ public class TripleRule {
 
     public void setLinkRule(boolean linkRule) {
         isLinkRule = linkRule;
+    }
+
+    public TripleRule deepCopy() {
+        final TripleRuleCopyHelper copyHelper = new TripleRuleCopyHelper(nameRepository);
+
+        final List<Node> newSourceNodes = new ArrayList<>();
+        for (final Node oldSourceNode : sourceNodes) {
+            final Node copiedSourceNode = copyHelper.getCopiedNode(oldSourceNode);
+            newSourceNodes.add(copiedSourceNode);
+        }
+
+        final List<Node> newTargetNodes = new ArrayList<>();
+        for (final Node oldTargetNode : targetNodes) {
+            final Node copiedTargetNode = copyHelper.getCopiedNode(oldTargetNode);
+            newTargetNodes.add(copiedTargetNode);
+        }
+
+        final List<Correspondence> newCorrespondences = new ArrayList<>();
+        for (final Correspondence correspondence : correspondences) {
+            newCorrespondences.add(correspondence.deepCopy(copyHelper));
+        }
+
+        final List<AttributeConstraint> newConstraints = new ArrayList<>();
+        for (final AttributeConstraint constraint : constraints) {
+            newConstraints.add(constraint.deepCopy());
+        }
+
+        return new TripleRule(
+                copyHelper.getCopiedNameRepository(),
+                newSourceNodes,
+                newTargetNodes,
+                newCorrespondences,
+                newConstraints,
+                isLinkRule);
     }
 
     @Override

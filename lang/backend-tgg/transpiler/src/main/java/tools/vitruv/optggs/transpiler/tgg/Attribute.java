@@ -34,6 +34,10 @@ public class Attribute {
         }
     }
 
+    public Attribute deepCopy() {
+        return new Attribute(name, operator, value);
+    }
+
     @Override
     public String toString() {
         return "." + name + operator.print() + value;

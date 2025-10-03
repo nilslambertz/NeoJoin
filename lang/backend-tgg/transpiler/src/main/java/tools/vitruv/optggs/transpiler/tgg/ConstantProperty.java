@@ -2,7 +2,8 @@ package tools.vitruv.optggs.transpiler.tgg;
 
 import tools.vitruv.optggs.operators.LogicOperator;
 
-public record ConstantProperty(String name, LogicOperator operator, String value) implements Property {
+public record ConstantProperty(String name, LogicOperator operator, String value)
+        implements Property {
 
     @Override
     public String toExpression(Node node) {
@@ -12,5 +13,10 @@ public record ConstantProperty(String name, LogicOperator operator, String value
         } else {
             return "." + name + " : " + value;
         }
+    }
+
+    @Override
+    public ConstantProperty deepCopy() {
+        return new ConstantProperty(name, operator, value);
     }
 }

@@ -21,6 +21,10 @@ public final class Parameter {
         return value;
     }
 
+    public Parameter deepCopy() {
+        return new Parameter(attribute, value.deepCopy());
+    }
+
     public void propagateConstant(VariableExpression variable, ConstantExpression constant) {
         if (value instanceof VariableExpression v) {
             if (v == variable) {
@@ -28,5 +32,4 @@ public final class Parameter {
             }
         }
     }
-
 }

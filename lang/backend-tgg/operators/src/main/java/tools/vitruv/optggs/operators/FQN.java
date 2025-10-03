@@ -31,10 +31,15 @@ public class FQN {
         return new FQN(metamodel, localName);
     }
 
+    public FQN deepCopy() {
+        return new FQN(metamodelName, localName);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof FQN fqn)) return false;
-        return Objects.equals(metamodelName, fqn.metamodelName) && Objects.equals(localName, fqn.localName);
+        return Objects.equals(metamodelName, fqn.metamodelName)
+                && Objects.equals(localName, fqn.localName);
     }
 
     @Override

@@ -27,23 +27,28 @@ public class AttributeConstraint {
 
     public Collection<Parameter> parameters() {
         // Order parameters to have a deterministic order
-        // This is because eMoflon::neo gives us these parameters based on the index in the invocation, which
-        // can be different than the index in the definition. And of course, we don't get the name of the parameter.
+        // This is because eMoflon::neo gives us these parameters based on the index in the
+        // invocation, which
+        // can be different than the index in the definition. And of course, we don't get the name
+        // of the parameter.
         // Alphabetical ordering, but `self` is the first and `result` the last entry.
         // E.g.: (a, c, self, return, b) becomes (self, a, b, c, return)
-        return parameters.stream().sorted((a, b) -> {
-            if (a.attribute().equals("self")) {
-                return -1;
-            } else if (a.attribute().equals("return")) {
-                return 1;
-            } else if (b.attribute().equals("self")) {
-                return 1;
-            } else if (b.attribute().equals("return")) {
-                return -1;
-            } else {
-                return a.attribute().compareTo(b.attribute());
-            }
-        }).toList();
+        return parameters.stream()
+                .sorted(
+                        (a, b) -> {
+                            if (a.attribute().equals("self")) {
+                                return -1;
+                            } else if (a.attribute().equals("return")) {
+                                return 1;
+                            } else if (b.attribute().equals("self")) {
+                                return 1;
+                            } else if (b.attribute().equals("return")) {
+                                return -1;
+                            } else {
+                                return a.attribute().compareTo(b.attribute());
+                            }
+                        })
+                .toList();
     }
 
     public void addParameter(String name, ValueExpression value) {
@@ -56,9 +61,16 @@ public class AttributeConstraint {
         }
     }
 
+    public AttributeConstraint deepCopy() {
+        return new AttributeConstraint(name, parameters.stream().map(Parameter::deepCopy).toList());
+    }
+
     @Override
     public String toString() {
-        var params = parameters.stream().map((param) -> param.attribute() + ": " + param.value()).toList();
+        var params =
+                parameters.stream()
+                        .map((param) -> param.attribute() + ": " + param.value())
+                        .toList();
         return name + "(" + String.join(",", params) + ")";
     }
 }

@@ -1,5 +1,6 @@
 package tools.vitruv.optggs.transpiler.tgg;
 
+
 public class Correspondence {
     private final Node source;
     private final Node target;
@@ -37,6 +38,11 @@ public class Correspondence {
 
     public CorrespondenceType toCorrespondenceType() {
         return new CorrespondenceType(source, target);
+    }
+
+    public Correspondence deepCopy(TripleRuleCopyHelper copyHelper) {
+        return new Correspondence(
+                copyHelper.getCopiedNode(source), copyHelper.getCopiedNode(target), isGreen);
     }
 
     @Override
