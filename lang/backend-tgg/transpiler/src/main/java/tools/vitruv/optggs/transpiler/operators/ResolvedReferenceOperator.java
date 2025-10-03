@@ -21,6 +21,9 @@ public class ResolvedReferenceOperator implements RuleAdder {
     private final ReferenceOperator referenceOperator;
     private final String targetField;
 
+    private FQN sourceRoot = null;
+    private List<String> referencesToLastNode = new ArrayList<>();
+
     public ResolvedReferenceOperator(NeojoinReferenceOperator projection) {
         this.referenceOperator = projection.referenceOperator();
         this.targetField = projection.targetField();
@@ -33,41 +36,36 @@ public class ResolvedReferenceOperator implements RuleAdder {
         }
         final List<TripleRule> rules = new ArrayList<>();
 
-        final TripleRule firstRule = generateTripleRuleForFeatureCall(featureCall, target);
-        rules.add(firstRule);
+        this.sourceRoot = new FQN(featureCall.getSimpleName());
+        TripleRule latestRule = generateTripleRuleForFeatureCall(this.sourceRoot, target);
+        rules.add(latestRule);
 
-        //        final TripleRule firstRule = generateTripleRuleForFeatureCall(source,
-        // firstOperator);
-        //        rules.add(firstRule);
-        //
-        //        TripleRule lastRule = firstRule;
-        //        ReferenceOperator nextOperator = firstOperator.getFollowingOperator();
-        //        while (nextOperator != null) {
-        //            final List<TripleRule> nextRules =
-        //                    generateTripleRuleForReferenceOperator(lastRule, nextOperator);
-        //            rules.addAll(nextRules);
-        //            if (!nextRules.isEmpty()) {
-        //                lastRule = nextRules.getLast();
-        //            }
-        //            nextOperator = nextOperator.getFollowingOperator();
-        //        }
+        ReferenceOperator nextReferenceOperator = featureCall.getFollowingOperator();
+        while (nextReferenceOperator != null) {
+            final TripleRule nextRule =
+                    generateTripleRuleForReferenceOperator(latestRule, nextReferenceOperator);
+            rules.add(nextRule);
+            latestRule = nextRule;
+            nextReferenceOperator = featureCall.getFollowingOperator();
+        }
 
         return rules;
     }
 
-    private List<TripleRule> generateTripleRuleForReferenceOperator(
+    private TripleRule generateTripleRuleForReferenceOperator(
             TripleRule previousRule, ReferenceOperator operator) {
-        if (operator instanceof FlatMap flatMap) {
+        if (operator instanceof MemberFeatureCall memberFeatureCall) {
+            return generateTripleRuleForMemberFeatureCall(previousRule, memberFeatureCall);
+        } else if (operator instanceof FlatMap flatMap) {
             return generateTripleRuleForFlatMap(previousRule, flatMap);
         }
 
-        return List.of();
+        throw new RuntimeException("Unknown operator: " + operator);
     }
 
-    private TripleRule generateTripleRuleForFeatureCall(FeatureCall featureCall, FQN target) {
+    private TripleRule generateTripleRuleForFeatureCall(FQN source, FQN target) {
         final TripleRule firstRule = new TripleRule();
         final Slice sourceSlice = firstRule.addSourceSlice();
-        final FQN source = new FQN(featureCall.getSimpleName());
         final Node sourceNode = sourceSlice.addNode(source);
 
         final Slice targetSlice = firstRule.addTargetSlice();
@@ -79,21 +77,26 @@ public class ResolvedReferenceOperator implements RuleAdder {
     }
 
     private TripleRule generateTripleRuleForMemberFeatureCall(
-            FQN source, MemberFeatureCall operator) {
-        final TripleRule firstRule = new TripleRule();
-        final Slice sourceSlice = firstRule.addSourceSlice();
-        Node parentNode = sourceSlice.addNode(source);
-        Node childNode = sourceSlice.addNode(new FQN("Axis"));
+            TripleRule previousRule, MemberFeatureCall operator) {
+        final TripleRule newRule = previousRule.deepCopy();
+
+        final Node sourceNode = newRule.findSourceNodeByType(this.sourceRoot).orElseThrow();
+        Node lastSourceNode = sourceNode;
+        for (String nextReference : referencesToLastNode) {
+            lastSourceNode = sourceNode.getLinkTarget(nextReference);
+        }
+
+        final Slice sourceSlice = newRule.addSourceSlice();
+        Node childNode = sourceSlice.addNode(new FQN(operator.getFeatureClassSimpleName()));
         childNode.makeGreen();
         Link parentLinkToChild = Link.Green(operator.getFeatureSimpleName(), childNode);
-        parentNode.addLink(parentLinkToChild);
-        firstRule.addSourceSlice(List.of(parentNode, childNode), List.of());
-        return firstRule;
+        lastSourceNode.addLink(parentLinkToChild);
+        //        newRule.addSourceSlice(List.of(childNode), List.of());
+        return newRule;
     }
 
-    private List<TripleRule> generateTripleRuleForFlatMap(
-            TripleRule previousRule, FlatMap operator) {
-        return List.of();
+    private TripleRule generateTripleRuleForFlatMap(TripleRule previousRule, FlatMap operator) {
+        return null;
     }
 
     @Override
