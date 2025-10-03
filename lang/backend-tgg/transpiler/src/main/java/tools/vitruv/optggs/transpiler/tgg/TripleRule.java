@@ -161,6 +161,15 @@ public class TripleRule {
         isLinkRule = linkRule;
     }
 
+    public Node findNestedSourceNode(FQN sourceNodeType, List<String> links) {
+        final Node sourceNode = findSourceNodeByType(sourceNodeType).orElseThrow();
+        Node lastSourceNode = sourceNode;
+        for (String nextReference : links) {
+            lastSourceNode = sourceNode.getLinkTarget(nextReference);
+        }
+        return lastSourceNode;
+    }
+
     public TripleRule deepCopy() {
         final TripleRuleCopyHelper copyHelper = new TripleRuleCopyHelper(nameRepository);
 
