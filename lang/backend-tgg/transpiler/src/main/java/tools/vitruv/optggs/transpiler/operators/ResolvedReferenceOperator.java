@@ -6,6 +6,7 @@ import tools.vitruv.neojoin.expression_parser.model.FeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.FlatMap;
 import tools.vitruv.neojoin.expression_parser.model.MemberFeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
+import tools.vitruv.neojoin.expression_parser.model.ToList;
 import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.operators.reference_operator.NeojoinReferenceOperator;
 import tools.vitruv.optggs.transpiler.tgg.Link;
@@ -36,9 +37,10 @@ public class ResolvedReferenceOperator implements RuleAdder {
         }
         final List<TripleRule> rules = new ArrayList<>();
 
+        // Generate the rule for the feature call, but don't add it to the list of rules, because it
+        // only consists of context nodes
         this.sourceRoot = new FQN(featureCall.getSimpleName());
         TripleRule latestRule = generateTripleRuleForFeatureCall(this.sourceRoot, target);
-        rules.add(latestRule);
 
         ReferenceOperator nextReferenceOperator = featureCall.getFollowingOperator();
         while (nextReferenceOperator != null) {
@@ -46,7 +48,7 @@ public class ResolvedReferenceOperator implements RuleAdder {
                     generateTripleRuleForReferenceOperator(latestRule, nextReferenceOperator);
             rules.add(nextRule);
             latestRule = nextRule;
-            nextReferenceOperator = featureCall.getFollowingOperator();
+            nextReferenceOperator = nextReferenceOperator.getFollowingOperator();
         }
 
         return rules;
@@ -58,6 +60,8 @@ public class ResolvedReferenceOperator implements RuleAdder {
             return generateTripleRuleForMemberFeatureCall(previousRule, memberFeatureCall);
         } else if (operator instanceof FlatMap flatMap) {
             return generateTripleRuleForFlatMap(previousRule, flatMap);
+        } else if (operator instanceof ToList toList) {
+            return generateTripleRuleForToList(previousRule, toList);
         }
 
         throw new RuntimeException("Unknown operator: " + operator);
@@ -80,23 +84,28 @@ public class ResolvedReferenceOperator implements RuleAdder {
             TripleRule previousRule, MemberFeatureCall operator) {
         final TripleRule newRule = previousRule.deepCopy();
 
-        final Node sourceNode = newRule.findSourceNodeByType(this.sourceRoot).orElseThrow();
-        Node lastSourceNode = sourceNode;
-        for (String nextReference : referencesToLastNode) {
-            lastSourceNode = sourceNode.getLinkTarget(nextReference);
-        }
+        final Node lastSourceNode =
+                newRule.findNestedSourceNode(this.sourceRoot, referencesToLastNode);
 
         final Slice sourceSlice = newRule.addSourceSlice();
-        Node childNode = sourceSlice.addNode(new FQN(operator.getFeatureClassSimpleName()));
+        Node childNode =
+                sourceSlice.addNode(
+                        new FQN(operator.getFeatureInformation().getFeatureClassSimpleName()));
         childNode.makeGreen();
-        Link parentLinkToChild = Link.Green(operator.getFeatureSimpleName(), childNode);
+        Link parentLinkToChild =
+                Link.Green(operator.getFeatureInformation().getFeatureName(), childNode);
         lastSourceNode.addLink(parentLinkToChild);
-        //        newRule.addSourceSlice(List.of(childNode), List.of());
         return newRule;
     }
 
     private TripleRule generateTripleRuleForFlatMap(TripleRule previousRule, FlatMap operator) {
-        return null;
+        // TODO
+        return previousRule;
+    }
+
+    private TripleRule generateTripleRuleForToList(TripleRule previousRule, ToList operator) {
+        // TODO
+        return previousRule;
     }
 
     @Override
