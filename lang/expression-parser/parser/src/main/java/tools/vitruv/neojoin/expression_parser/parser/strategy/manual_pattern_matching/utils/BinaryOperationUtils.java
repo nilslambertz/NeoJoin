@@ -52,11 +52,7 @@ public class BinaryOperationUtils {
                         .flatMap(JvmFeatureUtils::getFeature)
                         .flatMap(JvmFieldUtils::asJvmField)
                         .flatMap(JvmFieldUtils::getData)
-                        .map(
-                                fieldData ->
-                                        new FieldExpression(
-                                                fieldData.getFeatureSimpleName(),
-                                                fieldData.getFeatureIdentifier()));
+                        .map(fieldData -> new FieldExpression(fieldData.toFeatureInformation()));
         if (featureCallExpression.isPresent()) {
             return featureCallExpression;
         }

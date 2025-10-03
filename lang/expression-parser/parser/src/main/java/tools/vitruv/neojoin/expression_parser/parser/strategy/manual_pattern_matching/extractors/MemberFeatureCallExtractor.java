@@ -32,11 +32,9 @@ public class MemberFeatureCallExtractor implements ReferenceOperatorExtractor<Me
                 .flatMap(JvmFieldUtils::asJvmField)
                 .flatMap(JvmFieldUtils::getData)
                 .map(
-                        parameter ->
+                        fieldData ->
                                 new ReferenceOperatorWithNextFeatureCall<>(
-                                        new MemberFeatureCall(
-                                                parameter.getFeatureSimpleName(),
-                                                parameter.getFeatureIdentifier()),
+                                        new MemberFeatureCall(fieldData.toFeatureInformation()),
                                         nextMemberCallTarget.get()));
     }
 }

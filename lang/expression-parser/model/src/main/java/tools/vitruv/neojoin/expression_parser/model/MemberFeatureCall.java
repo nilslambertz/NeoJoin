@@ -3,13 +3,13 @@ package tools.vitruv.neojoin.expression_parser.model;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 @Data
 @RequiredArgsConstructor
 public class MemberFeatureCall implements ReferenceOperator {
-    final String featureClassSimpleName;
-    final String featureSimpleName;
+    @NonNull final FeatureInformation featureInformation;
 
     @Nullable ReferenceOperator followingOperator;
 }

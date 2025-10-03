@@ -6,7 +6,8 @@ import lombok.Value;
 
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
-import org.eclipse.xtext.common.types.JvmType;
+
+import tools.vitruv.neojoin.expression_parser.model.FeatureInformation;
 
 import java.util.Optional;
 
@@ -14,23 +15,29 @@ import java.util.Optional;
 public class JvmFieldUtils {
     @Value
     public static class JvmFieldData {
-        String featureSimpleName;
-        String featureIdentifier;
-        String returnTypeSimpleName;
-        String returnTypeIdentifier;
+        String featureName;
+        String featureClassSimpleName;
+        String featureClassIdentifier;
+
+        public FeatureInformation toFeatureInformation() {
+            return new FeatureInformation(
+                    featureName, featureClassSimpleName, featureClassIdentifier);
+        }
     }
 
     public static Optional<JvmFieldData> getData(JvmField jvmField) {
         return Optional.ofNullable(jvmField)
+                .map(JvmField::getType)
+                .flatMap(JvmTypeReferenceUtils::asParameterizedTypeReference)
+                .filter(JvmTypeReferenceUtils::hasExactlyOneArgument)
+                .flatMap(JvmTypeReferenceUtils::getFirstArgument)
+                .flatMap(JvmTypeReferenceUtils::asParameterizedTypeReference)
                 .map(
-                        field -> {
-                            final JvmType parentType = field.getType().getType();
-                            return new JvmFieldData(
-                                    field.getSimpleName(),
-                                    field.getIdentifier(),
-                                    parentType.getSimpleName(),
-                                    parentType.getIdentifier());
-                        });
+                        field ->
+                                new JvmFieldData(
+                                        jvmField.getSimpleName(),
+                                        field.getType().getSimpleName(),
+                                        field.getType().getIdentifier()));
     }
 
     public static Optional<JvmField> asJvmField(JvmIdentifiableElement jvmIdentifiableElement) {

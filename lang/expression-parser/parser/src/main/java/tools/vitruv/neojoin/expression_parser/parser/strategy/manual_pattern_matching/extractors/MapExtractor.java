@@ -41,9 +41,7 @@ public class MapExtractor implements ReferenceOperatorExtractor<Map> {
                 .map(
                         fieldData ->
                                 new ReferenceOperatorWithNextFeatureCall<Map>(
-                                        new Map(
-                                                fieldData.getFeatureSimpleName(),
-                                                fieldData.getFeatureIdentifier()),
+                                        new Map(fieldData.toFeatureInformation()),
                                         nextMemberCallTarget));
     }
 }
