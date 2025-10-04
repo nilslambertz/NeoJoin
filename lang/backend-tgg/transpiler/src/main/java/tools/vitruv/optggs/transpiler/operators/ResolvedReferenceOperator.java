@@ -94,19 +94,38 @@ public class ResolvedReferenceOperator implements RuleAdder {
                 sourceSlice.addNode(
                         new FQN(operator.getFeatureInformation().getFeatureClassSimpleName()));
         childNode.makeGreen();
-        Link parentLinkToChild =
-                Link.Green(operator.getFeatureInformation().getFeatureName(), childNode);
+
+        final String featureName = operator.getFeatureInformation().getFeatureName();
+        Link parentLinkToChild = Link.Green(featureName, childNode);
+        referencesToLastNode.add(featureName);
         lastSourceNode.addLink(parentLinkToChild);
+
         return newRule;
     }
 
     private TripleRule generateTripleRuleForFlatMap(TripleRule previousRule, FlatMap operator) {
-        // TODO
-        return previousRule;
+        // Copy the rule and make all nodes black
+        final TripleRule newRule = previousRule.deepCopy().makeBlack();
+
+        final Node lastSourceNode =
+                newRule.findNestedSourceNode(this.sourceRoot, referencesToLastNode);
+
+        final Slice sourceSlice = newRule.addSourceSlice();
+        Node childNode =
+                sourceSlice.addNode(
+                        new FQN(operator.getFeatureInformation().getFeatureClassSimpleName()));
+        childNode.makeGreen();
+
+        final String featureName = operator.getFeatureInformation().getFeatureName();
+        Link parentLinkToChild = Link.Green(featureName, childNode);
+        referencesToLastNode.add(featureName);
+        lastSourceNode.addLink(parentLinkToChild);
+
+        return newRule;
     }
 
     private TripleRule generateTripleRuleForToList(TripleRule previousRule, ToList operator) {
-        // TODO
+        // TODO: Add correspondence between last source node and the target class
         return previousRule;
     }
 
