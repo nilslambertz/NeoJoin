@@ -2,6 +2,7 @@ package tools.vitruv.optggs.transpiler.operators;
 
 import tools.vitruv.neojoin.expression_parser.model.FeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.FlatMap;
+import tools.vitruv.neojoin.expression_parser.model.Map;
 import tools.vitruv.neojoin.expression_parser.model.MemberFeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.model.ToList;
@@ -66,6 +67,9 @@ public class ResolvedReferenceOperator implements RuleAdder {
                     generateTripleRuleForMemberFeatureCall(previousRule, memberFeatureCall));
         } else if (operator instanceof FlatMap flatMap) {
             return Optional.of(generateTripleRuleForFlatMap(previousRule, flatMap));
+        } else if (operator instanceof Map map) {
+            updatePreviousRuleForMap(previousRule, map);
+            return Optional.empty();
         } else if (operator instanceof ToList toList) {
             updatePreviousRuleForToList(previousRule, toList);
             return Optional.empty();
@@ -127,6 +131,22 @@ public class ResolvedReferenceOperator implements RuleAdder {
         lastSourceNode.addLink(parentLinkToChild);
 
         return newRule;
+    }
+
+    private void updatePreviousRuleForMap(TripleRule previousRule, Map operator) {
+        final Node lastSourceNode =
+                previousRule.findNestedSourceNode(this.sourceRoot, referencesToLastNode);
+
+        final Slice sourceSlice = previousRule.addSourceSlice();
+        Node childNode =
+                sourceSlice.addNode(
+                        new FQN(operator.getFeatureInformation().getFeatureClassSimpleName()));
+        childNode.makeGreen();
+
+        final String featureName = operator.getFeatureInformation().getFeatureName();
+        Link parentLinkToChild = Link.Green(featureName, childNode);
+        referencesToLastNode.add(featureName);
+        lastSourceNode.addLink(parentLinkToChild);
     }
 
     private void updatePreviousRuleForToList(TripleRule previousRule, ToList operator) {
