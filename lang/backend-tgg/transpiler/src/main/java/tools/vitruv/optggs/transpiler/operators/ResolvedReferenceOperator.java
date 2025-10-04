@@ -1,12 +1,15 @@
 package tools.vitruv.optggs.transpiler.operators;
 
 import tools.vitruv.neojoin.expression_parser.model.FeatureCall;
+import tools.vitruv.neojoin.expression_parser.model.Filter;
 import tools.vitruv.neojoin.expression_parser.model.FlatMap;
 import tools.vitruv.neojoin.expression_parser.model.Map;
 import tools.vitruv.neojoin.expression_parser.model.MemberFeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.model.ToList;
 import tools.vitruv.optggs.operators.FQN;
+import tools.vitruv.optggs.operators.LogicOperator;
+import tools.vitruv.optggs.operators.expressions.ConstantExpression;
 import tools.vitruv.optggs.operators.reference_operator.NeojoinReferenceOperator;
 import tools.vitruv.optggs.transpiler.tgg.Correspondence;
 import tools.vitruv.optggs.transpiler.tgg.Link;
@@ -69,6 +72,9 @@ public class ResolvedReferenceOperator implements RuleAdder {
             return Optional.of(generateTripleRuleForFlatMap(previousRule, flatMap));
         } else if (operator instanceof Map map) {
             updatePreviousRuleForMap(previousRule, map);
+            return Optional.empty();
+        } else if (operator instanceof Filter filter) {
+            updatePreviousRuleForFilter(previousRule, filter);
             return Optional.empty();
         } else if (operator instanceof ToList toList) {
             updatePreviousRuleForToList(previousRule, toList);
@@ -147,6 +153,14 @@ public class ResolvedReferenceOperator implements RuleAdder {
         Link parentLinkToChild = Link.Green(featureName, childNode);
         referencesToLastNode.add(featureName);
         lastSourceNode.addLink(parentLinkToChild);
+    }
+
+    private void updatePreviousRuleForFilter(TripleRule previousRule, Filter operator) {
+        // TODO
+        final Node lastSourceNode =
+                previousRule.findNestedSourceNode(this.sourceRoot, referencesToLastNode);
+        lastSourceNode.addConstantAttribute(
+                "position", LogicOperator.Equals, ConstantExpression.String("front"));
     }
 
     private void updatePreviousRuleForToList(TripleRule previousRule, ToList operator) {
