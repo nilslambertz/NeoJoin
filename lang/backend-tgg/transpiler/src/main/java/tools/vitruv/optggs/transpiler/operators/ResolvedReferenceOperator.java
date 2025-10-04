@@ -1,7 +1,5 @@
 package tools.vitruv.optggs.transpiler.operators;
 
-import org.apache.log4j.Logger;
-
 import tools.vitruv.neojoin.expression_parser.model.FeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.FlatMap;
 import tools.vitruv.neojoin.expression_parser.model.MemberFeatureCall;
@@ -18,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ResolvedReferenceOperator implements RuleAdder {
-    private static final Logger log = Logger.getLogger(ResolvedReferenceOperator.class);
     private final ReferenceOperator referenceOperator;
     private final String targetField;
     private final String type;
