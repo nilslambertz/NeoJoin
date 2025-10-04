@@ -21,6 +21,7 @@ public class ResolvedReferenceOperator implements RuleAdder {
     private static final Logger log = Logger.getLogger(ResolvedReferenceOperator.class);
     private final ReferenceOperator referenceOperator;
     private final String targetField;
+    private final String type;
 
     private FQN sourceRoot = null;
     private List<String> referencesToLastNode = new ArrayList<>();
@@ -28,6 +29,7 @@ public class ResolvedReferenceOperator implements RuleAdder {
     public ResolvedReferenceOperator(NeojoinReferenceOperator projection) {
         this.referenceOperator = projection.referenceOperator();
         this.targetField = projection.targetField();
+        this.type = projection.type();
     }
 
     @Override

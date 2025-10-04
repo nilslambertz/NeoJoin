@@ -95,8 +95,8 @@ public record Query(
         return this;
     }
 
-    public Query referenceOperator(String field, ReferenceOperator referenceOperator) {
-        referenceOperators.add(new NeojoinReferenceOperator(field, referenceOperator));
+    public Query referenceOperator(String field, String type, ReferenceOperator referenceOperator) {
+        referenceOperators.add(new NeojoinReferenceOperator(field, type, referenceOperator));
         return this;
     }
 

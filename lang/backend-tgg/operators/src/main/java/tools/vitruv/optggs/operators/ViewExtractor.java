@@ -98,14 +98,14 @@ public class ViewExtractor {
             if (feature instanceof AQRFeature.Attribute
                     && feature.kind() instanceof AQRFeature.Kind.Copy) {
                 query.project(feature.name());
-            } else if (feature instanceof AQRFeature.Reference
-                    && feature.kind().expression() != null) {
+            } else if (feature instanceof AQRFeature.Reference reference
+                    && reference.kind().expression() != null) {
                 // TODO: Make pretty
                 final ReferenceOperator operator =
                         patternMatchingStrategy.extractReferenceOperator(
-                                feature.kind().expression());
+                                reference.kind().expression());
                 log.info("Found reference operator: " + operator);
-                query.referenceOperator(feature.name(), operator);
+                query.referenceOperator(reference.name(), reference.type().name(), operator);
             } else if (feature instanceof AQRFeature.Reference
                     && feature.kind().expression() == null) {
                 log.info("TODO: " + feature);
