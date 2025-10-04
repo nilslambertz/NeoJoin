@@ -149,7 +149,7 @@ public class Node {
         this.links.put(link.name(), link);
     }
 
-    public Node deepCopy(TripleRuleCopyHelper copyHelper) {
+    Node deepCopy(TripleRuleCopyHelper copyHelper) {
         final Map<String, Property> copiedProperties =
                 this.properties.entrySet().stream()
                         .collect(

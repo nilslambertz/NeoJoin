@@ -61,7 +61,7 @@ public class AttributeConstraint {
         }
     }
 
-    public AttributeConstraint deepCopy() {
+    AttributeConstraint deepCopy() {
         return new AttributeConstraint(name, parameters.stream().map(Parameter::deepCopy).toList());
     }
 

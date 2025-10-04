@@ -21,7 +21,7 @@ public final class Parameter {
         return value;
     }
 
-    public Parameter deepCopy() {
+    Parameter deepCopy() {
         return new Parameter(attribute, value.deepCopy());
     }
 

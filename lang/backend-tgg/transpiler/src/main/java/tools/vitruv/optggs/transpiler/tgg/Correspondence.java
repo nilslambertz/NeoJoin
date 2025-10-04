@@ -43,7 +43,7 @@ public class Correspondence {
         return new CorrespondenceType(source, target);
     }
 
-    public Correspondence deepCopy(TripleRuleCopyHelper copyHelper) {
+    Correspondence deepCopy(TripleRuleCopyHelper copyHelper) {
         return new Correspondence(
                 copyHelper.getCopiedNode(source), copyHelper.getCopiedNode(target), isGreen);
     }

@@ -34,7 +34,7 @@ public class Attribute {
         }
     }
 
-    public Attribute deepCopy() {
+    Attribute deepCopy() {
         return new Attribute(name, operator, value);
     }
 
