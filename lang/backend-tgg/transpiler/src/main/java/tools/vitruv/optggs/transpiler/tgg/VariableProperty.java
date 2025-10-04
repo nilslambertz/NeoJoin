@@ -12,7 +12,7 @@ public record VariableProperty(String name, String value) implements Property {
     }
 
     @Override
-    public Property deepCopy() {
+    public VariableProperty deepCopy() {
         return new VariableProperty(name, value);
     }
 }
