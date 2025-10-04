@@ -161,6 +161,12 @@ public class TripleRule {
         isLinkRule = linkRule;
     }
 
+    public TripleRule makeBlack() {
+        allSourcesAsSlice().makeBlack();
+        allTargetsAsSlice().makeBlack();
+        return this;
+    }
+
     public Node findNestedSourceNode(FQN sourceNodeType, List<String> links) {
         final Node sourceNode = findSourceNodeByType(sourceNodeType).orElseThrow();
         Node lastSourceNode = sourceNode;

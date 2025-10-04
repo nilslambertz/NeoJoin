@@ -15,7 +15,10 @@ public class Slice {
     private final List<Node> nodes = new ArrayList<>();
     private final List<Correspondence> correspondences = new ArrayList<>();
 
-    public Slice(TripleRule.RuleExtender ruleExtender, Collection<Node> initialNodes, Collection<Correspondence> initialCorrespondences) {
+    public Slice(
+            TripleRule.RuleExtender ruleExtender,
+            Collection<Node> initialNodes,
+            Collection<Correspondence> initialCorrespondences) {
         this.ruleExtender = ruleExtender;
         this.nodes.addAll(initialNodes);
         this.correspondences.addAll(initialCorrespondences);
@@ -63,6 +66,19 @@ public class Slice {
         return this;
     }
 
+    public Slice makeBlack() {
+        for (var node : nodes) {
+            node.makeBlack();
+            for (var link : node.links()) {
+                link.makeBlack();
+            }
+        }
+        for (var correspondence : correspondences) {
+            correspondence.makeBlack();
+        }
+        return this;
+    }
+
     public <T> Collection<T> mapNodes(Function<Node, T> function) {
         return nodes.stream().map(function).toList();
     }
@@ -75,9 +91,7 @@ public class Slice {
         return nodes.stream().filter(predicate).toList();
     }
 
-    public void extend(PatternLink pattern) {
-
-    }
+    public void extend(PatternLink pattern) {}
 
     @Override
     public String toString() {

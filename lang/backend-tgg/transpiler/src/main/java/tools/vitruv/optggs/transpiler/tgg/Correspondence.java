@@ -1,6 +1,5 @@
 package tools.vitruv.optggs.transpiler.tgg;
 
-
 public class Correspondence {
     private final Node source;
     private final Node target;
@@ -34,6 +33,10 @@ public class Correspondence {
 
     public void makeGreen() {
         isGreen = true;
+    }
+
+    public void makeBlack() {
+        isGreen = false;
     }
 
     public CorrespondenceType toCorrespondenceType() {
