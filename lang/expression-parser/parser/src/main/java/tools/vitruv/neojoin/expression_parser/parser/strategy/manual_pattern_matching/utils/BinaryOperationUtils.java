@@ -3,7 +3,9 @@ package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_ma
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmOperation;
+import org.eclipse.xtext.common.types.JvmParameterizedTypeReference;
 import org.eclipse.xtext.xbase.XBinaryOperation;
 import org.eclipse.xtext.xbase.XExpression;
 
@@ -51,7 +53,7 @@ public class BinaryOperationUtils {
                         .flatMap(JvmFeatureCallUtils::asMemberFeatureCall)
                         .flatMap(JvmFeatureUtils::getFeature)
                         .flatMap(JvmFieldUtils::asJvmField)
-                        .flatMap(JvmFieldUtils::getData)
+                        .flatMap(BinaryOperationUtils::getBinaryOperatorFieldArgumentData)
                         .map(fieldData -> new FieldExpression(fieldData.toFeatureInformation()));
         if (featureCallExpression.isPresent()) {
             return featureCallExpression;
@@ -66,6 +68,21 @@ public class BinaryOperationUtils {
         }
 
         return Optional.empty();
+    }
+
+    private static Optional<JvmFieldUtils.JvmFieldData> getBinaryOperatorFieldArgumentData(
+            JvmField jvmField) {
+        return Optional.ofNullable(jvmField)
+                .map(JvmField::getType)
+                .flatMap(JvmTypeReferenceUtils::asParameterizedTypeReference)
+                .map(JvmParameterizedTypeReference::getType)
+                .flatMap(JvmTypeUtils::asGenericType)
+                .map(
+                        type ->
+                                new JvmFieldUtils.JvmFieldData(
+                                        jvmField.getSimpleName(),
+                                        type.getSimpleName(),
+                                        type.getIdentifier()));
     }
 
     private static Optional<ComparisonOperator> getComparisonOperator(XBinaryOperation operation) {
