@@ -7,6 +7,7 @@ import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.model.ToList;
 import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.operators.reference_operator.NeojoinReferenceOperator;
+import tools.vitruv.optggs.transpiler.tgg.Correspondence;
 import tools.vitruv.optggs.transpiler.tgg.Link;
 import tools.vitruv.optggs.transpiler.tgg.Node;
 import tools.vitruv.optggs.transpiler.tgg.Slice;
@@ -14,19 +15,21 @@ import tools.vitruv.optggs.transpiler.tgg.TripleRule;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ResolvedReferenceOperator implements RuleAdder {
     private final ReferenceOperator referenceOperator;
     private final String targetField;
-    private final String type;
+    private final String targetType;
 
     private FQN sourceRoot = null;
+    private FQN targetRoot = null;
     private List<String> referencesToLastNode = new ArrayList<>();
 
     public ResolvedReferenceOperator(NeojoinReferenceOperator projection) {
         this.referenceOperator = projection.referenceOperator();
         this.targetField = projection.targetField();
-        this.type = projection.type();
+        this.targetType = projection.type();
     }
 
     @Override
@@ -39,28 +42,33 @@ public class ResolvedReferenceOperator implements RuleAdder {
         // Generate the rule for the feature call, but don't add it to the list of rules, because it
         // only consists of context nodes
         this.sourceRoot = new FQN(featureCall.getSimpleName());
+        this.targetRoot = target;
         TripleRule latestRule = generateTripleRuleForFeatureCall(this.sourceRoot, target);
 
         ReferenceOperator nextReferenceOperator = featureCall.getFollowingOperator();
         while (nextReferenceOperator != null) {
-            final TripleRule nextRule =
+            final Optional<TripleRule> nextRule =
                     generateTripleRuleForReferenceOperator(latestRule, nextReferenceOperator);
-            rules.add(nextRule);
-            latestRule = nextRule;
+            if (nextRule.isPresent()) {
+                rules.add(nextRule.get());
+                latestRule = nextRule.get();
+            }
             nextReferenceOperator = nextReferenceOperator.getFollowingOperator();
         }
 
         return rules;
     }
 
-    private TripleRule generateTripleRuleForReferenceOperator(
+    private Optional<TripleRule> generateTripleRuleForReferenceOperator(
             TripleRule previousRule, ReferenceOperator operator) {
         if (operator instanceof MemberFeatureCall memberFeatureCall) {
-            return generateTripleRuleForMemberFeatureCall(previousRule, memberFeatureCall);
+            return Optional.of(
+                    generateTripleRuleForMemberFeatureCall(previousRule, memberFeatureCall));
         } else if (operator instanceof FlatMap flatMap) {
-            return generateTripleRuleForFlatMap(previousRule, flatMap);
+            return Optional.of(generateTripleRuleForFlatMap(previousRule, flatMap));
         } else if (operator instanceof ToList toList) {
-            return generateTripleRuleForToList(previousRule, toList);
+            updatePreviousRuleForToList(previousRule, toList);
+            return Optional.empty();
         }
 
         throw new RuntimeException("Unknown operator: " + operator);
@@ -121,9 +129,23 @@ public class ResolvedReferenceOperator implements RuleAdder {
         return newRule;
     }
 
-    private TripleRule generateTripleRuleForToList(TripleRule previousRule, ToList operator) {
-        // TODO: Add correspondence between last source node and the target class
-        return previousRule;
+    private void updatePreviousRuleForToList(TripleRule previousRule, ToList operator) {
+        final Node lastSourceNode =
+                previousRule.findNestedSourceNode(this.sourceRoot, referencesToLastNode);
+
+        final Node targetSourceNode =
+                previousRule.findTargetNodeByType(this.targetRoot).orElseThrow();
+
+        final Slice targetSlice = previousRule.addTargetSlice();
+        Node targetChildNode = targetSlice.addNode(new FQN(targetType));
+        targetChildNode.makeGreen();
+
+        Link targetParentLinkToChild = Link.Green(targetField, targetChildNode);
+        targetSourceNode.addLink(targetParentLinkToChild);
+
+        final Correspondence newCorrespondence =
+                previousRule.addCorrespondenceRule(lastSourceNode, targetChildNode);
+        newCorrespondence.makeGreen();
     }
 
     @Override
