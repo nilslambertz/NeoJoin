@@ -37,10 +37,10 @@ public class MapExtractor implements ReferenceOperatorExtractor<Map> {
                 .flatMap(JvmFeatureCallUtils::asMemberFeatureCall)
                 .flatMap(JvmFeatureUtils::getFeature)
                 .flatMap(JvmFieldUtils::asJvmField)
-                .flatMap(JvmFieldUtils::getData)
+                .flatMap(JvmMapUtils::getMapArgumentData)
                 .map(
                         fieldData ->
-                                new ReferenceOperatorWithNextFeatureCall<Map>(
+                                new ReferenceOperatorWithNextFeatureCall<>(
                                         new Map(fieldData.toFeatureInformation()),
                                         nextMemberCallTarget));
     }
