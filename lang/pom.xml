@@ -89,7 +89,7 @@
       <dependency>
         <groupId>net.sourceforge.plantuml</groupId>
         <artifactId>plantuml</artifactId>
-        <version>1.2025.7</version>
+        <version>1.2025.8</version>
       </dependency>
       <dependency>
         <groupId>org.antlr</groupId>
@@ -180,12 +180,12 @@
       <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter-api</artifactId>
-        <version>5.13.4</version>
+        <version>6.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter-params</artifactId>
-        <version>5.13.4</version>
+        <version>6.0.0</version>
       </dependency>
       <dependency>
         <groupId>tools.vitruv</groupId>
