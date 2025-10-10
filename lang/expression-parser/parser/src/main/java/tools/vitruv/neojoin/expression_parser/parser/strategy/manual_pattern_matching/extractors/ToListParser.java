@@ -9,14 +9,14 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 
 import java.util.Optional;
 
-public class ToListExtractor implements ReferenceOperatorExtractor<ToList> {
-    public Optional<ReferenceOperatorWithNextFeatureCall<ToList>> extract(XExpression expression) {
+public class ToListParser implements ReferenceOperatorParser {
+    public Optional<ReferenceOperatorWithNextFeatureCall> parse(XExpression expression) {
         return JvmFeatureCallUtils.asMemberFeatureCall(expression)
                 .filter(JvmToListUtils::isToListOperation)
                 .flatMap(JvmFeatureCallUtils::getNextMemberCallTarget)
                 .map(
                         nextCallTarget ->
-                                new ReferenceOperatorWithNextFeatureCall<>(
+                                new ReferenceOperatorWithNextFeatureCall(
                                         new ToList(), nextCallTarget));
     }
 }

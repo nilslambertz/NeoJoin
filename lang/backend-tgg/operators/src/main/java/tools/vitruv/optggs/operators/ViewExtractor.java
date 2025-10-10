@@ -102,7 +102,7 @@ public class ViewExtractor {
                     && reference.kind().expression() != null) {
                 // TODO: Make pretty
                 final ReferenceOperator operator =
-                        patternMatchingStrategy.extractReferenceOperator(
+                        patternMatchingStrategy.parseReferenceOperator(
                                 reference.kind().expression());
                 log.info("Found reference operator: " + operator);
                 query.referenceOperator(reference.name(), reference.type().name(), operator);

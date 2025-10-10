@@ -11,16 +11,15 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 
 import java.util.Optional;
 
-public class FeatureCallExtractor implements ReferenceOperatorExtractor<FeatureCall> {
-    public Optional<ReferenceOperatorWithNextFeatureCall<FeatureCall>> extract(
-            XExpression expression) {
+public class FeatureCallParser implements ReferenceOperatorParser {
+    public Optional<ReferenceOperatorWithNextFeatureCall> parse(XExpression expression) {
         return JvmFeatureCallUtils.asFeatureCall(expression)
                 .flatMap(JvmFeatureUtils::getFeature)
                 .flatMap(JvmParameterUtils::asJvmFormalParameter)
                 .map(
                         parameter -> {
                             JvmType parameterType = parameter.getParameterType().getType();
-                            return new ReferenceOperatorWithNextFeatureCall<>(
+                            return new ReferenceOperatorWithNextFeatureCall(
                                     new FeatureCall(
                                             parameterType.getIdentifier(),
                                             parameterType.getSimpleName()),

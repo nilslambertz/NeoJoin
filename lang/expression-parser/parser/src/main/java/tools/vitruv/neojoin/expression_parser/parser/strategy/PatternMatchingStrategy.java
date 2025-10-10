@@ -7,6 +7,6 @@ import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 
 public interface PatternMatchingStrategy {
-    @NonNull ReferenceOperator extractReferenceOperator(@NonNull XExpression expression)
+    @NonNull ReferenceOperator parseReferenceOperator(@NonNull XExpression expression)
             throws UnsupportedReferenceExpressionException;
 }

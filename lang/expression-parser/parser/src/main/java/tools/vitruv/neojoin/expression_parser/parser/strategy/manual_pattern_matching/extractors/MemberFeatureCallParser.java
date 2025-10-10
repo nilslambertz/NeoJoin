@@ -12,9 +12,8 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 
 import java.util.Optional;
 
-public class MemberFeatureCallExtractor implements ReferenceOperatorExtractor<MemberFeatureCall> {
-    public Optional<ReferenceOperatorWithNextFeatureCall<MemberFeatureCall>> extract(
-            XExpression expression) {
+public class MemberFeatureCallParser implements ReferenceOperatorParser {
+    public Optional<ReferenceOperatorWithNextFeatureCall> parse(XExpression expression) {
         final Optional<XMemberFeatureCall> memberFeatureCall =
                 JvmFeatureCallUtils.asMemberFeatureCall(expression);
         if (memberFeatureCall.isEmpty()) {
@@ -33,7 +32,7 @@ public class MemberFeatureCallExtractor implements ReferenceOperatorExtractor<Me
                 .flatMap(JvmFieldUtils::getData)
                 .map(
                         fieldData ->
-                                new ReferenceOperatorWithNextFeatureCall<>(
+                                new ReferenceOperatorWithNextFeatureCall(
                                         new MemberFeatureCall(fieldData.toFeatureInformation()),
                                         nextMemberCallTarget.get()));
     }

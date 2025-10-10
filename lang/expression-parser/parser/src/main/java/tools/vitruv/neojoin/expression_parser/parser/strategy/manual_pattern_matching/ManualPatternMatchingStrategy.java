@@ -6,38 +6,38 @@ import org.jspecify.annotations.NonNull;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FeatureCallExtractor;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FilterExtractor;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FindAnyExtractor;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FlatMapExtractor;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.MapExtractor;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.MemberFeatureCallExtractor;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.ReferenceOperatorExtractor;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.ToListExtractor;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FeatureCallParser;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FilterParser;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FindAnyParser;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FlatMapParser;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.MapParser;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.MemberFeatureCallParser;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.ReferenceOperatorParser;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.ToListParser;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextFeatureCall;
 
 import java.util.List;
 import java.util.Optional;
 
 public class ManualPatternMatchingStrategy implements PatternMatchingStrategy {
-    private static final List<ReferenceOperatorExtractor<? extends ReferenceOperator>> EXTRACTORS =
+    private static final List<ReferenceOperatorParser> PARSERS =
             List.of(
-                    new FeatureCallExtractor(),
-                    new MemberFeatureCallExtractor(),
-                    new FilterExtractor(),
-                    new ToListExtractor(),
-                    new FlatMapExtractor(),
-                    new MapExtractor(),
-                    new FindAnyExtractor());
+                    new FeatureCallParser(),
+                    new MemberFeatureCallParser(),
+                    new FilterParser(),
+                    new ToListParser(),
+                    new FlatMapParser(),
+                    new MapParser(),
+                    new FindAnyParser());
 
     @Override
-    public @NonNull ReferenceOperator extractReferenceOperator(@NonNull XExpression expression)
+    public @NonNull ReferenceOperator parseReferenceOperator(@NonNull XExpression expression)
             throws UnsupportedReferenceExpressionException {
         XExpression currentExpression = expression;
         ReferenceOperator lastOperator = null;
         while (currentExpression != null) {
-            Optional<? extends ReferenceOperatorWithNextFeatureCall<? extends ReferenceOperator>>
-                    nextReferenceOperator = getNextReferenceOperator(currentExpression);
+            Optional<ReferenceOperatorWithNextFeatureCall> nextReferenceOperator =
+                    getNextReferenceOperator(currentExpression);
             if (nextReferenceOperator.isEmpty()) {
                 throw new UnsupportedReferenceExpressionException(currentExpression);
             }
@@ -52,11 +52,10 @@ public class ManualPatternMatchingStrategy implements PatternMatchingStrategy {
         return lastOperator;
     }
 
-    private static Optional<
-                    ? extends ReferenceOperatorWithNextFeatureCall<? extends ReferenceOperator>>
-            getNextReferenceOperator(XExpression expression) {
-        return EXTRACTORS.stream()
-                .map(extractor -> extractor.extract(expression))
+    private static Optional<ReferenceOperatorWithNextFeatureCall> getNextReferenceOperator(
+            XExpression expression) {
+        return PARSERS.stream()
+                .map(extractor -> extractor.parse(expression))
                 .flatMap(Optional::stream)
                 .findFirst();
     }

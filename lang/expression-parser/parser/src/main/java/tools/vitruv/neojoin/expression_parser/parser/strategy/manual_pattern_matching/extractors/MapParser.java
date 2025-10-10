@@ -3,20 +3,20 @@ package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_ma
 import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XExpression;
 
-import tools.vitruv.neojoin.expression_parser.model.FlatMap;
+import tools.vitruv.neojoin.expression_parser.model.Map;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextFeatureCall;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.BlockExpressionUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.ClosureUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFieldUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFlatMapUtils;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmMapUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmMemberCallUtils;
 
 import java.util.Optional;
 
-public class FlatMapExtractor implements ReferenceOperatorExtractor<FlatMap> {
-    public Optional<ReferenceOperatorWithNextFeatureCall<FlatMap>> extract(XExpression expression) {
+public class MapParser implements ReferenceOperatorParser {
+    public Optional<ReferenceOperatorWithNextFeatureCall> parse(XExpression expression) {
         XAbstractFeatureCall nextMemberCallTarget =
                 Optional.ofNullable(expression)
                         .flatMap(JvmFeatureCallUtils::getNextMemberCallTarget)
@@ -26,7 +26,7 @@ public class FlatMapExtractor implements ReferenceOperatorExtractor<FlatMap> {
         }
 
         return JvmFeatureCallUtils.asMemberFeatureCall(expression)
-                .filter(JvmFlatMapUtils::isFlatMapOperation)
+                .filter(JvmMapUtils::isMapOperation)
                 .filter(JvmMemberCallUtils::hasExactlyOneMemberCallArgument)
                 .flatMap(JvmMemberCallUtils::getFirstArgument)
                 .flatMap(ClosureUtils::asClosure)
@@ -37,11 +37,11 @@ public class FlatMapExtractor implements ReferenceOperatorExtractor<FlatMap> {
                 .flatMap(JvmFeatureCallUtils::asMemberFeatureCall)
                 .flatMap(JvmFeatureUtils::getFeature)
                 .flatMap(JvmFieldUtils::asJvmField)
-                .flatMap(JvmFieldUtils::getData)
+                .flatMap(JvmMapUtils::getMapArgumentData)
                 .map(
                         fieldData ->
-                                new ReferenceOperatorWithNextFeatureCall<>(
-                                        new FlatMap(fieldData.toFeatureInformation()),
+                                new ReferenceOperatorWithNextFeatureCall(
+                                        new Map(fieldData.toFeatureInformation()),
                                         nextMemberCallTarget));
     }
 }

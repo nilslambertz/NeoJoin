@@ -4,20 +4,19 @@ import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XBinaryOperation;
 import org.eclipse.xtext.xbase.XExpression;
 
-import tools.vitruv.neojoin.expression_parser.model.FindAny;
+import tools.vitruv.neojoin.expression_parser.model.Filter;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextFeatureCall;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.BinaryOperationUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.BlockExpressionUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.ClosureUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFindFirstUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFindLastUtils;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFilterUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmMemberCallUtils;
 
 import java.util.Optional;
 
-public class FindAnyExtractor implements ReferenceOperatorExtractor<FindAny> {
-    public Optional<ReferenceOperatorWithNextFeatureCall<FindAny>> extract(XExpression expression) {
+public class FilterParser implements ReferenceOperatorParser {
+    public Optional<ReferenceOperatorWithNextFeatureCall> parse(XExpression expression) {
         XAbstractFeatureCall nextMemberCallTarget =
                 Optional.ofNullable(expression)
                         .flatMap(JvmFeatureCallUtils::getNextMemberCallTarget)
@@ -29,11 +28,7 @@ public class FindAnyExtractor implements ReferenceOperatorExtractor<FindAny> {
         final Optional<XBinaryOperation> binaryOperation =
                 Optional.of(expression)
                         .flatMap(JvmFeatureCallUtils::asMemberFeatureCall)
-                        .filter(
-                                memberFeatureCall ->
-                                        JvmFindFirstUtils.isFindFirstOperation(memberFeatureCall)
-                                                || JvmFindLastUtils.isFindLastOperation(
-                                                        memberFeatureCall))
+                        .filter(JvmFilterUtils::isFilterOperation)
                         .filter(JvmMemberCallUtils::hasExactlyOneMemberCallArgument)
                         .flatMap(JvmMemberCallUtils::getFirstArgument)
                         .flatMap(ClosureUtils::asClosure)
@@ -50,7 +45,7 @@ public class FindAnyExtractor implements ReferenceOperatorExtractor<FindAny> {
                 .flatMap(BinaryOperationUtils::extractBinaryExpression)
                 .map(
                         binaryExpression ->
-                                new ReferenceOperatorWithNextFeatureCall<>(
-                                        new FindAny(binaryExpression), nextMemberCallTarget));
+                                new ReferenceOperatorWithNextFeatureCall(
+                                        new Filter(binaryExpression), nextMemberCallTarget));
     }
 }
