@@ -36,6 +36,7 @@ public class Scaffolding {
         createFile(path.resolve("META-INF/MANIFEST.MF"), "manifest", project, engine);
         try {
             Files.createDirectories(path.resolve("src"));
+            Files.createDirectories(path.resolve("xtend-gen"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
