@@ -71,6 +71,8 @@ public class FlatMapParser implements ReferenceOperatorParser {
         while (currentOperator != null) {
             final ReferenceOperator nextOperator;
             if (currentOperator instanceof MemberFeatureCall memberFeatureCall) {
+                // TODO: We probably have to differentiate here if the feature call is for a list or
+                // a "simple" field
                 nextOperator = new FlatMap(memberFeatureCall.getFeatureInformation());
             } else if (currentOperator instanceof Map mapCall) {
                 nextOperator = new Map(mapCall.getFeatureInformation());
