@@ -4,6 +4,7 @@ import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.xbase.XExpression;
 
 import tools.vitruv.neojoin.expression_parser.model.FeatureCall;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextFeatureCall;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureUtils;
@@ -12,12 +13,18 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 import java.util.Optional;
 
 public class FeatureCallParser implements ReferenceOperatorParser {
-    public Optional<ReferenceOperatorWithNextFeatureCall> parse(XExpression expression) {
+    public Optional<ReferenceOperatorWithNextFeatureCall> parse(
+            PatternMatchingStrategy strategy, XExpression expression) {
         return JvmFeatureCallUtils.asFeatureCall(expression)
                 .flatMap(JvmFeatureUtils::getFeature)
                 .flatMap(JvmParameterUtils::asJvmFormalParameter)
                 .map(
                         parameter -> {
+                            if (parameter.getParameterType() == null) {
+                                return new ReferenceOperatorWithNextFeatureCall(
+                                        FeatureCall.empty(), null);
+                            }
+
                             JvmType parameterType = parameter.getParameterType().getType();
                             return new ReferenceOperatorWithNextFeatureCall(
                                     new FeatureCall(

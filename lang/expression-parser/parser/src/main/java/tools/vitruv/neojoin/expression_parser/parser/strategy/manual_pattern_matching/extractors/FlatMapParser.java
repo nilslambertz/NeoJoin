@@ -4,6 +4,7 @@ import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XExpression;
 
 import tools.vitruv.neojoin.expression_parser.model.FlatMap;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextFeatureCall;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.BlockExpressionUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.ClosureUtils;
@@ -16,7 +17,8 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 import java.util.Optional;
 
 public class FlatMapParser implements ReferenceOperatorParser {
-    public Optional<ReferenceOperatorWithNextFeatureCall> parse(XExpression expression) {
+    public Optional<ReferenceOperatorWithNextFeatureCall> parse(
+            PatternMatchingStrategy strategy, XExpression expression) {
         XAbstractFeatureCall nextMemberCallTarget =
                 Optional.ofNullable(expression)
                         .flatMap(JvmFeatureCallUtils::getNextMemberCallTarget)

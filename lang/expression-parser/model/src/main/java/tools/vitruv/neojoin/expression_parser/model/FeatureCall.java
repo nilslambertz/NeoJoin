@@ -8,8 +8,12 @@ import org.jspecify.annotations.Nullable;
 @Data
 @RequiredArgsConstructor
 public class FeatureCall implements ReferenceOperator {
-    final String identifier;
-    final String simpleName;
+    @Nullable final String identifier;
+    @Nullable final String simpleName;
 
     @Nullable ReferenceOperator followingOperator;
+
+    public static FeatureCall empty() {
+        return new FeatureCall(null, null);
+    }
 }
