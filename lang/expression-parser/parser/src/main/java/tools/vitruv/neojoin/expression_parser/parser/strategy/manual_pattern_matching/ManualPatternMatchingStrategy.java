@@ -42,21 +42,26 @@ public class ManualPatternMatchingStrategy implements PatternMatchingStrategy {
                 throw new UnsupportedReferenceExpressionException(currentExpression);
             }
 
-            final ReferenceOperator nextOperator =
-                    nextReferenceOperator.get().getReferenceOperator();
-            nextOperator.setFollowingOperator(lastOperator);
-            lastOperator = nextOperator;
+            ReferenceOperator reversedFoundOperators =
+                    nextReferenceOperator.get().getReferenceOperator().reverse();
+            reversedFoundOperators.getLastOperatorInChain().setFollowingOperator(lastOperator);
+            lastOperator = reversedFoundOperators;
+
             currentExpression = nextReferenceOperator.get().getNextFeatureCall();
         }
 
         return lastOperator;
     }
 
-    private static Optional<ReferenceOperatorWithNextFeatureCall> getNextReferenceOperator(
-            XExpression expression) {
-        return PARSERS.stream()
-                .map(extractor -> extractor.parse(expression))
-                .flatMap(Optional::stream)
-                .findFirst();
+    private Optional<ReferenceOperatorWithNextFeatureCall> getNextReferenceOperator(
+            XExpression expression) throws UnsupportedReferenceExpressionException {
+        for (var parser : PARSERS) {
+            final var result = parser.parse(this, expression);
+            if (result.isPresent()) {
+                return result;
+            }
+        }
+
+        return Optional.empty();
     }
 }
