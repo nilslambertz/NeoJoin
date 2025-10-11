@@ -1,12 +1,12 @@
 package tools.vitruv.optggs.transpiler.operators;
 
+import tools.vitruv.neojoin.expression_parser.model.CollectReferences;
 import tools.vitruv.neojoin.expression_parser.model.FeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.Filter;
 import tools.vitruv.neojoin.expression_parser.model.FlatMap;
 import tools.vitruv.neojoin.expression_parser.model.Map;
 import tools.vitruv.neojoin.expression_parser.model.MemberFeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
-import tools.vitruv.neojoin.expression_parser.model.ToList;
 import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.operators.LogicOperator;
 import tools.vitruv.optggs.operators.expressions.ConstantExpression;
@@ -76,8 +76,8 @@ public class ResolvedReferenceOperator implements RuleAdder {
         } else if (operator instanceof Filter filter) {
             updatePreviousRuleForFilter(previousRule, filter);
             return Optional.empty();
-        } else if (operator instanceof ToList toList) {
-            updatePreviousRuleForToList(previousRule, toList);
+        } else if (operator instanceof CollectReferences collectReferences) {
+            updatePreviousRuleForToList(previousRule, collectReferences);
             return Optional.empty();
         }
 
@@ -163,7 +163,7 @@ public class ResolvedReferenceOperator implements RuleAdder {
                 "position", LogicOperator.Equals, ConstantExpression.String("front"));
     }
 
-    private void updatePreviousRuleForToList(TripleRule previousRule, ToList operator) {
+    private void updatePreviousRuleForToList(TripleRule previousRule, CollectReferences operator) {
         final Node lastSourceNode =
                 previousRule.findNestedSourceNode(this.sourceRoot, referencesToLastNode);
 
