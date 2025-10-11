@@ -1,5 +1,6 @@
 package tools.vitruv.neojoin.expression_parser.model;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 public interface ReferenceOperator {
@@ -7,6 +8,8 @@ public interface ReferenceOperator {
 
     void setFollowingOperator(ReferenceOperator followingOperator);
 
+    /** Returns the last ReferenceOperator in this chain */
+    @NonNull
     default ReferenceOperator getLastOperatorInChain() {
         ReferenceOperator lastOperator = this;
         while (lastOperator.getFollowingOperator() != null) {
@@ -15,6 +18,7 @@ public interface ReferenceOperator {
         return lastOperator;
     }
 
+    /** Reverses the ReferenceOperator-chain. This operation <b>mutates the original object</b> */
     default ReferenceOperator reverse() {
         ReferenceOperator previous = null;
         ReferenceOperator current = this;
