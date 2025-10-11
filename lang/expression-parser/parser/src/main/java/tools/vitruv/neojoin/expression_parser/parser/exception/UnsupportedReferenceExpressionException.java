@@ -12,4 +12,9 @@ public class UnsupportedReferenceExpressionException extends Exception {
         super(String.format("The expression %s is not supported", expression));
         this.expression = expression;
     }
+
+    public UnsupportedReferenceExpressionException(String message, XExpression expression) {
+        super(message);
+        this.expression = expression;
+    }
 }
