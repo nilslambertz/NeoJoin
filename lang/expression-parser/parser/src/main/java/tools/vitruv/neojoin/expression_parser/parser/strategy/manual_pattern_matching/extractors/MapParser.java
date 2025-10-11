@@ -52,22 +52,22 @@ public class MapParser implements ReferenceOperatorParser {
             return Optional.empty();
         }
 
-        ReferenceOperator currentOperator =
+        final ReferenceOperator mapArgumentOperator =
                 strategy.parseReferenceOperator(mapArgumentExpression.get());
-        if (!(currentOperator instanceof FeatureCall)) {
+        if (!(mapArgumentOperator instanceof FeatureCall)) {
             throw new UnsupportedReferenceExpressionException(
                     "The first element of a map expression must be a feature call",
                     mapArgumentExpression.get());
         }
 
-        ReferenceOperator lastOperator = null;
-        currentOperator = currentOperator.getFollowingOperator();
+        ReferenceOperator currentOperator = mapArgumentOperator.getFollowingOperator();
         if (currentOperator == null) {
             throw new UnsupportedReferenceExpressionException(
                     "The map expression must contain more than a feature call",
                     mapArgumentExpression.get());
         }
 
+        ReferenceOperator lastOperator = null;
         while (currentOperator != null) {
             final ReferenceOperator nextOperator;
             if (currentOperator instanceof MemberFeatureCall memberFeatureCall) {
