@@ -18,7 +18,11 @@ public interface ReferenceOperator {
         return lastOperator;
     }
 
-    /** Reverses the ReferenceOperator-chain. This operation <b>mutates the original object</b> */
+    /**
+     * Reverses the ReferenceOperator-chain.
+     *
+     * @implNote This operation <b>mutates the original object</b>
+     */
     default ReferenceOperator reverse() {
         ReferenceOperator previous = null;
         ReferenceOperator current = this;

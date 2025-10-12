@@ -22,7 +22,8 @@ public class ViewExtractor {
             throws UnsupportedReferenceExpressionException {
         final View view = new View();
 
-        for (var targetClass : aqr.classes()) {
+        // Add queries for all classes except the Root class
+        for (var targetClass : aqr.classesWithoutRoot()) {
             view.addQuery(queryFromTargetClass(targetClass, patternMatchingStrategy));
         }
 
