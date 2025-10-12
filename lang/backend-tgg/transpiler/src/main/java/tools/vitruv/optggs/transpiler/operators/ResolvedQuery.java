@@ -2,9 +2,10 @@ package tools.vitruv.optggs.transpiler.operators;
 
 import lombok.Value;
 
+import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedReferenceOperatorChain;
 import tools.vitruv.optggs.transpiler.tgg.TripleRule;
+import tools.vitruv.optggs.transpiler.tgg.TripleRulesBuilder;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -13,26 +14,23 @@ import java.util.Optional;
 public class ResolvedQuery {
     ResolvedSelection selection;
     List<ResolvedProjection> projections;
-    List<ResolvedReferenceOperator> referenceOperators;
+    List<ResolvedReferenceOperatorChain> referenceOperatorChains;
     List<ResolvedFilter> filters;
     Optional<ResolvedContainment> container;
     List<ResolvedLink> links;
 
-    public Collection<TripleRule> toRules() {
-        var rules = new ArrayList<TripleRule>();
-        rules.add(createPrimaryRule());
+    TripleRulesBuilder rulesBuilder = new TripleRulesBuilder();
 
-        rules.addAll(
-                referenceOperators.stream()
-                        .map(this::createReferenceOperatorRules)
-                        .flatMap(List::stream)
-                        .toList());
-        rules.addAll(links.stream().map(this::createLinkRule).toList());
-        return rules;
+    public Collection<TripleRule> toRules() {
+        createPrimaryRule();
+        referenceOperatorChains.forEach(this::createReferenceOperatorChainRules);
+        links.forEach(this::createLinkRule);
+
+        return rulesBuilder.getTripleRules();
     }
 
-    public TripleRule createPrimaryRule() {
-        var rule = new TripleRule();
+    public void createPrimaryRule() {
+        final TripleRule rule = rulesBuilder.addRule();
         selection.extendRule(rule);
         rule.allSourcesAsSlice().makeGreen();
         rule.allTargetsAsSlice().makeGreen();
@@ -43,20 +41,18 @@ public class ResolvedQuery {
             projection.extendRule(rule);
         }
         container.ifPresent(value -> value.extendRule(rule));
-        return rule;
     }
 
-    public List<TripleRule> createReferenceOperatorRules(
-            ResolvedReferenceOperator referenceOperator) {
-        return referenceOperator.addRules(selection.getTargetTop());
+    public void createReferenceOperatorChainRules(
+            ResolvedReferenceOperatorChain referenceOperatorChain) {
+        referenceOperatorChain.extendRules(selection.getTargetTop(), rulesBuilder);
     }
 
-    public TripleRule createLinkRule(ResolvedLink link) {
-        var rule = new TripleRule();
+    public void createLinkRule(ResolvedLink link) {
+        final TripleRule rule = rulesBuilder.addRule();
         rule.setLinkRule(true);
         selection.extendRule(rule);
         link.extendRule(rule);
-        return rule;
     }
 
     @Override

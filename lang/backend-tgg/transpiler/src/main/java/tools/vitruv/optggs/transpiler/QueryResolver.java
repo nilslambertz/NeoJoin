@@ -97,7 +97,7 @@ public abstract class QueryResolver<V, Q, S, P, RO, F, C extends Mappable, L, PA
 
     abstract P resolveProjection(Projection projection);
 
-    abstract RO resolveReferenceOperator(NeojoinReferenceOperator referenceOperator);
+    abstract RO resolveReferenceOperatorChain(NeojoinReferenceOperator referenceOperator);
 
     abstract F resolveFilter(Filter filter);
 
