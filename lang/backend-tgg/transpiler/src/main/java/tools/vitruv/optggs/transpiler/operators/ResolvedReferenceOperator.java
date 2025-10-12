@@ -11,7 +11,6 @@ import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.operators.LogicOperator;
 import tools.vitruv.optggs.operators.expressions.ConstantExpression;
 import tools.vitruv.optggs.operators.reference_operator.NeojoinReferenceOperator;
-import tools.vitruv.optggs.transpiler.tgg.Correspondence;
 import tools.vitruv.optggs.transpiler.tgg.Link;
 import tools.vitruv.optggs.transpiler.tgg.Node;
 import tools.vitruv.optggs.transpiler.tgg.Slice;
@@ -77,7 +76,7 @@ public class ResolvedReferenceOperator implements RuleAdder {
             updatePreviousRuleForFilter(previousRule, filter);
             return Optional.empty();
         } else if (operator instanceof CollectReferences collectReferences) {
-            updatePreviousRuleForToList(previousRule, collectReferences);
+            updatePreviousRuleForCollect(previousRule, collectReferences);
             return Optional.empty();
         }
 
@@ -163,23 +162,21 @@ public class ResolvedReferenceOperator implements RuleAdder {
                 "position", LogicOperator.Equals, ConstantExpression.String("front"));
     }
 
-    private void updatePreviousRuleForToList(TripleRule previousRule, CollectReferences operator) {
+    private void updatePreviousRuleForCollect(TripleRule previousRule, CollectReferences operator) {
         final Node lastSourceNode =
                 previousRule.findNestedSourceNode(this.sourceRoot, referencesToLastNode);
+        lastSourceNode.makeBlack();
 
         final Node targetSourceNode =
                 previousRule.findTargetNodeByType(this.targetRoot).orElseThrow();
 
         final Slice targetSlice = previousRule.addTargetSlice();
         Node targetChildNode = targetSlice.addNode(new FQN(targetType));
-        targetChildNode.makeGreen();
 
         Link targetParentLinkToChild = Link.Green(targetField, targetChildNode);
         targetSourceNode.addLink(targetParentLinkToChild);
 
-        final Correspondence newCorrespondence =
-                previousRule.addCorrespondenceRule(lastSourceNode, targetChildNode);
-        newCorrespondence.makeGreen();
+        previousRule.addCorrespondenceRule(lastSourceNode, targetChildNode);
     }
 
     @Override
