@@ -6,6 +6,7 @@ import org.jspecify.annotations.NonNull;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.CollectReferencesParser;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FeatureCallParser;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FilterParser;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FindAnyParser;
@@ -13,7 +14,6 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.MapParser;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.MemberFeatureCallParser;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.ReferenceOperatorParser;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.ToListParser;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextFeatureCall;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class ManualPatternMatchingStrategy implements PatternMatchingStrategy {
                     new FeatureCallParser(),
                     new MemberFeatureCallParser(),
                     new FilterParser(),
-                    new ToListParser(),
+                    new CollectReferencesParser(),
                     new FlatMapParser(),
                     new MapParser(),
                     new FindAnyParser());

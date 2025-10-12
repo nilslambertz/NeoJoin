@@ -13,7 +13,7 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 
 import java.util.Optional;
 
-public class ToListParser implements ReferenceOperatorParser {
+public class CollectReferencesParser implements ReferenceOperatorParser {
     private static final String TO_LIST_OPERATION_SIMPLE_NAME = "toList";
     private static final String FLATTEN_OPERATION_SIMPLE_NAME = "flatten";
 
