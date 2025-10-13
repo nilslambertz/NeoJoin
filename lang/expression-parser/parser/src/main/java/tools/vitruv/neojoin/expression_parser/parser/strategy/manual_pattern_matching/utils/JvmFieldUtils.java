@@ -25,21 +25,6 @@ public class JvmFieldUtils {
         }
     }
 
-    public static Optional<JvmFieldData> getData(JvmField jvmField) {
-        return Optional.ofNullable(jvmField)
-                .map(JvmField::getType)
-                .flatMap(JvmTypeReferenceUtils::asParameterizedTypeReference)
-                .filter(JvmTypeReferenceUtils::hasExactlyOneArgument)
-                .flatMap(JvmTypeReferenceUtils::getFirstArgument)
-                .flatMap(JvmTypeReferenceUtils::asParameterizedTypeReference)
-                .map(
-                        field ->
-                                new JvmFieldData(
-                                        jvmField.getSimpleName(),
-                                        field.getType().getSimpleName(),
-                                        field.getType().getIdentifier()));
-    }
-
     public static Optional<JvmField> asJvmField(JvmIdentifiableElement jvmIdentifiableElement) {
         return CastingUtils.cast(jvmIdentifiableElement, JvmField.class);
     }

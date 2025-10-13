@@ -24,7 +24,6 @@ public class ResolvedReferenceOperatorChain {
 
         final List<ResolvedReferenceOperator> intermediaryOperators =
                 referenceOperators.subList(1, referenceOperators.size() - 1);
-
         intermediaryOperators.forEach(
                 resolvedReferenceOperator -> resolvedReferenceOperator.extendRules(builder));
 

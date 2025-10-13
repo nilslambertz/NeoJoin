@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import org.eclipse.xtext.common.types.JvmParameterizedTypeReference;
-import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
 import java.util.List;
@@ -12,19 +11,9 @@ import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JvmTypeReferenceUtils {
-    private static final String LIST_IDENTIFIER = "java.util.List";
-
     public static Optional<JvmParameterizedTypeReference> asParameterizedTypeReference(
             JvmTypeReference typeReference) {
         return CastingUtils.cast(typeReference, JvmParameterizedTypeReference.class);
-    }
-
-    public static boolean isListType(JvmTypeReference typeReference) {
-        return Optional.ofNullable(typeReference)
-                .map(JvmTypeReference::getType)
-                .map(JvmType::getIdentifier)
-                .map(LIST_IDENTIFIER::equals)
-                .orElse(false);
     }
 
     public static boolean hasExactlyOneArgument(JvmParameterizedTypeReference typeReference) {

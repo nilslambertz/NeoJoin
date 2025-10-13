@@ -10,6 +10,7 @@ import org.jspecify.annotations.Nullable;
 @RequiredArgsConstructor
 public class MemberFeatureCall implements ReferenceOperator {
     @NonNull final FeatureInformation featureInformation;
+    final boolean isCollection;
 
     @Nullable ReferenceOperator followingOperator;
 }

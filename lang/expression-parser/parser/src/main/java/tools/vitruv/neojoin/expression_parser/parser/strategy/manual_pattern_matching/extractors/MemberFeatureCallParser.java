@@ -1,6 +1,7 @@
 package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors;
 
 import org.eclipse.xtext.common.types.JvmField;
+import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XExpression;
@@ -18,6 +19,8 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 import java.util.Optional;
 
 public class MemberFeatureCallParser implements ReferenceOperatorParser {
+    private static final String LIST_IDENTIFIER = "java.util.List";
+
     public Optional<ReferenceOperatorWithNextFeatureCall> parse(
             PatternMatchingStrategy strategy, XExpression expression) {
         final Optional<XMemberFeatureCall> memberFeatureCall =
@@ -40,12 +43,12 @@ public class MemberFeatureCallParser implements ReferenceOperatorParser {
             return Optional.empty();
         }
 
-        if (JvmTypeReferenceUtils.isListType(jvmField.get().getType())) {
-            return jvmField.flatMap(JvmFieldUtils::getData)
+        if (MemberFeatureCallParser.isListType(jvmField.get().getType())) {
+            return jvmField.flatMap(MemberFeatureCallParser::getListFeatureInformation)
                     .map(
-                            fieldData ->
+                            featureInformation ->
                                     new ReferenceOperatorWithNextFeatureCall(
-                                            new MemberFeatureCall(fieldData.toFeatureInformation()),
+                                            new MemberFeatureCall(featureInformation, true),
                                             nextMemberCallTarget.get()));
         }
 
@@ -53,19 +56,48 @@ public class MemberFeatureCallParser implements ReferenceOperatorParser {
                 .map(
                         featureInformation ->
                                 new ReferenceOperatorWithNextFeatureCall(
-                                        new MemberFeatureCall(featureInformation),
+                                        new MemberFeatureCall(featureInformation, false),
                                         nextMemberCallTarget.get()));
     }
 
     private static Optional<FeatureInformation> getFeatureInformation(JvmField jvmField) {
         return Optional.ofNullable(jvmField)
                 .map(JvmField::getType)
+                .flatMap(
+                        jvmTypeReference -> {
+                            if (isListType(jvmTypeReference)) {
+                                return getListFeatureInformation(jvmField);
+                            }
+
+                            final JvmType jvmType = jvmTypeReference.getType();
+                            return Optional.of(
+                                    new FeatureInformation(
+                                            jvmField.getSimpleName(),
+                                            jvmType.getSimpleName(),
+                                            jvmType.getIdentifier()));
+                        });
+    }
+
+    private static boolean isListType(JvmTypeReference typeReference) {
+        return Optional.ofNullable(typeReference)
                 .map(JvmTypeReference::getType)
+                .map(JvmType::getIdentifier)
+                .map(LIST_IDENTIFIER::equals)
+                .orElse(false);
+    }
+
+    private static Optional<FeatureInformation> getListFeatureInformation(JvmField jvmField) {
+        return Optional.ofNullable(jvmField)
+                .map(JvmField::getType)
+                .flatMap(JvmTypeReferenceUtils::asParameterizedTypeReference)
+                .filter(JvmTypeReferenceUtils::hasExactlyOneArgument)
+                .flatMap(JvmTypeReferenceUtils::getFirstArgument)
+                .flatMap(JvmTypeReferenceUtils::asParameterizedTypeReference)
                 .map(
-                        jvmType ->
+                        field ->
                                 new FeatureInformation(
                                         jvmField.getSimpleName(),
-                                        jvmType.getSimpleName(),
-                                        jvmType.getIdentifier()));
+                                        field.getType().getSimpleName(),
+                                        field.getType().getIdentifier()));
     }
 }
