@@ -23,15 +23,11 @@ public class MemberFeatureCallParser implements ReferenceOperatorParser {
 
     public Optional<ReferenceOperatorWithNextFeatureCall> parse(
             PatternMatchingStrategy strategy, XExpression expression) {
+        Optional<XAbstractFeatureCall> nextMemberCallTarget = findNextCallTarget(expression);
+
         final Optional<XMemberFeatureCall> memberFeatureCall =
                 JvmFeatureCallUtils.asMemberFeatureCall(expression);
         if (memberFeatureCall.isEmpty()) {
-            return Optional.empty();
-        }
-
-        Optional<XAbstractFeatureCall> nextMemberCallTarget =
-                memberFeatureCall.flatMap(JvmFeatureCallUtils::getNextMemberCallTarget);
-        if (nextMemberCallTarget.isEmpty()) {
             return Optional.empty();
         }
 
@@ -49,7 +45,7 @@ public class MemberFeatureCallParser implements ReferenceOperatorParser {
                             featureInformation ->
                                     new ReferenceOperatorWithNextFeatureCall(
                                             new MemberFeatureCall(featureInformation, true),
-                                            nextMemberCallTarget.get()));
+                                            nextMemberCallTarget.orElse(null)));
         }
 
         return jvmField.flatMap(MemberFeatureCallParser::getFeatureInformation)
@@ -57,7 +53,7 @@ public class MemberFeatureCallParser implements ReferenceOperatorParser {
                         featureInformation ->
                                 new ReferenceOperatorWithNextFeatureCall(
                                         new MemberFeatureCall(featureInformation, false),
-                                        nextMemberCallTarget.get()));
+                                        nextMemberCallTarget.orElse(null)));
     }
 
     private static Optional<FeatureInformation> getFeatureInformation(JvmField jvmField) {
