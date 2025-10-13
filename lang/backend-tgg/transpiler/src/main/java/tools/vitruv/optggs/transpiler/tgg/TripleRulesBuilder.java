@@ -31,6 +31,10 @@ public class TripleRulesBuilder {
         return addRule(new TripleRule());
     }
 
+    public void removeRule(TripleRule rule) {
+        tripleRules.remove(rule);
+    }
+
     public List<String> getReferencesToLastSourceNode() {
         return List.copyOf(referencesToLastSourceNode);
     }

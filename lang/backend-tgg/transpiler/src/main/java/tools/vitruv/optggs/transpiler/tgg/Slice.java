@@ -79,6 +79,15 @@ public class Slice {
         return this;
     }
 
+    public boolean hasAnyGreenElements() {
+        final boolean anyNodesAreGreen = nodes.stream().anyMatch(Node::isGreen);
+        final boolean anyLinksAreGreen =
+                nodes.stream().map(Node::links).flatMap(Collection::stream).anyMatch(Link::isGreen);
+        final boolean anyCorrespondencesAreGreen =
+                correspondences.stream().anyMatch(Correspondence::isGreen);
+        return anyNodesAreGreen || anyLinksAreGreen || anyCorrespondencesAreGreen;
+    }
+
     public <T> Collection<T> mapNodes(Function<Node, T> function) {
         return nodes.stream().map(function).toList();
     }

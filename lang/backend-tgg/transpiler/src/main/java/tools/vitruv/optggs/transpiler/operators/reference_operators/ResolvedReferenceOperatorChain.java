@@ -34,8 +34,9 @@ public class ResolvedReferenceOperatorChain {
             throw new IllegalStateException("Last Reference Operator must be a CollectReferences");
         }
 
-        // TODO: If the feature call rule didn't change (so no following operator modified it, but
-        // just copied and created new rules), then we need to remove it from the builder rules list
-        // because it only contains context nodes
+        // If the feature call rule wasn't extended with any green elements, we can remove it
+        if (featureCallRule.hasAnyGreenElements()) {
+            builder.removeRule(featureCallRule);
+        }
     }
 }

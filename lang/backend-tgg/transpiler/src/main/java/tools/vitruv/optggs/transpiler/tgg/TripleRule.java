@@ -175,6 +175,11 @@ public class TripleRule {
         return lastSourceNode;
     }
 
+    public boolean hasAnyGreenElements() {
+        return allSourcesAsSlice().hasAnyGreenElements()
+                || allTargetsAsSlice().hasAnyGreenElements();
+    }
+
     public TripleRule deepCopy() {
         final TripleRuleCopyHelper copyHelper = new TripleRuleCopyHelper(nameRepository);
 
