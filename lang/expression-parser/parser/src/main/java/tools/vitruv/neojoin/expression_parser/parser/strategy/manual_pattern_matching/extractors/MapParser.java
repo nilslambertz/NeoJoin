@@ -70,10 +70,14 @@ public class MapParser implements ReferenceOperatorParser {
         ReferenceOperator lastOperator = null;
         while (currentOperator != null) {
             final ReferenceOperator nextOperator;
-            if (currentOperator instanceof MemberFeatureCall memberFeatureCall) {
+            if (currentOperator instanceof MemberFeatureCall memberFeatureCall
+                    && memberFeatureCall.isCollection()) {
+                nextOperator = new FlatMap(memberFeatureCall.getFeatureInformation());
+            } else if (currentOperator instanceof MemberFeatureCall memberFeatureCall
+                    && !memberFeatureCall.isCollection()) {
                 nextOperator = new Map(memberFeatureCall.getFeatureInformation());
             } else if (currentOperator instanceof Map mapCall) {
-                nextOperator = new FlatMap(mapCall.getFeatureInformation());
+                nextOperator = new Map(mapCall.getFeatureInformation());
             } else {
                 throw new UnsupportedReferenceExpressionException(
                         "The map expression is not supported", mapArgumentExpression.get());

@@ -120,7 +120,8 @@ public class TranspilerQueryResolver
                 resolvedOperator =
                         new ResolvedMemberFeatureCall(
                                 featureInformation.getFeatureName(),
-                                new FQN(featureInformation.getFeatureClassSimpleName()));
+                                new FQN(featureInformation.getFeatureClassSimpleName()),
+                                memberFeatureCall.isCollection());
             } else if (currentReferenceOperator instanceof Map map) {
                 final FeatureInformation featureInformation = map.getFeatureInformation();
                 resolvedOperator =
