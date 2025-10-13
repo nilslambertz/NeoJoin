@@ -50,7 +50,7 @@ public class ManualPatternMatchingStrategy implements PatternMatchingStrategy {
             currentExpression = nextReferenceOperator.get().getNextFeatureCall();
         }
 
-        return lastOperator;
+        return lastOperator.removeAllIntermediateCollectors().addCollectorAtEndIfNotExists();
     }
 
     private Optional<ReferenceOperatorWithNextFeatureCall> getNextReferenceOperator(

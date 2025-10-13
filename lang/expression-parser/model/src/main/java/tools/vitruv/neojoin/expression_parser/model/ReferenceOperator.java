@@ -34,4 +34,39 @@ public interface ReferenceOperator {
         }
         return previous;
     }
+
+    /**
+     * Removes all intermediate CollectReferences operators
+     *
+     * @implNote This operation <b>mutates the original object</b>
+     */
+    default ReferenceOperator removeAllIntermediateCollectors() {
+        ReferenceOperator previous = this;
+        ReferenceOperator current = previous.getFollowingOperator();
+        while (current != null && current.getFollowingOperator() != null) {
+            if (current instanceof CollectReferences) {
+                previous.setFollowingOperator(current.getFollowingOperator());
+            } else {
+                previous = current;
+            }
+
+            current = current.getFollowingOperator();
+        }
+
+        return this;
+    }
+
+    /**
+     * Adds a CollectReferences operator at the end of the chain if there is not one already
+     *
+     * @implNote This operation <b>mutates the original object</b>
+     */
+    default ReferenceOperator addCollectorAtEndIfNotExists() {
+        final ReferenceOperator lastOperator = getLastOperatorInChain();
+        if (!(lastOperator instanceof CollectReferences)) {
+            lastOperator.setFollowingOperator(new CollectReferences());
+        }
+
+        return this;
+    }
 }
