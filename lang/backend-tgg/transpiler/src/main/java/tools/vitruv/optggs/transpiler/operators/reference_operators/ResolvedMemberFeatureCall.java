@@ -38,6 +38,9 @@ public class ResolvedMemberFeatureCall implements ResolvedReferenceOperator {
         builder.addReferenceToLastSourceNode(feature);
         lastSourceNode.addLink(parentLinkToChild);
 
-        builder.addRule(rule);
+        // If feature is a collection, a new rule is needed
+        if (isCollection) {
+            builder.addRule(rule);
+        }
     }
 }
