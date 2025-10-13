@@ -14,7 +14,9 @@ public class ResolvedReferenceOperatorChain {
     String targetReference;
     FQN targetType;
 
-    public void extendRules(FQN targetTop, TripleRulesBuilder builder) {
+    public TripleRulesBuilder extendRules(FQN targetTop) {
+        TripleRulesBuilder builder = new TripleRulesBuilder();
+
         final TripleRule featureCallRule;
         if (referenceOperators.getFirst() instanceof ResolvedFeatureCall featureCall) {
             featureCallRule = featureCall.createFeatureCallRule(targetTop, builder);
@@ -35,8 +37,10 @@ public class ResolvedReferenceOperatorChain {
         }
 
         // If the feature call rule wasn't extended with any green elements, we can remove it
-        if (featureCallRule.hasAnyGreenElements()) {
+        if (!featureCallRule.hasAnyGreenElements()) {
             builder.removeRule(featureCallRule);
         }
+
+        return builder;
     }
 }

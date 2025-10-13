@@ -9,6 +9,7 @@ import tools.vitruv.optggs.transpiler.tgg.TripleRulesBuilder;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Value
 public class ResolvedQuery {
@@ -23,10 +24,15 @@ public class ResolvedQuery {
 
     public Collection<TripleRule> toRules() {
         createPrimaryRule();
-        referenceOperatorChains.forEach(this::createReferenceOperatorChainRules);
         links.forEach(this::createLinkRule);
 
-        return rulesBuilder.getTripleRules();
+        final Stream<TripleRule> referenceOperatorRules =
+                referenceOperatorChains.stream()
+                        .map(this::createReferenceOperatorChainRules)
+                        .flatMap(List::stream);
+
+        return Stream.concat(rulesBuilder.getTripleRules().stream(), referenceOperatorRules)
+                .toList();
     }
 
     public void createPrimaryRule() {
@@ -43,9 +49,9 @@ public class ResolvedQuery {
         container.ifPresent(value -> value.extendRule(rule));
     }
 
-    public void createReferenceOperatorChainRules(
+    public List<TripleRule> createReferenceOperatorChainRules(
             ResolvedReferenceOperatorChain referenceOperatorChain) {
-        referenceOperatorChain.extendRules(selection.getTargetTop(), rulesBuilder);
+        return referenceOperatorChain.extendRules(selection.getTargetTop()).getTripleRules();
     }
 
     public void createLinkRule(ResolvedLink link) {
