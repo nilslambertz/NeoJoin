@@ -5,6 +5,7 @@ import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 
+import tools.vitruv.neojoin.expression_parser.model.CollectReferences;
 import tools.vitruv.neojoin.expression_parser.model.FeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.FlatMap;
 import tools.vitruv.neojoin.expression_parser.model.Map;
@@ -80,6 +81,8 @@ public class FlatMapParser implements ReferenceOperatorParser {
                 nextOperator = new Map(mapCall.getFeatureInformation());
             } else if (currentOperator instanceof FlatMap flatMapCall) {
                 nextOperator = new FlatMap(flatMapCall.getFeatureInformation());
+            } else if (currentOperator instanceof CollectReferences) {
+                nextOperator = new CollectReferences();
             } else {
                 throw new UnsupportedReferenceExpressionException(
                         "The flatMap expression is not supported", flatMapArgumentExpression.get());

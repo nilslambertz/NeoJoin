@@ -5,6 +5,7 @@ import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 
+import tools.vitruv.neojoin.expression_parser.model.CollectReferences;
 import tools.vitruv.neojoin.expression_parser.model.FeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.FlatMap;
 import tools.vitruv.neojoin.expression_parser.model.Map;
@@ -78,6 +79,8 @@ public class MapParser implements ReferenceOperatorParser {
                 nextOperator = new Map(memberFeatureCall.getFeatureInformation());
             } else if (currentOperator instanceof Map mapCall) {
                 nextOperator = new Map(mapCall.getFeatureInformation());
+            } else if (currentOperator instanceof CollectReferences) {
+                nextOperator = new CollectReferences();
             } else {
                 throw new UnsupportedReferenceExpressionException(
                         "The map expression is not supported", mapArgumentExpression.get());
