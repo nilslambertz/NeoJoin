@@ -9,8 +9,9 @@ import org.eclipse.xtext.xbase.XMemberFeatureCall;
 
 import tools.vitruv.neojoin.expression_parser.model.FeatureInformation;
 import tools.vitruv.neojoin.expression_parser.model.MemberFeatureCall;
+import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
+import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextFeatureCall;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFieldUtils;
@@ -21,8 +22,9 @@ import java.util.Optional;
 public class MemberFeatureCallParser implements ReferenceOperatorParser {
     private static final String LIST_IDENTIFIER = "java.util.List";
 
-    public Optional<ReferenceOperatorWithNextFeatureCall> parse(
-            PatternMatchingStrategy strategy, XExpression expression) {
+    public Optional<ReferenceOperator> parse(
+            PatternMatchingStrategy strategy, XExpression expression)
+            throws UnsupportedReferenceExpressionException {
         Optional<XAbstractFeatureCall> nextMemberCallTarget = findNextCallTarget(expression);
 
         final Optional<XMemberFeatureCall> memberFeatureCall =
@@ -39,21 +41,34 @@ public class MemberFeatureCallParser implements ReferenceOperatorParser {
             return Optional.empty();
         }
 
+        final Optional<ReferenceOperator> foundOperatorOptional;
         if (MemberFeatureCallParser.isListType(jvmField.get().getType())) {
-            return jvmField.flatMap(MemberFeatureCallParser::getListFeatureInformation)
-                    .map(
-                            featureInformation ->
-                                    new ReferenceOperatorWithNextFeatureCall(
-                                            new MemberFeatureCall(featureInformation, true),
-                                            nextMemberCallTarget.orElse(null)));
+            foundOperatorOptional =
+                    jvmField.flatMap(MemberFeatureCallParser::getListFeatureInformation)
+                            .map(
+                                    featureInformation ->
+                                            new MemberFeatureCall(featureInformation, true));
+        } else {
+            foundOperatorOptional =
+                    jvmField.flatMap(MemberFeatureCallParser::getFeatureInformation)
+                            .map(
+                                    featureInformation ->
+                                            new MemberFeatureCall(featureInformation, false));
+        }
+        final ReferenceOperator foundOperator =
+                foundOperatorOptional.orElseThrow(
+                        () ->
+                                new UnsupportedOperationException(
+                                        "The MemberFeatureCall couldn't be parsed"));
+
+        final ReferenceOperator followingOperator;
+        if (nextMemberCallTarget.isPresent()) {
+            followingOperator = strategy.parseReferenceOperator(nextMemberCallTarget.get());
+            followingOperator.getLastOperatorInChain().setFollowingOperator(foundOperator);
+            return Optional.of(followingOperator);
         }
 
-        return jvmField.flatMap(MemberFeatureCallParser::getFeatureInformation)
-                .map(
-                        featureInformation ->
-                                new ReferenceOperatorWithNextFeatureCall(
-                                        new MemberFeatureCall(featureInformation, false),
-                                        nextMemberCallTarget.orElse(null)));
+        return Optional.of(foundOperator);
     }
 
     private static Optional<FeatureInformation> getFeatureInformation(JvmField jvmField) {

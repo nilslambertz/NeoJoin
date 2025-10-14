@@ -5,8 +5,9 @@ import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XExpression;
 
 import tools.vitruv.neojoin.expression_parser.model.CollectReferences;
+import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
+import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextFeatureCall;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmOperationUtils;
@@ -17,17 +18,25 @@ public class CollectReferencesParser implements ReferenceOperatorParser {
     private static final String TO_LIST_OPERATION_SIMPLE_NAME = "toList";
     private static final String FLATTEN_OPERATION_SIMPLE_NAME = "flatten";
 
-    public Optional<ReferenceOperatorWithNextFeatureCall> parse(
-            PatternMatchingStrategy strategy, XExpression expression) {
+    public Optional<ReferenceOperator> parse(
+            PatternMatchingStrategy strategy, XExpression expression)
+            throws UnsupportedReferenceExpressionException {
         Optional<XAbstractFeatureCall> nextMemberCallTarget = findNextCallTarget(expression);
 
-        if (isToListOperation(expression) || isFlattenOperation(expression)) {
-            return Optional.of(
-                    new ReferenceOperatorWithNextFeatureCall(
-                            new CollectReferences(), nextMemberCallTarget.get()));
+        if (!isToListOperation(expression) && !isFlattenOperation(expression)) {
+            return Optional.empty();
         }
 
-        return Optional.empty();
+        final ReferenceOperator foundOperator = new CollectReferences();
+
+        final ReferenceOperator followingOperator;
+        if (nextMemberCallTarget.isPresent()) {
+            followingOperator = strategy.parseReferenceOperator(nextMemberCallTarget.get());
+            followingOperator.getLastOperatorInChain().setFollowingOperator(foundOperator);
+            return Optional.of(followingOperator);
+        }
+
+        return Optional.of(foundOperator);
     }
 
     private static boolean isToListOperation(XExpression expression) {

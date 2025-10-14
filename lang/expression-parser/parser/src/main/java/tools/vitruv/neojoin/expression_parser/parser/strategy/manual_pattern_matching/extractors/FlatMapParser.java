@@ -13,7 +13,6 @@ import tools.vitruv.neojoin.expression_parser.model.MemberFeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextFeatureCall;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.BlockExpressionUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.ClosureUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
@@ -26,7 +25,7 @@ import java.util.Optional;
 public class FlatMapParser implements ReferenceOperatorParser {
     private static final String FLAT_MAP_OPERATION_SIMPLE_NAME = "flatMap";
 
-    public Optional<ReferenceOperatorWithNextFeatureCall> parse(
+    public Optional<ReferenceOperator> parse(
             PatternMatchingStrategy strategy, XExpression expression)
             throws UnsupportedReferenceExpressionException {
         Optional<XAbstractFeatureCall> nextMemberCallTarget = findNextCallTarget(expression);
@@ -68,7 +67,8 @@ public class FlatMapParser implements ReferenceOperatorParser {
                     flatMapArgumentExpression.get());
         }
 
-        ReferenceOperator lastOperator = null;
+        final ReferenceOperator operatorHead = new CollectReferences();
+        ReferenceOperator lastOperator = operatorHead;
         while (currentOperator != null) {
             final ReferenceOperator nextOperator;
             if (currentOperator instanceof MemberFeatureCall memberFeatureCall
@@ -88,14 +88,19 @@ public class FlatMapParser implements ReferenceOperatorParser {
                         "The flatMap expression is not supported", flatMapArgumentExpression.get());
             }
 
-            nextOperator.setFollowingOperator(lastOperator);
+            lastOperator.setFollowingOperator(nextOperator);
             lastOperator = nextOperator;
             currentOperator = currentOperator.getFollowingOperator();
         }
 
-        return Optional.of(
-                new ReferenceOperatorWithNextFeatureCall(
-                        lastOperator, nextMemberCallTarget.orElse(null)));
+        final ReferenceOperator followingOperator;
+        if (nextMemberCallTarget.isPresent()) {
+            followingOperator = strategy.parseReferenceOperator(nextMemberCallTarget.get());
+            followingOperator.getLastOperatorInChain().setFollowingOperator(operatorHead);
+            return Optional.of(followingOperator);
+        }
+
+        return Optional.of(operatorHead);
     }
 
     private static boolean isFlatMapOperation(XMemberFeatureCall featureCall) {

@@ -5,8 +5,9 @@ import org.eclipse.xtext.xbase.XBinaryOperation;
 import org.eclipse.xtext.xbase.XExpression;
 
 import tools.vitruv.neojoin.expression_parser.model.FindAny;
+import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
+import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextFeatureCall;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.BinaryOperationUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.BlockExpressionUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.ClosureUtils;
@@ -18,15 +19,10 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 import java.util.Optional;
 
 public class FindAnyParser implements ReferenceOperatorParser {
-    public Optional<ReferenceOperatorWithNextFeatureCall> parse(
-            PatternMatchingStrategy strategy, XExpression expression) {
-        XAbstractFeatureCall nextMemberCallTarget =
-                Optional.ofNullable(expression)
-                        .flatMap(JvmFeatureCallUtils::getNextMemberCallTarget)
-                        .orElse(null);
-        if (nextMemberCallTarget == null) {
-            return Optional.empty();
-        }
+    public Optional<ReferenceOperator> parse(
+            PatternMatchingStrategy strategy, XExpression expression)
+            throws UnsupportedReferenceExpressionException {
+        Optional<XAbstractFeatureCall> nextMemberCallTarget = findNextCallTarget(expression);
 
         final Optional<XBinaryOperation> binaryOperation =
                 Optional.of(expression)
@@ -48,11 +44,22 @@ public class FindAnyParser implements ReferenceOperatorParser {
             return Optional.empty();
         }
 
-        return binaryOperation
-                .flatMap(BinaryOperationUtils::extractBinaryExpression)
-                .map(
-                        binaryExpression ->
-                                new ReferenceOperatorWithNextFeatureCall(
-                                        new FindAny(binaryExpression), nextMemberCallTarget));
+        final ReferenceOperator foundOperator =
+                binaryOperation
+                        .flatMap(BinaryOperationUtils::extractBinaryExpression)
+                        .map(FindAny::new)
+                        .orElseThrow(
+                                () ->
+                                        new UnsupportedOperationException(
+                                                "The MemberFeatureCall couldn't be parsed"));
+
+        final ReferenceOperator followingOperator;
+        if (nextMemberCallTarget.isPresent()) {
+            followingOperator = strategy.parseReferenceOperator(nextMemberCallTarget.get());
+            followingOperator.setFollowingOperator(foundOperator);
+            return Optional.of(followingOperator);
+        }
+
+        return Optional.of(foundOperator);
     }
 }

@@ -14,7 +14,6 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.MapParser;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.MemberFeatureCallParser;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.ReferenceOperatorParser;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.model.ReferenceOperatorWithNextFeatureCall;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,28 +32,14 @@ public class ManualPatternMatchingStrategy implements PatternMatchingStrategy {
     @Override
     public @NonNull ReferenceOperator parseReferenceOperator(@NonNull XExpression expression)
             throws UnsupportedReferenceExpressionException {
-        XExpression currentExpression = expression;
-        ReferenceOperator lastOperator = null;
-        while (currentExpression != null) {
-            Optional<ReferenceOperatorWithNextFeatureCall> nextReferenceOperator =
-                    getNextReferenceOperator(currentExpression);
-            if (nextReferenceOperator.isEmpty()) {
-                throw new UnsupportedReferenceExpressionException(currentExpression);
-            }
-
-            ReferenceOperator reversedFoundOperators =
-                    nextReferenceOperator.get().getReferenceOperator().reverse();
-            reversedFoundOperators.getLastOperatorInChain().setFollowingOperator(lastOperator);
-            lastOperator = reversedFoundOperators;
-
-            currentExpression = nextReferenceOperator.get().getNextFeatureCall();
-        }
-
-        return lastOperator.removeAllIntermediateCollectors().addCollectorAtEndIfNotExists();
+        return getReferenceOperator(expression)
+                .orElseThrow(() -> new UnsupportedReferenceExpressionException(expression))
+                .removeAllIntermediateCollectors()
+                .addCollectorAtEndIfNotExists();
     }
 
-    private Optional<ReferenceOperatorWithNextFeatureCall> getNextReferenceOperator(
-            XExpression expression) throws UnsupportedReferenceExpressionException {
+    private Optional<ReferenceOperator> getReferenceOperator(XExpression expression)
+            throws UnsupportedReferenceExpressionException {
         for (var parser : PARSERS) {
             final var result = parser.parse(this, expression);
             if (result.isPresent()) {
