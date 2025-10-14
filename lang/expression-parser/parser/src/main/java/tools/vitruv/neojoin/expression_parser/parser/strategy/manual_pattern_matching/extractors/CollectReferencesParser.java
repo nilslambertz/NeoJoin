@@ -1,7 +1,6 @@
 package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors;
 
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
-import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XExpression;
 
 import tools.vitruv.neojoin.expression_parser.model.CollectReferences;
@@ -21,22 +20,12 @@ public class CollectReferencesParser implements ReferenceOperatorParser {
     public Optional<ReferenceOperator> parse(
             PatternMatchingStrategy strategy, XExpression expression)
             throws UnsupportedReferenceExpressionException {
-        Optional<XAbstractFeatureCall> nextMemberCallTarget = findNextCallTarget(expression);
-
         if (!isToListOperation(expression) && !isFlattenOperation(expression)) {
             return Optional.empty();
         }
 
-        final ReferenceOperator foundOperator = new CollectReferences();
-
-        final ReferenceOperator followingOperator;
-        if (nextMemberCallTarget.isPresent()) {
-            followingOperator = strategy.parseReferenceOperator(nextMemberCallTarget.get());
-            followingOperator.getLastOperatorInChain().setFollowingOperator(foundOperator);
-            return Optional.of(followingOperator);
-        }
-
-        return Optional.of(foundOperator);
+        return parseAndAppendFollowingExpressionOperators(
+                strategy, expression, new CollectReferences());
     }
 
     private static boolean isToListOperation(XExpression expression) {

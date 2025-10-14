@@ -1,6 +1,5 @@
 package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors;
 
-import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XBinaryOperation;
 import org.eclipse.xtext.xbase.XExpression;
 
@@ -21,8 +20,6 @@ public class FilterParser implements ReferenceOperatorParser {
     public Optional<ReferenceOperator> parse(
             PatternMatchingStrategy strategy, XExpression expression)
             throws UnsupportedReferenceExpressionException {
-        Optional<XAbstractFeatureCall> nextMemberCallTarget = findNextCallTarget(expression);
-
         final Optional<XBinaryOperation> binaryOperation =
                 Optional.of(expression)
                         .flatMap(JvmFeatureCallUtils::asMemberFeatureCall)
@@ -48,13 +45,6 @@ public class FilterParser implements ReferenceOperatorParser {
                                         new UnsupportedOperationException(
                                                 "The MemberFeatureCall couldn't be parsed"));
 
-        final ReferenceOperator followingOperator;
-        if (nextMemberCallTarget.isPresent()) {
-            followingOperator = strategy.parseReferenceOperator(nextMemberCallTarget.get());
-            followingOperator.setFollowingOperator(foundOperator);
-            return Optional.of(followingOperator);
-        }
-
-        return Optional.of(foundOperator);
+        return parseAndAppendFollowingExpressionOperators(strategy, expression, foundOperator);
     }
 }

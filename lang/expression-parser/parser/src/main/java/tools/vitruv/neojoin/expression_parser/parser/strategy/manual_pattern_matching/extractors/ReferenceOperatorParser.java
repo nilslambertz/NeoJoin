@@ -15,9 +15,36 @@ public interface ReferenceOperatorParser {
     Optional<ReferenceOperator> parse(PatternMatchingStrategy strategy, XExpression expression)
             throws UnsupportedReferenceExpressionException;
 
+    /** Returns the next call target if the expression is a {@code XMemberFeatureCall} */
     default Optional<XAbstractFeatureCall> findNextCallTarget(XExpression expression) {
         return JvmFeatureCallUtils.asMemberFeatureCall(expression)
                 .map(XMemberFeatureCall::getMemberCallTarget)
                 .flatMap(JvmFeatureCallUtils::asAbstractFeatureCall);
+    }
+
+    /**
+     * Runs the Reference operator extraction on the following {@code memberCallTarget} and appends
+     * it to the existing ReferenceOperator chain
+     */
+    default Optional<ReferenceOperator> parseAndAppendFollowingExpressionOperators(
+            PatternMatchingStrategy strategy,
+            XExpression currentExpression,
+            ReferenceOperator currentOperator)
+            throws UnsupportedReferenceExpressionException {
+        final Optional<XAbstractFeatureCall> nextMemberCallTarget =
+                findNextCallTarget(currentExpression);
+        if (nextMemberCallTarget.isPresent()) {
+            // Parse the following expression
+            final ReferenceOperator followingOperator =
+                    strategy.parseReferenceOperator(nextMemberCallTarget.get());
+
+            // As the Expression "AST" contains the expressions in reverse order, the current
+            // expression should come after the expression we parsed afterward
+            followingOperator.getLastOperatorInChain().setFollowingOperator(currentOperator);
+            return Optional.of(followingOperator);
+        }
+
+        // If there is no following operator, we are at the end of the expression chain
+        return Optional.of(currentOperator);
     }
 }

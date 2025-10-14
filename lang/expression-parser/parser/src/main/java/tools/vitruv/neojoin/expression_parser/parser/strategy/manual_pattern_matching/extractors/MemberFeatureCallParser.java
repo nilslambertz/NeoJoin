@@ -3,7 +3,6 @@ package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_ma
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
-import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 
@@ -25,8 +24,6 @@ public class MemberFeatureCallParser implements ReferenceOperatorParser {
     public Optional<ReferenceOperator> parse(
             PatternMatchingStrategy strategy, XExpression expression)
             throws UnsupportedReferenceExpressionException {
-        Optional<XAbstractFeatureCall> nextMemberCallTarget = findNextCallTarget(expression);
-
         final Optional<XMemberFeatureCall> memberFeatureCall =
                 JvmFeatureCallUtils.asMemberFeatureCall(expression);
         if (memberFeatureCall.isEmpty()) {
@@ -61,14 +58,7 @@ public class MemberFeatureCallParser implements ReferenceOperatorParser {
                                 new UnsupportedOperationException(
                                         "The MemberFeatureCall couldn't be parsed"));
 
-        final ReferenceOperator followingOperator;
-        if (nextMemberCallTarget.isPresent()) {
-            followingOperator = strategy.parseReferenceOperator(nextMemberCallTarget.get());
-            followingOperator.getLastOperatorInChain().setFollowingOperator(foundOperator);
-            return Optional.of(followingOperator);
-        }
-
-        return Optional.of(foundOperator);
+        return parseAndAppendFollowingExpressionOperators(strategy, expression, foundOperator);
     }
 
     private static Optional<FeatureInformation> getFeatureInformation(JvmField jvmField) {

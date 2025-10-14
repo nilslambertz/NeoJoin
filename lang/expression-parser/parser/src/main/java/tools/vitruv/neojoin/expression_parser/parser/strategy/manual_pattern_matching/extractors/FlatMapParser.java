@@ -1,7 +1,6 @@
 package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors;
 
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
-import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 
@@ -28,8 +27,6 @@ public class FlatMapParser implements ReferenceOperatorParser {
     public Optional<ReferenceOperator> parse(
             PatternMatchingStrategy strategy, XExpression expression)
             throws UnsupportedReferenceExpressionException {
-        Optional<XAbstractFeatureCall> nextMemberCallTarget = findNextCallTarget(expression);
-
         // Check that expression is flatMap and get single argument
         final Optional<XExpression> flatMapArgument =
                 JvmFeatureCallUtils.asMemberFeatureCall(expression)
@@ -93,14 +90,7 @@ public class FlatMapParser implements ReferenceOperatorParser {
             currentOperator = currentOperator.getFollowingOperator();
         }
 
-        final ReferenceOperator followingOperator;
-        if (nextMemberCallTarget.isPresent()) {
-            followingOperator = strategy.parseReferenceOperator(nextMemberCallTarget.get());
-            followingOperator.getLastOperatorInChain().setFollowingOperator(operatorHead);
-            return Optional.of(followingOperator);
-        }
-
-        return Optional.of(operatorHead);
+        return parseAndAppendFollowingExpressionOperators(strategy, expression, operatorHead);
     }
 
     private static boolean isFlatMapOperation(XMemberFeatureCall featureCall) {
