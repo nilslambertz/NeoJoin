@@ -1,8 +1,12 @@
 # NeoJoin
 
-*NeoJoin* is a declarative query language for view-based model-driven software development. It allows to easily create views based on one or more source models using a declarative SQL-like syntax. It supports multiple backends for the model-view transformation, one of which is based on triple graph grammars (TGGs) and supports bidirectional and incremental transformations between models and views.
+*NeoJoin* is a declarative query language for view-based model-driven software development. It allows to easily create
+views based on one or more source models using a declarative SQL-like syntax. It supports multiple backends for the
+model-view transformation, one of which is based on triple graph grammars (TGGs) and supports bidirectional and
+incremental transformations between models and views.
 
-*Note: The frontend is currently not connected to the TGG backend, so an automatic transformation of the queries in NeoJoin syntax is only possible with the EMF backend. We plan to add support for this in the future.*
+*Note: The frontend is currently not connected to the TGG backend, so an automatic transformation of the queries in
+NeoJoin syntax is only possible with the EMF backend. We plan to add support for this in the future.*
 
 ### Syntax Example
 
@@ -34,13 +38,16 @@ create ReviewedRestaurant {
 * *Bidirectional and incremental transformations* using the TGG backend
 * Queries can *select*, *join*, *filter* and *group* classes from the source models
 * Features in the view can be *copied* from the source models, *renamed* or *calculated* based on a custom expression
-* Query conditions and feature definition using [Xtend expressions](https://eclipse.dev/Xtext/xtend/documentation/203_xtend_expressions.html)
-* [VSCode](https://code.visualstudio.com/) plugin for syntax highlighting, code completion, and live visualization of the resulting view type
+* Query conditions and feature definition
+  using [Xtend expressions](https://eclipse.dev/Xtext/xtend/documentation/203_xtend_expressions.html)
+* [VSCode](https://code.visualstudio.com/) plugin for syntax highlighting, code completion, and live visualization of
+  the resulting view type
 * Input and output meta-models as `.ecore` and instance-models as `.xmi` files
 
 ## Structure
 
 ### Project
+
 | Directory     | Content                                                      |
 |---------------|--------------------------------------------------------------|
 | docs          | Project documentation                                        |
@@ -50,6 +57,7 @@ create ReviewedRestaurant {
 | vscode-plugin | VSCode plugin for NeoJoin language support and visualization |
 
 ### Prototype Implementation
+
 | **Module** / Package       | Description                                                                                             |
 |----------------------------|---------------------------------------------------------------------------------------------------------|
 | **backend-emf**            | EMF-based transformation engine to derive instances of the view based on the query                      |
@@ -89,14 +97,19 @@ We use [SonarQube](https://sonarcloud.io/project/overview?id=vitruv-tools_NeoJoi
 * Open the `vscode-plugin` folder in VSCode (top-level in a workspace)
 * Run `npm install` to install dependencies
 * Go to `Run and Debug` > Select launch configuration `Launch Client` > Press `Start Debugging`
-    * The language server needs a few seconds to start up, so code completion / analysis will not work right at the start.
+    * The language server needs a few seconds to start up, so code completion / analysis will not work right at the
+      start.
     * The plugin requires that the `.jar` files have been generated and are at their default location.
-    * If you cannot find the launch configuration `Launch Client`, ensure that you have opened VSCode with the `vscode-plugin` folder as your workspace.
-* If you get the error message `Activating extension 'vitruv-tools.neojoin' failed: Cannot find module` check the build task for potential problems: Bottom Panel > Select tab `Terminal` > Select task `watch` (on the right)
+    * If you cannot find the launch configuration `Launch Client`, ensure that you have opened VSCode with the
+      `vscode-plugin` folder as your workspace.
+* If you get the error message `Activating extension 'vitruv-tools.neojoin' failed: Cannot find module` check the build
+  task for potential problems: Bottom Panel > Select tab `Terminal` > Select task `watch` (on the right)
 
 ### Notes
 
-* Xtext heavily uses generated classes which means that opening this repository in a Java IDE after cloning will look like a christmas tree. Run `maven compile` to generate all missing classes. To improve compile times afterwards you can skip re-generation of classes by activating the maven profile `skip-workflow`.
+* Xtext heavily uses generated classes which means that opening this repository in a Java IDE after cloning will look
+  like a christmas tree. Run `maven compile` to generate all missing classes. To improve compile times afterwards you
+  can skip re-generation of classes by activating the maven profile `skip-workflow`.
 
 ## Usage
 
@@ -109,14 +122,18 @@ We use [SonarQube](https://sonarcloud.io/project/overview?id=vitruv-tools_NeoJoi
 
 ### VSCode Plugin
 
-Provides basic IDE support (syntax highlighting, code-completion, etc.) and a side-by-side live visualization of queries. Can be installed from the `.vsix` file via **Extensions** > 3-dot menu > **Install from VSIX...**.
+Provides basic IDE support (syntax highlighting, code-completion, etc.) and a side-by-side live visualization of
+queries. Can be installed from the `.vsix` file via **Extensions** > 3-dot menu > **Install from VSIX...**.
 
 #### Commands
+
 * **Show Query Visualization** - Show a live visualization of the queries in the currently active text editor.
-* **Generate View Type** - Generate the view type resulting from the queries in the currently active text editor and save it as an Ecore file next to the query file.
+* **Generate View Type** - Generate the view type resulting from the queries in the currently active text editor and
+  save it as an Ecore file next to the query file.
 * **Restart Server** - Restart the language server after configuration changes.
 
 #### Settings
+
 * **Meta Model Search Path** - Semicolon separted list of file URLs to search for source meta models.
 * **Debug** - Enable debug logging.
 
@@ -166,7 +183,27 @@ You can use the convenience function `API.generateProjectForView(...)` for steps
 
 ### Running the Generated Model-View Transformations
 
-*to do*
+Prerequisites:
+
+- Eclipse with [eMoflon::Neo](https://emoflon.org/download/#emoflonneo) set up
+- [Neo4j Desktop](https://neo4j.com/deployment-center/) **version 4.4.X**
+
+Make sure the Neo4j database is running and the Neo4j username/password is correctly configured in Eclipse. Additional
+information about how to set up Neo4j and eMoflon::Neo is
+available [here](https://emoflon.org/getting-started/#emoflonneo).
+
+Running the TGG transformations with Neo4j:
+
+1. Open the generated project folder with Eclipse
+    - The `src/*.msl` files contain the generated TGG project and (meta)models
+    - The `src/*Runner.java` files can be executed to sync the source and target models with Neo4j
+    - For each source model, a `src/*ForwardRunner.java` is available for the first generation of the target model
+2. Right click the desired `src/*ForwardRunner.java` > `Run As` > `Java Application`
+    - This will clear the Neo4j database and run the ForwardRunner for this model
+3. Run `match (n {enamespace: "YOUR_SOURCE_MODEL_NAME"}), (m {enamespace: "Target"}) return n, m` in the Neo4j Browser
+    - This will output the graph with the source and target elements as well as the correspondences
+4. Optional: Dump the models using the [script](/scripts/dump/readme.md)
+    - Make sure the source and target model names are correctly configured
 
 ## Used Technology
 
