@@ -3,7 +3,6 @@ package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_ma
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.xbase.XExpression;
 
-import tools.vitruv.neojoin.expression_parser.model.CollectReferences;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
@@ -24,8 +23,7 @@ public class CollectReferencesParser implements ReferenceOperatorParser {
             return Optional.empty();
         }
 
-        return parseAndAppendFollowingExpressionOperators(
-                strategy, expression, new CollectReferences());
+        return parseAndAppendFollowingExpressionOperators(strategy, expression, null);
     }
 
     private static boolean isToListOperation(XExpression expression) {

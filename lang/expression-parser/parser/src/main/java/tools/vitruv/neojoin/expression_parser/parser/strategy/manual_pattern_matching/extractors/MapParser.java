@@ -4,7 +4,6 @@ import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 
-import tools.vitruv.neojoin.expression_parser.model.CollectReferences;
 import tools.vitruv.neojoin.expression_parser.model.FeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.FlatMap;
 import tools.vitruv.neojoin.expression_parser.model.Map;
@@ -57,38 +56,49 @@ public class MapParser implements ReferenceOperatorParser {
                     mapArgumentExpression.get());
         }
 
-        ReferenceOperator currentOperator = mapArgumentOperator.getFollowingOperator();
-        if (currentOperator == null) {
+        ReferenceOperator currentMapArgumentOperator = mapArgumentOperator.getFollowingOperator();
+        if (currentMapArgumentOperator == null) {
             throw new UnsupportedReferenceExpressionException(
                     "The map expression must contain more than a feature call",
                     mapArgumentExpression.get());
         }
 
-        final ReferenceOperator operatorHead = new CollectReferences();
-        ReferenceOperator lastOperator = operatorHead;
-        while (currentOperator != null) {
-            final ReferenceOperator nextOperator;
-            if (currentOperator instanceof MemberFeatureCall memberFeatureCall
-                    && memberFeatureCall.isCollection()) {
-                nextOperator = new FlatMap(memberFeatureCall.getFeatureInformation());
-            } else if (currentOperator instanceof MemberFeatureCall memberFeatureCall
-                    && !memberFeatureCall.isCollection()) {
-                nextOperator = new Map(memberFeatureCall.getFeatureInformation());
-            } else if (currentOperator instanceof Map mapCall) {
-                nextOperator = new Map(mapCall.getFeatureInformation());
-            } else if (currentOperator instanceof CollectReferences) {
-                nextOperator = new CollectReferences();
-            } else {
-                throw new UnsupportedReferenceExpressionException(
-                        "The map expression is not supported", mapArgumentExpression.get());
-            }
+        // Loop through each parsed ReferenceOperators inside the map arguments and map/extract them
+        // to the top level ReferenceOperator chain
+        final ReferenceOperator extractedOperatorHead =
+                extractMapArgumentOperator(currentMapArgumentOperator, mapArgumentExpression.get());
+        currentMapArgumentOperator = currentMapArgumentOperator.getFollowingOperator();
 
-            lastOperator.setFollowingOperator(nextOperator);
-            lastOperator = nextOperator;
-            currentOperator = currentOperator.getFollowingOperator();
+        ReferenceOperator currentExtractedOperator = extractedOperatorHead;
+        while (currentMapArgumentOperator != null) {
+            final ReferenceOperator nextOperator =
+                    extractMapArgumentOperator(
+                            currentMapArgumentOperator, mapArgumentExpression.get());
+
+            currentExtractedOperator.setFollowingOperator(nextOperator);
+            currentExtractedOperator = nextOperator;
+            currentMapArgumentOperator = currentMapArgumentOperator.getFollowingOperator();
         }
 
-        return parseAndAppendFollowingExpressionOperators(strategy, expression, operatorHead);
+        return parseAndAppendFollowingExpressionOperators(
+                strategy, expression, extractedOperatorHead);
+    }
+
+    private static ReferenceOperator extractMapArgumentOperator(
+            ReferenceOperator mapArgumentOperator, XExpression mapArgumentExpression)
+            throws UnsupportedReferenceExpressionException {
+        if (mapArgumentOperator instanceof MemberFeatureCall memberFeatureCall
+                && memberFeatureCall.isCollection()) {
+            return new FlatMap(memberFeatureCall.getFeatureInformation());
+        } else if (mapArgumentOperator instanceof MemberFeatureCall memberFeatureCall
+                && !memberFeatureCall.isCollection()) {
+            return new Map(memberFeatureCall.getFeatureInformation());
+        } else if (mapArgumentOperator instanceof Map mapCall) {
+            return new Map(mapCall.getFeatureInformation());
+        }
+
+        throw new UnsupportedReferenceExpressionException(
+                "The map expression is not supported", mapArgumentExpression);
     }
 
     private static boolean isMapOperation(XMemberFeatureCall featureCall) {

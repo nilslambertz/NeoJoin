@@ -33,9 +33,7 @@ public class ManualPatternMatchingStrategy implements PatternMatchingStrategy {
     public @NonNull ReferenceOperator parseReferenceOperator(@NonNull XExpression expression)
             throws UnsupportedReferenceExpressionException {
         return getReferenceOperator(expression)
-                .orElseThrow(() -> new UnsupportedReferenceExpressionException(expression))
-                .removeAllIntermediateCollectors()
-                .addCollectorAtEndIfNotExists();
+                .orElseThrow(() -> new UnsupportedReferenceExpressionException(expression));
     }
 
     private Optional<ReferenceOperator> getReferenceOperator(XExpression expression)

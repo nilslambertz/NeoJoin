@@ -4,7 +4,6 @@ import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 
-import tools.vitruv.neojoin.expression_parser.model.CollectReferences;
 import tools.vitruv.neojoin.expression_parser.model.FeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.FlatMap;
 import tools.vitruv.neojoin.expression_parser.model.Map;
@@ -57,40 +56,50 @@ public class FlatMapParser implements ReferenceOperatorParser {
                     flatMapArgumentExpression.get());
         }
 
-        ReferenceOperator currentOperator = flatMapArgumentOperator.getFollowingOperator();
-        if (currentOperator == null) {
+        ReferenceOperator currentFlatMapArgumentOperator =
+                flatMapArgumentOperator.getFollowingOperator();
+        if (currentFlatMapArgumentOperator == null) {
             throw new UnsupportedReferenceExpressionException(
                     "The flatMap expression must contain more than a feature call",
                     flatMapArgumentExpression.get());
         }
 
-        final ReferenceOperator operatorHead = new CollectReferences();
+        final ReferenceOperator operatorHead =
+                extractFlatMapArgumentOperator(
+                        currentFlatMapArgumentOperator, flatMapArgumentExpression.get());
+        currentFlatMapArgumentOperator = currentFlatMapArgumentOperator.getFollowingOperator();
+
         ReferenceOperator lastOperator = operatorHead;
-        while (currentOperator != null) {
-            final ReferenceOperator nextOperator;
-            if (currentOperator instanceof MemberFeatureCall memberFeatureCall
-                    && memberFeatureCall.isCollection()) {
-                nextOperator = new FlatMap(memberFeatureCall.getFeatureInformation());
-            } else if (currentOperator instanceof MemberFeatureCall memberFeatureCall
-                    && !memberFeatureCall.isCollection()) {
-                nextOperator = new Map(memberFeatureCall.getFeatureInformation());
-            } else if (currentOperator instanceof Map mapCall) {
-                nextOperator = new Map(mapCall.getFeatureInformation());
-            } else if (currentOperator instanceof FlatMap flatMapCall) {
-                nextOperator = new FlatMap(flatMapCall.getFeatureInformation());
-            } else if (currentOperator instanceof CollectReferences) {
-                nextOperator = new CollectReferences();
-            } else {
-                throw new UnsupportedReferenceExpressionException(
-                        "The flatMap expression is not supported", flatMapArgumentExpression.get());
-            }
+        while (currentFlatMapArgumentOperator != null) {
+            final ReferenceOperator nextOperator =
+                    extractFlatMapArgumentOperator(
+                            currentFlatMapArgumentOperator, flatMapArgumentExpression.get());
 
             lastOperator.setFollowingOperator(nextOperator);
             lastOperator = nextOperator;
-            currentOperator = currentOperator.getFollowingOperator();
+            currentFlatMapArgumentOperator = currentFlatMapArgumentOperator.getFollowingOperator();
         }
 
         return parseAndAppendFollowingExpressionOperators(strategy, expression, operatorHead);
+    }
+
+    private static ReferenceOperator extractFlatMapArgumentOperator(
+            ReferenceOperator flatMapArgumentOperator, XExpression flatMapArgumentExpression)
+            throws UnsupportedReferenceExpressionException {
+        if (flatMapArgumentOperator instanceof MemberFeatureCall memberFeatureCall
+                && memberFeatureCall.isCollection()) {
+            return new FlatMap(memberFeatureCall.getFeatureInformation());
+        } else if (flatMapArgumentOperator instanceof MemberFeatureCall memberFeatureCall
+                && !memberFeatureCall.isCollection()) {
+            return new Map(memberFeatureCall.getFeatureInformation());
+        } else if (flatMapArgumentOperator instanceof Map mapCall) {
+            return new Map(mapCall.getFeatureInformation());
+        } else if (flatMapArgumentOperator instanceof FlatMap flatMapCall) {
+            return new FlatMap(flatMapCall.getFeatureInformation());
+        }
+
+        throw new UnsupportedReferenceExpressionException(
+                "The flatMap expression is not supported", flatMapArgumentExpression);
     }
 
     private static boolean isFlatMapOperation(XMemberFeatureCall featureCall) {

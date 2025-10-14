@@ -1,6 +1,5 @@
 package tools.vitruv.optggs.transpiler;
 
-import tools.vitruv.neojoin.expression_parser.model.CollectReferences;
 import tools.vitruv.neojoin.expression_parser.model.FeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.FeatureInformation;
 import tools.vitruv.neojoin.expression_parser.model.FlatMap;
@@ -134,8 +133,6 @@ public class TranspilerQueryResolver
                         new ResolvedFlatMap(
                                 featureInformation.getFeatureName(),
                                 new FQN(featureInformation.getFeatureClassSimpleName()));
-            } else if (currentReferenceOperator instanceof CollectReferences) {
-                resolvedOperator = new ResolvedCollectReferences();
             } else {
                 throw new IllegalStateException("Unsupported reference operator chain");
             }
@@ -144,6 +141,8 @@ public class TranspilerQueryResolver
             currentReferenceOperator = currentReferenceOperator.getFollowingOperator();
         }
 
+        // Add a collector at the end of the reference chain
+        referenceOperatorChain.add(new ResolvedCollectReferences());
         return new ResolvedReferenceOperatorChain(
                 referenceOperatorChain,
                 referenceOperator.targetField(),

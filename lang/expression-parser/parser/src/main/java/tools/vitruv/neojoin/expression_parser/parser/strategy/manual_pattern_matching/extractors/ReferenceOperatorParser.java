@@ -3,6 +3,7 @@ package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_ma
 import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
+import org.jspecify.annotations.Nullable;
 
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
@@ -29,7 +30,7 @@ public interface ReferenceOperatorParser {
     default Optional<ReferenceOperator> parseAndAppendFollowingExpressionOperators(
             PatternMatchingStrategy strategy,
             XExpression currentExpression,
-            ReferenceOperator currentOperator)
+            @Nullable ReferenceOperator currentOperator)
             throws UnsupportedReferenceExpressionException {
         final Optional<XAbstractFeatureCall> nextMemberCallTarget =
                 findNextCallTarget(currentExpression);
@@ -45,6 +46,6 @@ public interface ReferenceOperatorParser {
         }
 
         // If there is no following operator, we are at the end of the expression chain
-        return Optional.of(currentOperator);
+        return Optional.ofNullable(currentOperator);
     }
 }
