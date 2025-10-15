@@ -5,9 +5,12 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.Diagnostician;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.xtext.validation.Issue;
 import org.jspecify.annotations.NullUnmarked;
 import org.jspecify.annotations.Nullable;
@@ -27,6 +30,8 @@ import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedRefere
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.ManualPatternMatchingStrategy;
 import tools.vitruv.neojoin.generation.MetaModelGenerator;
 import tools.vitruv.neojoin.tgg.emsl_utils.EmslMetamodelGenerator;
+import tools.vitruv.neojoin.tgg.emsl_utils.EmslModelGenerator;
+import tools.vitruv.neojoin.tgg.emsl_utils.EmslUtils;
 import tools.vitruv.neojoin.transformation.Transformator;
 import tools.vitruv.neojoin.transformation.TransformatorException;
 import tools.vitruv.neojoin.utils.EMFUtils;
@@ -102,27 +107,9 @@ public class Main implements Callable<Integer> {
         @Option(names = {"-tgg", "--generate-tgg-rules"}, paramLabel = "GENERATE TGG RULES", required = true, description = "Generate the corresponding TGG rules and write them to the given output directory")
         Path output;
 
-        @ArgGroup(exclusive = false, heading = "Optional source model for the TGG transformation:%n")
-        @Nullable
-        TGGSourceModel sourceModel;
-    }
-
-    static class TGGSourceModel {
-        @Option(
-            names = {"--source-model-name"},
-            paramLabel = "SOURCE_MODEL_NAME",
-            required = true,
-            description = "Name of the source model"
+        @Option(names = {"--source-model-path"}, paramLabel = "SOURCE_MODEL_PATH", description = "Optional: Path to the source model for the TGG transformation"
         )
-        String name;
-
-        @Option(
-            names = {"--source-model-path"},
-            paramLabel = "SOURCE_MODEL_PATH",
-            required = true,
-            description = "Path to the source model"
-        )
-        Path path;
+        Path sourceModelPath;
     }
 
     /**
@@ -242,10 +229,18 @@ public class Main implements Callable<Integer> {
             project.addTargetMetamodel(new Metamodel(targetMetamodelPath));
             final View view = ViewExtractor.viewFromAQR(aqr, new ManualPatternMatchingStrategy());
 
-            if(tggRuleGeneration.sourceModel != null) {
-                final Path sourceModelPath = tggRuleGeneration.sourceModel.path;
-                final String sourceModelName = tggRuleGeneration.sourceModel.name;
-                project.addSourceModel(new Model(sourceModelName, sourceModelPath));
+            if(tggRuleGeneration.sourceModelPath != null) {
+                ResourceSet sourceModelResourceSet = new ResourceSetImpl();
+                sourceModelResourceSet.getPackageRegistry().putAll(registry);
+                sourceModelResourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
+                Resource sourceModelResource = sourceModelResourceSet.getResource(URI.createFileURI(tggRuleGeneration.sourceModelPath.toString()), true);
+                EcoreUtil.resolveAll(sourceModelResource);
+
+                final Path convertedSourceModelPath = Path.of("target/emsl-source-model.msl");
+                EmslModelGenerator.generateModels(sourceModelResourceSet, convertedSourceModelPath);
+                final String sourceModelName = EmslUtils.extractModelName(sourceModelResource.getURI());
+
+                project.addSourceModel(new Model(sourceModelName, convertedSourceModelPath));
             }
 
             API.generateProjectForView(
