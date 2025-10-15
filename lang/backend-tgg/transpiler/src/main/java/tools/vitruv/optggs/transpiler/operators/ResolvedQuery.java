@@ -28,7 +28,7 @@ public class ResolvedQuery {
 
         final Stream<TripleRule> referenceOperatorRules =
                 referenceOperatorChains.stream()
-                        .map(this::createReferenceOperatorChainRules)
+                        .map(ResolvedReferenceOperatorChain::generateRules)
                         .flatMap(List::stream);
 
         return Stream.concat(rulesBuilder.getTripleRules().stream(), referenceOperatorRules)
@@ -47,11 +47,6 @@ public class ResolvedQuery {
             projection.extendRule(rule);
         }
         container.ifPresent(value -> value.extendRule(rule));
-    }
-
-    public List<TripleRule> createReferenceOperatorChainRules(
-            ResolvedReferenceOperatorChain referenceOperatorChain) {
-        return referenceOperatorChain.extendRules(selection.getTargetTop()).getTripleRules();
     }
 
     public void createLinkRule(ResolvedLink link) {

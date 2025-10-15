@@ -1,6 +1,8 @@
 package tools.vitruv.optggs.operators;
 
 import org.apache.log4j.Logger;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EPackage;
 import org.jspecify.annotations.NonNull;
 
 import tools.vitruv.neojoin.aqr.*;
@@ -24,21 +26,25 @@ public class ViewExtractor {
 
         // Add queries for all classes except the Root class
         for (var targetClass : aqr.classesWithoutRoot()) {
-            view.addQuery(queryFromTargetClass(targetClass, patternMatchingStrategy));
+            view.addQuery(
+                    queryFromTargetClass(
+                            aqr.export().name(), targetClass, patternMatchingStrategy));
         }
 
         return view;
     }
 
     private static Query queryFromTargetClass(
-            AQRTargetClass targetClass, @NonNull PatternMatchingStrategy patternMatchingStrategy)
+            String targetNamespace,
+            AQRTargetClass targetClass,
+            @NonNull PatternMatchingStrategy patternMatchingStrategy)
             throws UnsupportedReferenceExpressionException {
         final FQN source =
                 Optional.ofNullable(targetClass.source())
                         .map(AQRSource::from)
                         .map(ViewExtractor::fqn)
                         .orElse(fqn(targetClass.name()));
-        final FQN target = fqn(targetClass.name());
+        final FQN targetRoot = new FQN(targetNamespace, targetClass.name());
 
         final Map<String, FQN> namedRefs = new HashMap<>();
         namedRefs.put("", source);
@@ -50,7 +56,7 @@ public class ViewExtractor {
         for (var join : joins) {
             sourcePattern = joinFromAST(join, sourcePattern, namedRefs);
         }
-        var query = new Query(new Selection(sourcePattern, Pattern.from(target)));
+        var query = new Query(new Selection(sourcePattern, Pattern.from(targetRoot)));
 
         // TODO: Filters???
         if (targetClass.source() != null && targetClass.source().condition() != null) {
@@ -58,7 +64,7 @@ public class ViewExtractor {
         }
 
         applyProjectionsFromAST(
-                targetClass.features(), query, namedRefs, target, patternMatchingStrategy);
+                targetClass.features(), query, namedRefs, targetRoot, patternMatchingStrategy);
 
         if (targetClass.source() != null && !targetClass.source().groupingExpressions().isEmpty()) {
             throw new RuntimeException("Grouping expressions are not supported");
@@ -91,7 +97,7 @@ public class ViewExtractor {
             List<AQRFeature> features,
             Query query,
             Map<String, FQN> namedRefs,
-            FQN target,
+            FQN targetRoot,
             @NonNull PatternMatchingStrategy patternMatchingStrategy)
             throws UnsupportedReferenceExpressionException {
         for (AQRFeature feature : features) {
@@ -106,7 +112,16 @@ public class ViewExtractor {
                         patternMatchingStrategy.parseReferenceOperator(
                                 reference.kind().expression());
                 log.info("Found reference operator: " + operator);
-                query.referenceOperator(reference.name(), reference.type().name(), operator);
+                final String sourceTypeNamespace =
+                        Optional.ofNullable(reference.type().source())
+                                .map(AQRSource::from)
+                                .map(AQRFrom::clazz)
+                                .map(EClass::getEPackage)
+                                .map(EPackage::getNsPrefix)
+                                .orElse(null);
+                final String sourceTypeName = reference.type().name();
+                final FQN targetLeaf = targetRoot.withLocalName(reference.type().name());
+                query.referenceOperator(targetRoot, targetLeaf, reference.name(), operator);
             } else if (feature instanceof AQRFeature.Reference
                     && feature.kind().expression() == null) {
                 log.info("TODO: " + feature);

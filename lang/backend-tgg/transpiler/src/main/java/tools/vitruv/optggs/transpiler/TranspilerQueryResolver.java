@@ -15,7 +15,7 @@ import tools.vitruv.optggs.operators.filters.ConstantFilter;
 import tools.vitruv.optggs.operators.filters.FunctionFilter;
 import tools.vitruv.optggs.operators.projections.DerivedProjection;
 import tools.vitruv.optggs.operators.projections.SimpleProjection;
-import tools.vitruv.optggs.operators.reference_operator.NeojoinReferenceOperator;
+import tools.vitruv.optggs.operators.reference_operator.ReferenceOperatorChain;
 import tools.vitruv.optggs.operators.selection.From;
 import tools.vitruv.optggs.operators.selection.Join;
 import tools.vitruv.optggs.operators.selection.PatternLink;
@@ -105,7 +105,7 @@ public class TranspilerQueryResolver
 
     @Override
     ResolvedReferenceOperatorChain resolveReferenceOperatorChain(
-            NeojoinReferenceOperator referenceOperator) {
+            ReferenceOperatorChain referenceOperator) {
         final List<ResolvedReferenceOperator> referenceOperatorChain = new ArrayList<>();
 
         ReferenceOperator currentReferenceOperator = referenceOperator.referenceOperator();
@@ -145,8 +145,9 @@ public class TranspilerQueryResolver
         referenceOperatorChain.add(new ResolvedCollectReferences());
         return new ResolvedReferenceOperatorChain(
                 referenceOperatorChain,
-                referenceOperator.targetField(),
-                new FQN(referenceOperator.type()));
+                referenceOperator.targetRoot(),
+                referenceOperator.targetLeaf(),
+                referenceOperator.targetField());
     }
 
     @Override

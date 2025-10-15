@@ -11,15 +11,16 @@ import java.util.List;
 @Value
 public class ResolvedReferenceOperatorChain {
     List<ResolvedReferenceOperator> referenceOperators;
+    FQN targetRoot;
+    FQN targetLeaf;
     String targetReference;
-    FQN targetType;
 
-    public TripleRulesBuilder extendRules(FQN targetTop) {
+    public List<TripleRule> generateRules() {
         TripleRulesBuilder builder = new TripleRulesBuilder();
 
         final TripleRule featureCallRule;
         if (referenceOperators.getFirst() instanceof ResolvedFeatureCall featureCall) {
-            featureCallRule = featureCall.createFeatureCallRule(targetTop, builder);
+            featureCallRule = featureCall.createFeatureCallRule(targetRoot, builder);
         } else {
             throw new IllegalStateException("First Reference Operator must be a FeatureCall");
         }
@@ -31,7 +32,7 @@ public class ResolvedReferenceOperatorChain {
 
         if (referenceOperators.getLast() instanceof ResolvedCollectReferences collectReferences) {
             collectReferences.extendRulesForCollect(
-                    targetTop, targetType, targetReference, builder);
+                    targetRoot, targetLeaf, targetReference, builder);
         } else {
             throw new IllegalStateException("Last Reference Operator must be a CollectReferences");
         }
@@ -41,6 +42,6 @@ public class ResolvedReferenceOperatorChain {
             builder.removeRule(featureCallRule);
         }
 
-        return builder;
+        return builder.getTripleRules();
     }
 }

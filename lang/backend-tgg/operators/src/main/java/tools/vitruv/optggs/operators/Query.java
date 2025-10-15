@@ -2,7 +2,7 @@ package tools.vitruv.optggs.operators;
 
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.optggs.operators.builder.SourceSelectionBuilder;
-import tools.vitruv.optggs.operators.reference_operator.NeojoinReferenceOperator;
+import tools.vitruv.optggs.operators.reference_operator.ReferenceOperatorChain;
 import tools.vitruv.optggs.operators.traits.Containable;
 import tools.vitruv.optggs.operators.traits.Filterable;
 import tools.vitruv.optggs.operators.traits.Linkable;
@@ -60,7 +60,7 @@ import java.util.Set;
 public record Query(
         Selection selection,
         List<Projection> projections,
-        List<NeojoinReferenceOperator> referenceOperators,
+        List<ReferenceOperatorChain> referenceOperators,
         List<Filter> filters,
         List<Containment> containments,
         List<Link> links)
@@ -95,8 +95,14 @@ public record Query(
         return this;
     }
 
-    public Query referenceOperator(String field, String type, ReferenceOperator referenceOperator) {
-        referenceOperators.add(new NeojoinReferenceOperator(field, type, referenceOperator));
+    public Query referenceOperator(
+            FQN targetRoot,
+            FQN targetLeaf,
+            String targetField,
+            ReferenceOperator referenceOperator) {
+        referenceOperators.add(
+                new ReferenceOperatorChain(
+                        targetRoot, targetLeaf, targetField, referenceOperator));
         return this;
     }
 

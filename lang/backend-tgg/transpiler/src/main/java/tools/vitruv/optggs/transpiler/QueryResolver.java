@@ -1,7 +1,7 @@
 package tools.vitruv.optggs.transpiler;
 
 import tools.vitruv.optggs.operators.*;
-import tools.vitruv.optggs.operators.reference_operator.NeojoinReferenceOperator;
+import tools.vitruv.optggs.operators.reference_operator.ReferenceOperatorChain;
 import tools.vitruv.optggs.operators.selection.Pattern;
 import tools.vitruv.optggs.operators.selection.PatternLink;
 import tools.vitruv.optggs.operators.selection.Union;
@@ -97,7 +97,7 @@ public abstract class QueryResolver<V, Q, S, P, RO, F, C extends Mappable, L, PA
 
     abstract P resolveProjection(Projection projection);
 
-    abstract RO resolveReferenceOperatorChain(NeojoinReferenceOperator referenceOperator);
+    abstract RO resolveReferenceOperatorChain(ReferenceOperatorChain referenceOperator);
 
     abstract F resolveFilter(Filter filter);
 

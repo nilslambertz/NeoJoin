@@ -35,6 +35,10 @@ public class FQN {
         return new FQN(metamodelName, localName);
     }
 
+    public FQN withLocalName(String localName) {
+        return new FQN(metamodelName, localName);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof FQN fqn)) return false;
