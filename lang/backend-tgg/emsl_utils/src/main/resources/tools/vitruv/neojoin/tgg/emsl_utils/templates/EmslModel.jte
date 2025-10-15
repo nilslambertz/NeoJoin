@@ -1,6 +1,5 @@
 @import org.eclipse.emf.common.util.EList
 @import org.eclipse.emf.ecore.EAttribute
-@import org.eclipse.emf.ecore.EEnum
 @import org.eclipse.emf.ecore.EObject
 @import org.eclipse.emf.ecore.EReference
 @import java.util.ArrayList
@@ -9,7 +8,6 @@
 @import static tools.vitruv.neojoin.tgg.emsl_utils.EmslUtils.escapeKeywords
 @import static tools.vitruv.neojoin.tgg.emsl_utils.EmslUtils.extractModelName
 @import static tools.vitruv.neojoin.tgg.emsl_utils.EmslUtils.getBuiltInValue
-@import static tools.vitruv.neojoin.tgg.emsl_utils.EmslUtils.getUserDefinedValue
 @param org.eclipse.emf.ecore.resource.Resource resource
 @param java.util.Map<EObject, String> objIDs
 
@@ -27,7 +25,7 @@
     }
 
     @for(EObject modelElt : eAllContents)
-        ${objIDs.get(modelElt)} : ${escapeKeywords(modelElt.eClass().getName())}
+        ${objIDs.get(modelElt)} : ${escapeKeywords(modelElt.eClass().getName())} {
         @for (EAttribute attr : modelElt.eClass().getEAllAttributes())
             @if (modelElt.eGet(attr) != null)
                 .${escapeKeywords(attr.getName())} : ${getBuiltInValue(attr, modelElt)}
@@ -44,6 +42,7 @@
                 -${escapeKeywords(ref.getName())} -> ${objIDs.get((EObject) refVal)}
             @endif
         @endfor
+        }
     @endfor
+    }
 @endfor
-}
