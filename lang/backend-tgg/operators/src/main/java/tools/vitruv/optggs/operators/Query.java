@@ -96,13 +96,14 @@ public record Query(
     }
 
     public Query referenceOperator(
+            String sourceNamespace,
             FQN targetRoot,
             FQN targetLeaf,
             String targetField,
             ReferenceOperator referenceOperator) {
         referenceOperators.add(
                 new ReferenceOperatorChain(
-                        targetRoot, targetLeaf, targetField, referenceOperator));
+                        sourceNamespace, targetRoot, targetLeaf, targetField, referenceOperator));
         return this;
     }
 

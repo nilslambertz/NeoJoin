@@ -107,32 +107,38 @@ public class TranspilerQueryResolver
     ResolvedReferenceOperatorChain resolveReferenceOperatorChain(
             ReferenceOperatorChain referenceOperator) {
         final List<ResolvedReferenceOperator> referenceOperatorChain = new ArrayList<>();
+        final FQN emptySourceFqn = new FQN(referenceOperator.sourceNamespace(), null);
 
         ReferenceOperator currentReferenceOperator = referenceOperator.referenceOperator();
         while (currentReferenceOperator != null) {
             final ResolvedReferenceOperator resolvedOperator;
             if (currentReferenceOperator instanceof FeatureCall featureCall) {
-                resolvedOperator = new ResolvedFeatureCall(new FQN(featureCall.getSimpleName()));
+                resolvedOperator =
+                        new ResolvedFeatureCall(
+                                emptySourceFqn.withLocalName(featureCall.getSimpleName()));
             } else if (currentReferenceOperator instanceof MemberFeatureCall memberFeatureCall) {
                 final FeatureInformation featureInformation =
                         memberFeatureCall.getFeatureInformation();
                 resolvedOperator =
                         new ResolvedMemberFeatureCall(
                                 featureInformation.getFeatureName(),
-                                new FQN(featureInformation.getFeatureClassSimpleName()),
+                                emptySourceFqn.withLocalName(
+                                        featureInformation.getFeatureClassSimpleName()),
                                 memberFeatureCall.isCollection());
             } else if (currentReferenceOperator instanceof Map map) {
                 final FeatureInformation featureInformation = map.getFeatureInformation();
                 resolvedOperator =
                         new ResolvedMap(
                                 featureInformation.getFeatureName(),
-                                new FQN(featureInformation.getFeatureClassSimpleName()));
+                                emptySourceFqn.withLocalName(
+                                        featureInformation.getFeatureClassSimpleName()));
             } else if (currentReferenceOperator instanceof FlatMap flatMap) {
                 final FeatureInformation featureInformation = flatMap.getFeatureInformation();
                 resolvedOperator =
                         new ResolvedFlatMap(
                                 featureInformation.getFeatureName(),
-                                new FQN(featureInformation.getFeatureClassSimpleName()));
+                                emptySourceFqn.withLocalName(
+                                        featureInformation.getFeatureClassSimpleName()));
             } else {
                 throw new IllegalStateException("Unsupported reference operator chain");
             }

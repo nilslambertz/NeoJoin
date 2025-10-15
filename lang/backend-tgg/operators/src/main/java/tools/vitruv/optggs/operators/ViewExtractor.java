@@ -119,9 +119,9 @@ public class ViewExtractor {
                                 .map(EClass::getEPackage)
                                 .map(EPackage::getNsPrefix)
                                 .orElse(null);
-                final String sourceTypeName = reference.type().name();
                 final FQN targetLeaf = targetRoot.withLocalName(reference.type().name());
-                query.referenceOperator(targetRoot, targetLeaf, reference.name(), operator);
+                query.referenceOperator(
+                        sourceTypeNamespace, targetRoot, targetLeaf, reference.name(), operator);
             } else if (feature instanceof AQRFeature.Reference
                     && feature.kind().expression() == null) {
                 log.info("TODO: " + feature);
