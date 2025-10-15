@@ -23,10 +23,4 @@ public class JvmFeatureCallUtils {
     public static Optional<XAbstractFeatureCall> asAbstractFeatureCall(XExpression expression) {
         return CastingUtils.cast(expression, XAbstractFeatureCall.class);
     }
-
-    public static Optional<XAbstractFeatureCall> getNextMemberCallTarget(XExpression expression) {
-        return asMemberFeatureCall(expression)
-                .map(XMemberFeatureCall::getMemberCallTarget)
-                .flatMap(JvmFeatureCallUtils::asAbstractFeatureCall);
-    }
 }
