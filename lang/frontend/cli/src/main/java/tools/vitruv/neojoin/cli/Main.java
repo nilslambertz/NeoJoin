@@ -33,6 +33,7 @@ import tools.vitruv.neojoin.utils.EMFUtils;
 import tools.vitruv.neojoin.utils.Utils;
 import tools.vitruv.optggs.driver.API;
 import tools.vitruv.optggs.driver.Metamodel;
+import tools.vitruv.optggs.driver.Model;
 import tools.vitruv.optggs.driver.Project;
 import tools.vitruv.optggs.operators.View;
 import tools.vitruv.optggs.operators.ViewExtractor;
@@ -100,6 +101,28 @@ public class Main implements Callable<Integer> {
 
         @Option(names = {"-tgg", "--generate-tgg-rules"}, paramLabel = "GENERATE TGG RULES", required = true, description = "Generate the corresponding TGG rules and write them to the given output directory")
         Path output;
+
+        @ArgGroup(exclusive = false, heading = "Optional source model for the TGG transformation:%n")
+        @Nullable
+        TGGSourceModel sourceModel;
+    }
+
+    static class TGGSourceModel {
+        @Option(
+            names = {"--source-model-name"},
+            paramLabel = "SOURCE_MODEL_NAME",
+            required = true,
+            description = "Name of the source model"
+        )
+        String name;
+
+        @Option(
+            names = {"--source-model-path"},
+            paramLabel = "SOURCE_MODEL_PATH",
+            required = true,
+            description = "Path to the source model"
+        )
+        Path path;
     }
 
     /**
@@ -218,6 +241,12 @@ public class Main implements Callable<Integer> {
             project.addSourceMetamodel(new Metamodel(sourceMetamodelPath));
             project.addTargetMetamodel(new Metamodel(targetMetamodelPath));
             final View view = ViewExtractor.viewFromAQR(aqr, new ManualPatternMatchingStrategy());
+
+            if(tggRuleGeneration.sourceModel != null) {
+                final Path sourceModelPath = tggRuleGeneration.sourceModel.path;
+                final String sourceModelName = tggRuleGeneration.sourceModel.name;
+                project.addSourceModel(new Model(sourceModelName, sourceModelPath));
+            }
 
             API.generateProjectForView(
                     project, view, tggRuleGeneration.output, new LocalNameResolver());
