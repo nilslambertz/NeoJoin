@@ -12,7 +12,6 @@
 @import static tools.vitruv.neojoin.tgg.emsl_utils.EmslUtils.getUserDefinedValue
 @param org.eclipse.emf.ecore.resource.Resource resource
 @param java.util.Map<EObject, String> objIDs
-@param java.util.Map<String, EEnum> metaModelEnum
 
 !{var contents = resource.getContents().stream().filter(content -> !(content instanceof  EPackage)).toList();}
 @for(EObject rootOfModel : contents)
@@ -30,9 +29,7 @@
     @for(EObject modelElt : eAllContents)
         ${objIDs.get(modelElt)} : ${escapeKeywords(modelElt.eClass().getName())}
         @for (EAttribute attr : modelElt.eClass().getEAllAttributes())
-            @if (attr.getEType() instanceof EEnum)
-                .${escapeKeywords(attr.getName())} : ${getUserDefinedValue(metaModelEnum, attr, modelElt)}
-            @elseif (modelElt.eGet(attr) != null)
+            @if (modelElt.eGet(attr) != null)
                 .${escapeKeywords(attr.getName())} : ${getBuiltInValue(attr, modelElt)}
             @endif
         @endfor
