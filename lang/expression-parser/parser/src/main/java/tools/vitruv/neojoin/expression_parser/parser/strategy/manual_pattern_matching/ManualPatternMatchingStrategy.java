@@ -16,7 +16,6 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.ReferenceOperatorParser;
 
 import java.util.List;
-import java.util.Optional;
 
 public class ManualPatternMatchingStrategy implements PatternMatchingStrategy {
     private static final List<ReferenceOperatorParser> PARSERS =
@@ -32,19 +31,13 @@ public class ManualPatternMatchingStrategy implements PatternMatchingStrategy {
     @Override
     public @NonNull ReferenceOperator parseReferenceOperator(@NonNull XExpression expression)
             throws UnsupportedReferenceExpressionException {
-        return getReferenceOperator(expression)
-                .orElseThrow(() -> new UnsupportedReferenceExpressionException(expression));
-    }
-
-    private Optional<ReferenceOperator> getReferenceOperator(XExpression expression)
-            throws UnsupportedReferenceExpressionException {
         for (var parser : PARSERS) {
             final var result = parser.parse(this, expression);
             if (result.isPresent()) {
-                return result;
+                return result.get();
             }
         }
 
-        return Optional.empty();
+        throw new UnsupportedReferenceExpressionException(expression);
     }
 }
