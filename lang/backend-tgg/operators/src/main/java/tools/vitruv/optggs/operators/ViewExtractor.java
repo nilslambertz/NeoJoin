@@ -9,6 +9,7 @@ import tools.vitruv.neojoin.aqr.*;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
+import tools.vitruv.optggs.operators.exception.UnsupportedProjectionException;
 import tools.vitruv.optggs.operators.selection.Pattern;
 
 import java.util.HashMap;
@@ -25,7 +26,7 @@ public class ViewExtractor {
         final View view = new View();
 
         // Add queries for all classes except the Root class
-        for (var targetClass : aqr.classesWithoutRoot()) {
+        for (final AQRTargetClass targetClass : aqr.classesWithoutRoot()) {
             view.addQuery(
                     queryFromTargetClass(
                             aqr.export().name(), targetClass, patternMatchingStrategy));
@@ -53,12 +54,12 @@ public class ViewExtractor {
         Pattern sourcePattern = Pattern.from(source);
         final List<AQRJoin> joins =
                 Optional.ofNullable(targetClass.source()).map(AQRSource::joins).orElse(List.of());
-        for (var join : joins) {
+        for (final AQRJoin join : joins) {
             sourcePattern = joinFromAST(join, sourcePattern, namedRefs);
         }
-        var query = new Query(new Selection(sourcePattern, Pattern.from(targetRoot)));
+        final Query query = new Query(new Selection(sourcePattern, Pattern.from(targetRoot)));
 
-        // TODO: Filters???
+        // TODO: Filters on the source
         if (targetClass.source() != null && targetClass.source().condition() != null) {
             throw new RuntimeException("Condition expressions are not supported");
         }
@@ -74,7 +75,7 @@ public class ViewExtractor {
     }
 
     private static Pattern joinFromAST(AQRJoin join, Pattern pattern, Map<String, FQN> namedRefs) {
-        var fqn = fqn(join.from());
+        final FQN fqn = fqn(join.from());
         Optional<String> joinFromAlias =
                 Optional.ofNullable(join.from().alias()).filter(alias -> !alias.isEmpty());
         joinFromAlias.ifPresent(s -> namedRefs.put(s, fqn));
@@ -102,16 +103,26 @@ public class ViewExtractor {
             throws UnsupportedReferenceExpressionException {
         for (AQRFeature feature : features) {
             // TODO: Expressions, calculations, references??
-            if (feature instanceof AQRFeature.Attribute
-                    && feature.kind() instanceof AQRFeature.Kind.Copy) {
-                query.project(feature.name());
+            if (feature instanceof AQRFeature.Attribute attribute
+                    && attribute.kind() instanceof AQRFeature.Kind.Copy copy) {
+                final String sourceAttributeName = copy.source().getName();
+                final String targetAttributeName = attribute.name();
+                query.project(sourceAttributeName, targetAttributeName);
+            } else if (feature instanceof AQRFeature.Attribute attribute
+                    && attribute.kind() instanceof AQRFeature.Kind.Calculate) {
+                throw new UnsupportedProjectionException(
+                        String.format("Calculate expressions are not supported: %s", feature));
             } else if (feature instanceof AQRFeature.Reference reference
-                    && reference.kind().expression() != null) {
-                // TODO: Make pretty
+                    && reference.kind() instanceof AQRFeature.Kind.Copy copy) {
+                // We could "mock" a ReferenceOperator FeatureCall + MemberFeatureCall here to
+                // support this
+                throw new UnsupportedProjectionException(
+                        String.format("Copying of References not supported: %s", feature));
+            } else if (feature instanceof AQRFeature.Reference reference
+                    && reference.kind() instanceof AQRFeature.Kind.Calculate calculateReference) {
                 final ReferenceOperator operator =
                         patternMatchingStrategy.parseReferenceOperator(
-                                reference.kind().expression());
-                log.info("Found reference operator: " + operator);
+                                calculateReference.expression());
                 final String sourceTypeNamespace =
                         Optional.ofNullable(reference.type().source())
                                 .map(AQRSource::from)
@@ -122,11 +133,9 @@ public class ViewExtractor {
                 final FQN targetLeaf = targetRoot.withLocalName(reference.type().name());
                 query.referenceOperator(
                         sourceTypeNamespace, targetRoot, targetLeaf, reference.name(), operator);
-            } else if (feature instanceof AQRFeature.Reference
-                    && feature.kind().expression() == null) {
-                log.info("TODO: " + feature);
             } else {
-                throw new RuntimeException("Invalid projection: " + feature);
+                throw new UnsupportedProjectionException(
+                        String.format("Unsupported projection: %s", feature));
             }
         }
     }
@@ -137,7 +146,7 @@ public class ViewExtractor {
 
     private static FQN fqn(String name) {
         if (name.contains(".")) {
-            var splitted = name.split("\\.");
+            final String[] splitted = name.split("\\.");
             return new FQN(splitted[0], splitted[1]);
         } else {
             return new FQN(name);
