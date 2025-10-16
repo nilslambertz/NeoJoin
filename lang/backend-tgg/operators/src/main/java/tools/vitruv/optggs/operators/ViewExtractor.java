@@ -102,40 +102,48 @@ public class ViewExtractor {
             @NonNull PatternMatchingStrategy patternMatchingStrategy)
             throws UnsupportedReferenceExpressionException {
         for (AQRFeature feature : features) {
-            // TODO: Expressions, calculations, references??
-            if (feature instanceof AQRFeature.Attribute attribute
-                    && attribute.kind() instanceof AQRFeature.Kind.Copy copy) {
-                final String sourceAttributeName = copy.source().getName();
-                final String targetAttributeName = attribute.name();
-                query.project(sourceAttributeName, targetAttributeName);
-            } else if (feature instanceof AQRFeature.Attribute attribute
-                    && attribute.kind() instanceof AQRFeature.Kind.Calculate) {
-                throw new UnsupportedProjectionException(
-                        String.format("Calculate expressions are not supported: %s", feature));
-            } else if (feature instanceof AQRFeature.Reference reference
-                    && reference.kind() instanceof AQRFeature.Kind.Copy copy) {
-                // We could "mock" a ReferenceOperator FeatureCall + MemberFeatureCall here to
-                // support this
-                throw new UnsupportedProjectionException(
-                        String.format("Copying of References not supported: %s", feature));
-            } else if (feature instanceof AQRFeature.Reference reference
-                    && reference.kind() instanceof AQRFeature.Kind.Calculate calculateReference) {
-                final ReferenceOperator operator =
-                        patternMatchingStrategy.parseReferenceOperator(
-                                calculateReference.expression());
-                final String sourceTypeNamespace =
-                        Optional.ofNullable(reference.type().source())
-                                .map(AQRSource::from)
-                                .map(AQRFrom::clazz)
-                                .map(EClass::getEPackage)
-                                .map(EPackage::getNsPrefix)
-                                .orElse(null);
-                final FQN targetLeaf = targetRoot.withLocalName(reference.type().name());
-                query.referenceOperator(
-                        sourceTypeNamespace, targetRoot, targetLeaf, reference.name(), operator);
-            } else {
-                throw new UnsupportedProjectionException(
-                        String.format("Unsupported projection: %s", feature));
+            switch (feature) {
+                case AQRFeature.Attribute attribute
+                        when attribute.kind() instanceof AQRFeature.Kind.Copy copy -> {
+                    final String sourceAttributeName = copy.source().getName();
+                    final String targetAttributeName = attribute.name();
+                    query.project(sourceAttributeName, targetAttributeName);
+                }
+                case AQRFeature.Attribute attribute
+                        when attribute.kind() instanceof AQRFeature.Kind.Calculate ->
+                        throw new UnsupportedProjectionException(
+                                String.format(
+                                        "Calculate expressions are not supported: %s", feature));
+                case AQRFeature.Reference reference
+                        when reference.kind() instanceof AQRFeature.Kind.Copy copy ->
+                        // We could "mock" a ReferenceOperator FeatureCall + MemberFeatureCall here
+                        // to support this
+                        throw new UnsupportedProjectionException(
+                                String.format("Copying of References not supported: %s", feature));
+                case AQRFeature.Reference reference
+                        when reference.kind()
+                                instanceof AQRFeature.Kind.Calculate calculateReference -> {
+                    final ReferenceOperator operator =
+                            patternMatchingStrategy.parseReferenceOperator(
+                                    calculateReference.expression());
+                    final String sourceTypeNamespace =
+                            Optional.ofNullable(reference.type().source())
+                                    .map(AQRSource::from)
+                                    .map(AQRFrom::clazz)
+                                    .map(EClass::getEPackage)
+                                    .map(EPackage::getNsPrefix)
+                                    .orElse(null);
+                    final FQN targetLeaf = targetRoot.withLocalName(reference.type().name());
+                    query.referenceOperator(
+                            sourceTypeNamespace,
+                            targetRoot,
+                            targetLeaf,
+                            reference.name(),
+                            operator);
+                }
+                case null, default ->
+                        throw new UnsupportedProjectionException(
+                                String.format("Unsupported projection: %s", feature));
             }
         }
     }
