@@ -132,7 +132,7 @@ public class ViewExtractor {
     }
 
     private static FQN fqn(AQRFrom from) {
-        return fqn(from.clazz().getName());
+        return new FQN(from.clazz().getEPackage().getNsPrefix(), from.clazz().getName());
     }
 
     private static FQN fqn(String name) {
