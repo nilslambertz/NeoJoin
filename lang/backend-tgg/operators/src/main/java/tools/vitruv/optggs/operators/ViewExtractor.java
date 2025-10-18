@@ -1,6 +1,5 @@
 package tools.vitruv.optggs.operators;
 
-import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.jspecify.annotations.NonNull;
@@ -18,8 +17,6 @@ import java.util.Map;
 import java.util.Optional;
 
 public class ViewExtractor {
-    private static final Logger log = Logger.getLogger(ViewExtractor.class);
-
     public static View viewFromAQR(
             AQR aqr, @NonNull PatternMatchingStrategy patternMatchingStrategy)
             throws UnsupportedReferenceExpressionException {
@@ -59,16 +56,15 @@ public class ViewExtractor {
         }
         final Query query = new Query(new Selection(sourcePattern, Pattern.from(targetRoot)));
 
-        // TODO: Filters on the source
         if (targetClass.source() != null && targetClass.source().condition() != null) {
-            throw new RuntimeException("Condition expressions are not supported");
+            throw new UnsupportedOperationException("Condition expressions are not supported");
         }
 
         applyProjectionsFromAST(
                 targetClass.features(), query, namedRefs, targetRoot, patternMatchingStrategy);
 
         if (targetClass.source() != null && !targetClass.source().groupingExpressions().isEmpty()) {
-            throw new RuntimeException("Grouping expressions are not supported");
+            throw new UnsupportedOperationException("Grouping expressions are not supported");
         }
 
         return query;
