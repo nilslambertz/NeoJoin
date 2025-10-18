@@ -10,21 +10,13 @@ import tools.vitruv.optggs.transpiler.tgg.TripleRule;
 import tools.vitruv.optggs.transpiler.tgg.TripleRulesBuilder;
 
 @Value
-public class ResolvedMemberFeatureCall implements ResolvedReferenceOperator {
+public class ResolvedCollectionMemberFeatureCall implements ResolvedReferenceOperator {
     String feature;
     FQN featureElement;
-    boolean isCollection;
 
     @Override
     public void extendRules(TripleRulesBuilder builder) {
-        final TripleRule rule;
-
-        // If feature is a collection, we need to create a new rule
-        if (isCollection) {
-            rule = builder.getLatestRule().deepCopy();
-        } else {
-            rule = builder.getLatestRule();
-        }
+        final TripleRule rule = builder.getLatestRule().deepCopy();
 
         final Node lastSourceNode =
                 rule.findNestedSourceNode(
@@ -38,9 +30,6 @@ public class ResolvedMemberFeatureCall implements ResolvedReferenceOperator {
         builder.addReferenceToLastSourceNode(feature);
         lastSourceNode.addLink(parentLinkToChild);
 
-        // If feature is a collection, a new rule is needed
-        if (isCollection) {
-            builder.addRule(rule);
-        }
+        builder.addRule(rule);
     }
 }

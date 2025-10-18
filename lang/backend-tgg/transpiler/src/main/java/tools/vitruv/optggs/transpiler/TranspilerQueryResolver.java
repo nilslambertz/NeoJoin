@@ -39,12 +39,13 @@ import tools.vitruv.optggs.transpiler.operators.patterns.ResolvedThetaJoin;
 import tools.vitruv.optggs.transpiler.operators.projections.ResolvedDerivedProjection;
 import tools.vitruv.optggs.transpiler.operators.projections.ResolvedSimpleProjection;
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedCollectReferences;
+import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedCollectionMemberFeatureCall;
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedFeatureCall;
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedFlatMap;
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedMap;
-import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedMemberFeatureCall;
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedReferenceOperator;
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedReferenceOperatorChain;
+import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedSingleMemberFeatureCall;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,15 +117,24 @@ public class TranspilerQueryResolver
                 resolvedOperator =
                         new ResolvedFeatureCall(
                                 emptySourceFqn.withLocalName(featureCall.getSimpleName()));
-            } else if (currentReferenceOperator instanceof MemberFeatureCall memberFeatureCall) {
+            } else if (currentReferenceOperator instanceof MemberFeatureCall memberFeatureCall
+                    && !memberFeatureCall.isCollection()) {
                 final FeatureInformation featureInformation =
                         memberFeatureCall.getFeatureInformation();
                 resolvedOperator =
-                        new ResolvedMemberFeatureCall(
+                        new ResolvedSingleMemberFeatureCall(
                                 featureInformation.getFeatureName(),
                                 emptySourceFqn.withLocalName(
-                                        featureInformation.getFeatureClassSimpleName()),
-                                memberFeatureCall.isCollection());
+                                        featureInformation.getFeatureClassSimpleName()));
+            } else if (currentReferenceOperator instanceof MemberFeatureCall memberFeatureCall
+                    && memberFeatureCall.isCollection()) {
+                final FeatureInformation featureInformation =
+                        memberFeatureCall.getFeatureInformation();
+                resolvedOperator =
+                        new ResolvedCollectionMemberFeatureCall(
+                                featureInformation.getFeatureName(),
+                                emptySourceFqn.withLocalName(
+                                        featureInformation.getFeatureClassSimpleName()));
             } else if (currentReferenceOperator instanceof Map map) {
                 final FeatureInformation featureInformation = map.getFeatureInformation();
                 resolvedOperator =
