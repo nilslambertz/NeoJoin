@@ -3,6 +3,7 @@ package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_ma
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtext.xbase.XBlockExpression;
 import org.eclipse.xtext.xbase.XExpression;
 
@@ -13,6 +14,13 @@ import java.util.Optional;
 public class BlockExpressionUtils {
     public static Optional<XBlockExpression> asBlockExpression(XExpression expression) {
         return CastingUtils.cast(expression, XBlockExpression.class);
+    }
+
+    public static boolean hasNoExpressions(XBlockExpression blockExpression) {
+        return Optional.ofNullable(blockExpression)
+                .map(XBlockExpression::getExpressions)
+                .map(EList::isEmpty)
+                .orElse(false);
     }
 
     public static boolean hasExactlyOneExpression(XBlockExpression blockExpression) {

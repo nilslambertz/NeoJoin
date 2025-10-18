@@ -1,55 +1,55 @@
 package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors;
 
-import org.eclipse.xtext.xbase.XBinaryOperation;
+import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.xbase.XExpression;
+import org.eclipse.xtext.xbase.XMemberFeatureCall;
 
 import tools.vitruv.neojoin.expression_parser.model.FindAny;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.BinaryOperationUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.BlockExpressionUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.ClosureUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFindFirstUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFindLastUtils;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmMemberCallUtils;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmOperationUtils;
 
 import java.util.Optional;
+import java.util.Set;
 
 public class FindAnyParser implements ReferenceOperatorParser {
+    private static final String FIND_FIRST_OPERATION_SIMPLE_NAME = "findFirst";
+    private static final String FIND_LAST_OPERATION_SIMPLE_NAME = "findLast";
+    private static final Set<String> FIND_ANY_OPERATION_SIMPLE_NAMES =
+            Set.of(FIND_FIRST_OPERATION_SIMPLE_NAME, FIND_LAST_OPERATION_SIMPLE_NAME);
+
     public Optional<ReferenceOperator> parse(
             PatternMatchingStrategy strategy, XExpression expression)
             throws UnsupportedReferenceExpressionException {
-        final Optional<XBinaryOperation> binaryOperation =
-                Optional.of(expression)
+        boolean isFindAnyWithoutArguments =
+                Optional.ofNullable(expression)
                         .flatMap(JvmFeatureCallUtils::asMemberFeatureCall)
-                        .filter(
-                                memberFeatureCall ->
-                                        JvmFindFirstUtils.isFindFirstOperation(memberFeatureCall)
-                                                || JvmFindLastUtils.isFindLastOperation(
-                                                        memberFeatureCall))
+                        .filter(FindAnyParser::isFindAnyOperation)
                         .filter(JvmMemberCallUtils::hasExactlyOneMemberCallArgument)
                         .flatMap(JvmMemberCallUtils::getFirstArgument)
                         .flatMap(ClosureUtils::asClosure)
                         .flatMap(ClosureUtils::getExpression)
                         .flatMap(BlockExpressionUtils::asBlockExpression)
-                        .filter(BlockExpressionUtils::hasExactlyOneExpression)
-                        .flatMap(BlockExpressionUtils::getFirstExpression)
-                        .flatMap(BinaryOperationUtils::asBinaryOperation);
-        if (binaryOperation.isEmpty()) {
+                        .filter(BlockExpressionUtils::hasNoExpressions)
+                        .isPresent();
+        if (!isFindAnyWithoutArguments) {
             return Optional.empty();
         }
 
-        final ReferenceOperator foundOperator =
-                binaryOperation
-                        .flatMap(BinaryOperationUtils::extractBinaryExpression)
-                        .map(FindAny::new)
-                        .orElseThrow(
-                                () ->
-                                        new UnsupportedOperationException(
-                                                "The MemberFeatureCall couldn't be parsed"));
+        return parseAndAppendFollowingExpressionOperators(strategy, expression, new FindAny());
+    }
 
-        return parseAndAppendFollowingExpressionOperators(strategy, expression, foundOperator);
+    private static boolean isFindAnyOperation(XMemberFeatureCall featureCall) {
+        return JvmFeatureUtils.getFeature(featureCall)
+                .flatMap(JvmOperationUtils::asJvmOperation)
+                .map(JvmIdentifiableElement::getSimpleName)
+                .map(FIND_ANY_OPERATION_SIMPLE_NAMES::contains)
+                .orElse(false);
     }
 }
