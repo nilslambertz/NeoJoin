@@ -137,9 +137,7 @@ public class ViewExtractor {
                             reference.name(),
                             operator);
                 }
-                case null, default ->
-                        throw new UnsupportedProjectionException(
-                                String.format("Unsupported projection: %s", feature));
+                case null, default -> throw new UnsupportedProjectionException(feature);
             }
         }
     }
