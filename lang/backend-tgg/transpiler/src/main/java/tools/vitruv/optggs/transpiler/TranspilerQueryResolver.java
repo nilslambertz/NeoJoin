@@ -5,12 +5,17 @@ import tools.vitruv.neojoin.expression_parser.model.FeatureInformation;
 import tools.vitruv.neojoin.expression_parser.model.FlatMap;
 import tools.vitruv.neojoin.expression_parser.model.Map;
 import tools.vitruv.neojoin.expression_parser.model.MemberFeatureCall;
+import tools.vitruv.neojoin.expression_parser.model.ReferenceFilter;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
+import tools.vitruv.neojoin.expression_parser.model.predicate_expression.ComparisonOperator;
+import tools.vitruv.neojoin.expression_parser.model.predicate_expression.ConstantValue;
 import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.operators.Filter;
+import tools.vitruv.optggs.operators.LogicOperator;
 import tools.vitruv.optggs.operators.Projection;
 import tools.vitruv.optggs.operators.Query;
 import tools.vitruv.optggs.operators.Selection;
+import tools.vitruv.optggs.operators.expressions.ConstantExpression;
 import tools.vitruv.optggs.operators.filters.ConstantFilter;
 import tools.vitruv.optggs.operators.filters.FunctionFilter;
 import tools.vitruv.optggs.operators.projections.DerivedProjection;
@@ -43,6 +48,7 @@ import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedColl
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedFeatureCall;
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedFlatMap;
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedMap;
+import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedReferenceFilter;
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedReferenceOperator;
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedReferenceOperatorChain;
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedSingleMemberFeatureCall;
@@ -114,42 +120,50 @@ public class TranspilerQueryResolver
         while (currentReferenceOperator != null) {
             final ResolvedReferenceOperator resolvedOperator;
             switch (currentReferenceOperator) {
-                case FeatureCall featureCall -> resolvedOperator =
-                    new ResolvedFeatureCall(
-                        emptySourceFqn.withLocalName(featureCall.getSimpleName()));
+                case FeatureCall featureCall ->
+                        resolvedOperator =
+                                new ResolvedFeatureCall(
+                                        emptySourceFqn.withLocalName(featureCall.getSimpleName()));
                 case MemberFeatureCall memberFeatureCall when !memberFeatureCall.isCollection() -> {
                     final FeatureInformation featureInformation =
-                        memberFeatureCall.getFeatureInformation();
+                            memberFeatureCall.getFeatureInformation();
                     resolvedOperator =
-                        new ResolvedSingleMemberFeatureCall(
-                            featureInformation.getFeatureName(),
-                            emptySourceFqn.withLocalName(
-                                featureInformation.getFeatureClassSimpleName()));
+                            new ResolvedSingleMemberFeatureCall(
+                                    featureInformation.getFeatureName(),
+                                    emptySourceFqn.withLocalName(
+                                            featureInformation.getFeatureClassSimpleName()));
                 }
                 case MemberFeatureCall memberFeatureCall when memberFeatureCall.isCollection() -> {
                     final FeatureInformation featureInformation =
-                        memberFeatureCall.getFeatureInformation();
+                            memberFeatureCall.getFeatureInformation();
                     resolvedOperator =
-                        new ResolvedCollectionMemberFeatureCall(
-                            featureInformation.getFeatureName(),
-                            emptySourceFqn.withLocalName(
-                                featureInformation.getFeatureClassSimpleName()));
+                            new ResolvedCollectionMemberFeatureCall(
+                                    featureInformation.getFeatureName(),
+                                    emptySourceFqn.withLocalName(
+                                            featureInformation.getFeatureClassSimpleName()));
                 }
                 case Map map -> {
                     final FeatureInformation featureInformation = map.getFeatureInformation();
                     resolvedOperator =
-                        new ResolvedMap(
-                            featureInformation.getFeatureName(),
-                            emptySourceFqn.withLocalName(
-                                featureInformation.getFeatureClassSimpleName()));
+                            new ResolvedMap(
+                                    featureInformation.getFeatureName(),
+                                    emptySourceFqn.withLocalName(
+                                            featureInformation.getFeatureClassSimpleName()));
                 }
                 case FlatMap flatMap -> {
                     final FeatureInformation featureInformation = flatMap.getFeatureInformation();
                     resolvedOperator =
-                        new ResolvedFlatMap(
-                            featureInformation.getFeatureName(),
-                            emptySourceFqn.withLocalName(
-                                featureInformation.getFeatureClassSimpleName()));
+                            new ResolvedFlatMap(
+                                    featureInformation.getFeatureName(),
+                                    emptySourceFqn.withLocalName(
+                                            featureInformation.getFeatureClassSimpleName()));
+                }
+                case ReferenceFilter filter -> {
+                    resolvedOperator =
+                            new ResolvedReferenceFilter(
+                                    filter.getFeature(),
+                                    toLogicOperator(filter.getOperator()),
+                                    toConstantExpression(filter.getConstantValue()));
                 }
                 default -> throw new IllegalStateException("Unsupported reference operator chain");
             }
@@ -208,5 +222,24 @@ public class TranspilerQueryResolver
         } else {
             throw new RuntimeException("Unknown pattern type while resolving");
         }
+    }
+
+    private static LogicOperator toLogicOperator(ComparisonOperator comparisonOperator) {
+        return switch (comparisonOperator) {
+            case Equals -> LogicOperator.Equals;
+            case NotEquals -> LogicOperator.NotEquals;
+            case LessThan -> LogicOperator.LessThan;
+            case LessEquals -> LogicOperator.LessEquals;
+            case GreaterThan -> LogicOperator.MoreThan;
+            case GreaterEquals -> LogicOperator.MoreEquals;
+        };
+    }
+
+    private static ConstantExpression toConstantExpression(ConstantValue value) {
+        if (value.isString()) {
+            return ConstantExpression.String(value.getValue());
+        }
+
+        return new ConstantExpression(value.getValue());
     }
 }
