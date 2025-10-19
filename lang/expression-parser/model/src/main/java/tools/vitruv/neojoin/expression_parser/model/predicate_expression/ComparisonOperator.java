@@ -1,4 +1,4 @@
-package tools.vitruv.neojoin.expression_parser.model.binary_expression;
+package tools.vitruv.neojoin.expression_parser.model.predicate_expression;
 
 public enum ComparisonOperator {
     Equals,
