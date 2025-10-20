@@ -107,9 +107,11 @@ public class Main implements Callable<Integer> {
         @Option(names = {"-tgg", "--generate-tgg-rules"}, paramLabel = "GENERATE TGG RULES", required = true, description = "Generate the corresponding TGG rules and write them to the given output directory")
         Path output;
 
-        @Option(names = {"--source-model-path"}, paramLabel = "SOURCE_MODEL_PATH", description = "Optional: Path to the source model for the TGG transformation"
-        )
+        @Option(names = {"--source-model-path"}, paramLabel = "SOURCE_MODEL_PATH", description = "Optional: Path to the source model for the TGG transformation")
         Path sourceModelPath;
+
+        @Option(names = {"--target-model-path"}, paramLabel = "TARGET_MODEL_PATH", description = "Optional: Path to the target model for the TGG transformation")
+        Path targetModelPath;
     }
 
     /**
@@ -191,7 +193,9 @@ public class Main implements Callable<Integer> {
         var targetMetaModel = new MetaModelGenerator(aqr).generate();
         printIssues(targetMetaModel.diagnostic());
         if (generate != null) {
-            EMFUtils.save(getOutputURI(generate.output, "ecore"), targetMetaModel.pack());
+            EPackage targetMetamodelPackage = targetMetaModel.pack();
+            EMFUtils.save(getOutputURI(generate.output, "ecore"), targetMetamodelPackage);
+            registry.put(targetMetamodelPackage.getNsURI(), targetMetamodelPackage);
         }
 
         if (transform != null) {
@@ -209,19 +213,22 @@ public class Main implements Callable<Integer> {
         }
 
         if (tggRuleGeneration != null) {
-            if(generate == null) {
-                printError("TGG rule generation requires executing the Metamodel generation (--generate) too");
+            if (generate == null) {
+                printError(
+                        "TGG rule generation requires executing the Metamodel generation (--generate) too");
                 return 1;
             }
 
             // Generate metamodel(s) for eMoflon
             final Path sourceMetamodelPath = Path.of("target/emsl-source-metamodel.msl");
-            EmslMetamodelGenerator.generateMetamodels(sourceMetaModelResourceSet, sourceMetamodelPath);
+            EmslMetamodelGenerator.generateMetamodels(
+                    sourceMetaModelResourceSet, sourceMetamodelPath);
 
             final ResourceSet targetMetaModelResourceSet = new ResourceSetImpl();
             targetMetaModelResourceSet.getResources().add(targetMetaModel.pack().eResource());
             final Path targetMetamodelPath = Path.of("target/emsl-target-metamodel.msl");
-            EmslMetamodelGenerator.generateMetamodels(targetMetaModelResourceSet, targetMetamodelPath);
+            EmslMetamodelGenerator.generateMetamodels(
+                    targetMetaModelResourceSet, targetMetamodelPath);
 
             // TODO: How to choose Project name?
             final Project project = new Project("TestTGGProjectV2");
@@ -229,18 +236,22 @@ public class Main implements Callable<Integer> {
             project.addTargetMetamodel(new Metamodel(targetMetamodelPath));
             final View view = ViewExtractor.viewFromAQR(aqr, new ManualPatternMatchingStrategy());
 
-            if(tggRuleGeneration.sourceModelPath != null) {
-                ResourceSet sourceModelResourceSet = new ResourceSetImpl();
-                sourceModelResourceSet.getPackageRegistry().putAll(registry);
-                sourceModelResourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
-                Resource sourceModelResource = sourceModelResourceSet.getResource(URI.createFileURI(tggRuleGeneration.sourceModelPath.toString()), true);
-                EcoreUtil.resolveAll(sourceModelResource);
+            if (tggRuleGeneration.sourceModelPath != null) {
+                final Path sourceModelOutputPath = Path.of("target/emsl-source-model.msl");
+                final String sourceModelName =
+                        convertEcoreModelToEmslAndGetModelName(
+                                registry, tggRuleGeneration.sourceModelPath, sourceModelOutputPath);
 
-                final Path convertedSourceModelPath = Path.of("target/emsl-source-model.msl");
-                EmslModelGenerator.generateModels(sourceModelResourceSet, convertedSourceModelPath);
-                final String sourceModelName = EmslUtils.extractModelName(sourceModelResource.getURI());
+                project.addSourceModel(new Model(sourceModelName, sourceModelOutputPath));
+            }
 
-                project.addSourceModel(new Model(sourceModelName, convertedSourceModelPath));
+            if (tggRuleGeneration.targetModelPath != null) {
+                final Path targetModelOutputPath = Path.of("target/emsl-target-model.msl");
+                final String targetModelName =
+                        convertEcoreModelToEmslAndGetModelName(
+                                registry, tggRuleGeneration.targetModelPath, targetModelOutputPath);
+
+                project.addTargetModel(new Model(targetModelName, targetModelOutputPath));
             }
 
             API.generateProjectForView(
@@ -248,6 +259,22 @@ public class Main implements Callable<Integer> {
         }
 
         return 0;
+    }
+
+    private static String convertEcoreModelToEmslAndGetModelName(
+            EPackage.Registry registry, Path modelPath, Path outputPath) {
+        ResourceSet modelResourceSet = new ResourceSetImpl();
+        modelResourceSet.getPackageRegistry().putAll(registry);
+        modelResourceSet
+                .getResourceFactoryRegistry()
+                .getExtensionToFactoryMap()
+                .put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
+        Resource sourceModelResource =
+                modelResourceSet.getResource(URI.createFileURI(modelPath.toString()), true);
+        EcoreUtil.resolveAll(sourceModelResource);
+
+        EmslModelGenerator.generateModels(modelResourceSet, outputPath);
+        return EmslUtils.extractModelName(sourceModelResource.getURI());
     }
 
     private static void printIssues(List<Issue> issues) {
