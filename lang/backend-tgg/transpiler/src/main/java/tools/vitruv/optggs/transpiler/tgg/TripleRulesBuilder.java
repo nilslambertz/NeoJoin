@@ -1,11 +1,8 @@
 package tools.vitruv.optggs.transpiler.tgg;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import tools.vitruv.optggs.operators.FQN;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +13,7 @@ public class TripleRulesBuilder {
     private final List<TripleRule> tripleRules = new ArrayList<>();
     private TripleRule latestRule = null;
 
-    @Setter private FQN sourceRoot = null;
-
-    @Getter(AccessLevel.NONE)
-    private final List<String> referencesToLastSourceNode = new ArrayList<>();
+    @Setter private TripleRulePathToNode pathToLastNode = null;
 
     public TripleRule addRule(TripleRule rule) {
         tripleRules.add(rule);
@@ -35,11 +29,7 @@ public class TripleRulesBuilder {
         tripleRules.remove(rule);
     }
 
-    public List<String> getReferencesToLastSourceNode() {
-        return List.copyOf(referencesToLastSourceNode);
-    }
-
-    public void addReferenceToLastSourceNode(String reference) {
-        referencesToLastSourceNode.add(reference);
+    public void addLinkToPathToLastNode(String link) {
+        pathToLastNode.addLinkToPath(link);
     }
 }

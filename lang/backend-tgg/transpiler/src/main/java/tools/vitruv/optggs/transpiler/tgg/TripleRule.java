@@ -167,9 +167,9 @@ public class TripleRule {
         return this;
     }
 
-    public Node findNestedSourceNode(FQN sourceNodeType, List<String> links) {
-        Node lastSourceNode = findSourceNodeByType(sourceNodeType).orElseThrow();
-        for (String nextReference : links) {
+    public Node findNestedSourceNode(TripleRulePathToNode path) {
+        Node lastSourceNode = findSourceNodeByType(path.getRoot()).orElseThrow();
+        for (String nextReference : path.getLinkPath()) {
             lastSourceNode = lastSourceNode.getLinkTarget(nextReference);
         }
         return lastSourceNode;

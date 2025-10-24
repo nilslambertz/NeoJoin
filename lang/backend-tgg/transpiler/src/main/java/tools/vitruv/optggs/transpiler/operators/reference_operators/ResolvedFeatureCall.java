@@ -6,6 +6,7 @@ import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.transpiler.tgg.Node;
 import tools.vitruv.optggs.transpiler.tgg.Slice;
 import tools.vitruv.optggs.transpiler.tgg.TripleRule;
+import tools.vitruv.optggs.transpiler.tgg.TripleRulePathToNode;
 import tools.vitruv.optggs.transpiler.tgg.TripleRulesBuilder;
 
 @Value
@@ -19,7 +20,7 @@ public class ResolvedFeatureCall implements ResolvedReferenceOperator {
     }
 
     public TripleRule createFeatureCallRule(FQN targetTop, TripleRulesBuilder builder) {
-        builder.setSourceRoot(element);
+        builder.setPathToLastNode(new TripleRulePathToNode(element));
 
         final TripleRule featureCallRule = builder.addRule();
         final Slice sourceSlice = featureCallRule.addSourceSlice();

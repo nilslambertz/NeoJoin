@@ -7,6 +7,7 @@ import tools.vitruv.optggs.transpiler.tgg.Link;
 import tools.vitruv.optggs.transpiler.tgg.Node;
 import tools.vitruv.optggs.transpiler.tgg.Slice;
 import tools.vitruv.optggs.transpiler.tgg.TripleRule;
+import tools.vitruv.optggs.transpiler.tgg.TripleRulePathToNode;
 import tools.vitruv.optggs.transpiler.tgg.TripleRulesBuilder;
 
 @Value
@@ -23,9 +24,9 @@ public class ResolvedCollectReferences implements ResolvedReferenceOperator {
             String targetReference,
             TripleRulesBuilder builder) {
         final TripleRule latestRule = builder.getLatestRule();
-        final Node lastSourceNode =
-                latestRule.findNestedSourceNode(
-                        builder.getSourceRoot(), builder.getReferencesToLastSourceNode());
+
+        final TripleRulePathToNode pathToLastNode = builder.getPathToLastNode();
+        final Node lastSourceNode = latestRule.findNestedSourceNode(pathToLastNode);
         lastSourceNode.makeBlack();
 
         final Node targetSourceNode = latestRule.findTargetNodeByType(targetTop).orElseThrow();

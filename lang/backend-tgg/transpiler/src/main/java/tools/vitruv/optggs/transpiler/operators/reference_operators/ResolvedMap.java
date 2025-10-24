@@ -7,6 +7,7 @@ import tools.vitruv.optggs.transpiler.tgg.Link;
 import tools.vitruv.optggs.transpiler.tgg.Node;
 import tools.vitruv.optggs.transpiler.tgg.Slice;
 import tools.vitruv.optggs.transpiler.tgg.TripleRule;
+import tools.vitruv.optggs.transpiler.tgg.TripleRulePathToNode;
 import tools.vitruv.optggs.transpiler.tgg.TripleRulesBuilder;
 
 @Value
@@ -17,16 +18,16 @@ public class ResolvedMap implements ResolvedReferenceOperator {
     @Override
     public void extendRules(TripleRulesBuilder builder) {
         final TripleRule latestRule = builder.getLatestRule();
-        final Node lastSourceNode =
-                latestRule.findNestedSourceNode(
-                        builder.getSourceRoot(), builder.getReferencesToLastSourceNode());
+
+        final TripleRulePathToNode pathToLastNode = builder.getPathToLastNode();
+        final Node lastSourceNode = latestRule.findNestedSourceNode(pathToLastNode);
 
         final Slice sourceSlice = latestRule.addSourceSlice();
         Node childNode = sourceSlice.addNode(featureElement);
         childNode.makeGreen();
 
         Link parentLinkToChild = Link.Green(feature, childNode);
-        builder.addReferenceToLastSourceNode(feature);
+        builder.addLinkToPathToLastNode(feature);
         lastSourceNode.addLink(parentLinkToChild);
     }
 }
