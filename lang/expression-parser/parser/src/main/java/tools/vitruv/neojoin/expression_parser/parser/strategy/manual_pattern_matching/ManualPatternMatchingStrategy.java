@@ -38,6 +38,6 @@ public class ManualPatternMatchingStrategy implements PatternMatchingStrategy {
             }
         }
 
-        throw new UnsupportedReferenceExpressionException(expression);
+        throw UnsupportedReferenceExpressionException.fromExpression(expression);
     }
 }

@@ -13,6 +13,7 @@ import org.eclipse.xtext.xbase.XStringLiteral;
 
 import tools.vitruv.neojoin.expression_parser.model.predicate_expression.ComparisonOperator;
 import tools.vitruv.neojoin.expression_parser.model.predicate_expression.ConstantValue;
+import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 
 import java.util.Map;
 import java.util.Optional;
@@ -35,34 +36,45 @@ public class PredicateExpressionUtils {
     /**
      * Extracts a ConstantPredicate out of the binary operation. The order of operations is expected
      * to be FIELD - COMPARISON_OPERATOR - CONSTANT_VALUE
+     *
+     * @throws UnsupportedReferenceExpressionException If the expression doesn't match the expected
+     *     format
      */
-    public static Optional<ConstantPredicate> extractConstantPredicate(XBinaryOperation operation) {
+    public static ConstantPredicate extractConstantPredicate(XBinaryOperation operation)
+            throws UnsupportedReferenceExpressionException {
         // Left side should be a feature/field call
+        final XExpression leftOperand = operation.getLeftOperand();
         final Optional<String> fieldSimpleName =
-                Optional.ofNullable(operation.getLeftOperand())
+                Optional.ofNullable(leftOperand)
                         .flatMap(JvmFeatureCallUtils::asMemberFeatureCall)
                         .flatMap(JvmFeatureUtils::getFeature)
                         .flatMap(JvmFieldUtils::asJvmField)
                         .map(JvmField::getSimpleName);
         if (fieldSimpleName.isEmpty()) {
-            return Optional.empty();
+            throw new UnsupportedReferenceExpressionException(
+                    String.format(
+                            "The left side of a filter expression must be a field, but was: %s",
+                            leftOperand));
         }
 
         final Optional<ComparisonOperator> comparisonOperator = getComparisonOperator(operation);
         if (comparisonOperator.isEmpty()) {
-            return Optional.empty();
+            throw new UnsupportedReferenceExpressionException(
+                    "The comparison operator is not supported");
         }
 
         // Right side should be a constant
-        final Optional<ConstantValue> constantValue =
-                getConstantExpressionAsString(operation.getRightOperand());
+        final XExpression rightOperand = operation.getRightOperand();
+        final Optional<ConstantValue> constantValue = getConstantExpressionAsString(rightOperand);
         if (constantValue.isEmpty()) {
-            return Optional.empty();
+            throw new UnsupportedReferenceExpressionException(
+                    String.format(
+                            "The right side of a filter expression must be a constant, but was: %s",
+                            rightOperand));
         }
 
-        return Optional.of(
-                new ConstantPredicate(
-                        fieldSimpleName.get(), comparisonOperator.get(), constantValue.get()));
+        return new ConstantPredicate(
+                fieldSimpleName.get(), comparisonOperator.get(), constantValue.get());
     }
 
     private static Optional<ComparisonOperator> getComparisonOperator(XBinaryOperation operation) {

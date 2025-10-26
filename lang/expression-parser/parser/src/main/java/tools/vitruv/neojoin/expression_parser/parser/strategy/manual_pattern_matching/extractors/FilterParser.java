@@ -1,6 +1,7 @@
 package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors;
 
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
+import org.eclipse.xtext.xbase.XBinaryOperation;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 
@@ -24,7 +25,7 @@ public class FilterParser implements ReferenceOperatorParser {
     public Optional<ReferenceOperator> parse(
             PatternMatchingStrategy strategy, XExpression expression)
             throws UnsupportedReferenceExpressionException {
-        final Optional<PredicateExpressionUtils.ConstantPredicate> constantFilterPredicate =
+        final Optional<XBinaryOperation> binaryOperation =
                 Optional.of(expression)
                         .flatMap(JvmFeatureCallUtils::asMemberFeatureCall)
                         .filter(FilterParser::isFilterOperation)
@@ -35,19 +36,22 @@ public class FilterParser implements ReferenceOperatorParser {
                         .flatMap(BlockExpressionUtils::asBlockExpression)
                         .filter(BlockExpressionUtils::hasExactlyOneExpression)
                         .flatMap(BlockExpressionUtils::getFirstExpression)
-                        .flatMap(PredicateExpressionUtils::asBinaryOperation)
-                        .flatMap(PredicateExpressionUtils::extractConstantPredicate);
-        if (constantFilterPredicate.isEmpty()) {
+                        .flatMap(PredicateExpressionUtils::asBinaryOperation);
+        if (binaryOperation.isEmpty()) {
             return Optional.empty();
         }
+
+        // Try to parse filter expression (throws if not possible)
+        final PredicateExpressionUtils.ConstantPredicate constantFilterPredicate =
+                PredicateExpressionUtils.extractConstantPredicate(binaryOperation.get());
 
         return parseAndAppendFollowingExpressionOperators(
                 strategy,
                 expression,
                 new ReferenceFilter(
-                        constantFilterPredicate.get().getFeature(),
-                        constantFilterPredicate.get().getOperator(),
-                        constantFilterPredicate.get().getConstantValue()));
+                        constantFilterPredicate.getFeature(),
+                        constantFilterPredicate.getOperator(),
+                        constantFilterPredicate.getConstantValue()));
     }
 
     private static boolean isFilterOperation(XMemberFeatureCall featureCall) {

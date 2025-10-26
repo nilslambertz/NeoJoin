@@ -1,20 +1,18 @@
 package tools.vitruv.neojoin.expression_parser.parser.exception;
 
-import lombok.Value;
-
 import org.eclipse.xtext.xbase.XExpression;
 
-@Value
 public class UnsupportedReferenceExpressionException extends Exception {
-    XExpression expression;
+    public static UnsupportedReferenceExpressionException fromExpression(XExpression expression) {
+        return new UnsupportedReferenceExpressionException(
+                String.format("The expression %s is not supported", expression));
+    }
 
-    public UnsupportedReferenceExpressionException(XExpression expression) {
-        super(String.format("The expression %s is not supported", expression));
-        this.expression = expression;
+    public UnsupportedReferenceExpressionException(String message) {
+        super(message);
     }
 
     public UnsupportedReferenceExpressionException(String message, XExpression expression) {
-        super(message);
-        this.expression = expression;
+        super(String.format(message + ". The expression was %s", expression));
     }
 }
