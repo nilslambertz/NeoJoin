@@ -113,4 +113,24 @@ class MemberFeatureCallParserTest {
         assertTrue(resultAsMemberFeatureCall.isCollection());
         assertNull(resultAsMemberFeatureCall.getFollowingOperator());
     }
+
+    @Test
+    public void shouldThrowWhenTypeIsNull() {
+        // given
+        final JvmField jvmField = JvmFieldFixtures.createJvmField();
+        jvmField.setSimpleName("someChildFieldReference");
+        jvmField.setType(null);
+
+        final XMemberFeatureCall memberFeatureCall =
+                XFeatureCallFixtures.createXMemberFeatureCall();
+        memberFeatureCall.setFeature(jvmField);
+
+        // when & then
+        final ManualPatternMatchingStrategy strategy = new ManualPatternMatchingStrategy();
+        UnsupportedReferenceExpressionException exception =
+                assertThrows(
+                        UnsupportedReferenceExpressionException.class,
+                        () -> parser.parse(strategy, memberFeatureCall));
+        assertEquals("The MemberFeatureCall couldn't be parsed", exception.getMessage());
+    }
 }

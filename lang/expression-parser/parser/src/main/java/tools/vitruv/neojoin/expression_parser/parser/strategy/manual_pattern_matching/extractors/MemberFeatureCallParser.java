@@ -55,7 +55,7 @@ public class MemberFeatureCallParser implements ReferenceOperatorParser {
         final ReferenceOperator foundOperator =
                 foundOperatorOptional.orElseThrow(
                         () ->
-                                new UnsupportedOperationException(
+                                new UnsupportedReferenceExpressionException(
                                         "The MemberFeatureCall couldn't be parsed"));
 
         return parseAndAppendFollowingExpressionOperators(strategy, expression, foundOperator);
