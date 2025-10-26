@@ -13,7 +13,10 @@ import org.junit.jupiter.api.Test;
 
 import tools.vitruv.neojoin.expression_parser.model.FeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.ExpressionParserUtils;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.fixtures.JvmFormalParameterFixtures;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.fixtures.JvmTypeFixtures;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.fixtures.JvmTypeReferenceFixtures;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.fixtures.XFeatureCallFixtures;
 
 import java.util.Optional;
 
@@ -22,9 +25,9 @@ class FeatureCallParserTest {
     public void parseEmptyFeatureCall() {
         // given
         final JvmFormalParameter emptyFormalParameter =
-                ExpressionParserUtils.createJvmFormalParameter();
+                JvmFormalParameterFixtures.createJvmFormalParameter();
         final XFeatureCall featureCall =
-                ExpressionParserUtils.createXFeatureCall(emptyFormalParameter);
+                XFeatureCallFixtures.createXFeatureCall(emptyFormalParameter);
 
         // when
         final FeatureCallParser parser = new FeatureCallParser();
@@ -45,12 +48,12 @@ class FeatureCallParserTest {
     @Test
     public void parseNonEmptyFeatureCall() {
         // given
-        final JvmType jvmType = ExpressionParserUtils.createJvmType("my.test.package.Car", "Car");
+        final JvmType jvmType = JvmTypeFixtures.createJvmType("my.test.package.Car", "Car");
         final JvmTypeReference jvmTypeReference =
-                ExpressionParserUtils.createJvmTypeReference(jvmType);
+                JvmTypeReferenceFixtures.createJvmTypeReference(jvmType);
         final JvmFormalParameter formalParameter =
-                ExpressionParserUtils.createJvmFormalParameter(jvmTypeReference);
-        final XFeatureCall featureCall = ExpressionParserUtils.createXFeatureCall(formalParameter);
+                JvmFormalParameterFixtures.createJvmFormalParameter(jvmTypeReference);
+        final XFeatureCall featureCall = XFeatureCallFixtures.createXFeatureCall(formalParameter);
 
         // when
         final FeatureCallParser parser = new FeatureCallParser();
