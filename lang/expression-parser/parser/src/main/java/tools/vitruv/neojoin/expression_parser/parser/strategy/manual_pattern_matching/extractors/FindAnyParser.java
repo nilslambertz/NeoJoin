@@ -1,6 +1,6 @@
 package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors;
 
-import org.eclipse.xtext.common.types.JvmIdentifiableElement;
+import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 
@@ -48,7 +48,7 @@ public class FindAnyParser implements ReferenceOperatorParser {
     private static boolean isFindAnyOperation(XMemberFeatureCall featureCall) {
         return JvmFeatureUtils.getFeature(featureCall)
                 .flatMap(JvmOperationUtils::asJvmOperation)
-                .map(JvmIdentifiableElement::getSimpleName)
+                .map(JvmOperation::getSimpleName)
                 .map(FIND_ANY_OPERATION_SIMPLE_NAMES::contains)
                 .orElse(false);
     }

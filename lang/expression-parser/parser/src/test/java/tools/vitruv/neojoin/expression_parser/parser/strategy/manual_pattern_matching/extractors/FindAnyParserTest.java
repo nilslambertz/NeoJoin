@@ -1,0 +1,85 @@
+package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.eclipse.xtext.common.types.JvmOperation;
+import org.eclipse.xtext.xbase.XClosure;
+import org.eclipse.xtext.xbase.XMemberFeatureCall;
+import org.junit.jupiter.api.Test;
+
+import tools.vitruv.neojoin.expression_parser.model.FindAny;
+import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
+import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.ManualPatternMatchingStrategy;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.fixtures.JvmOperationFixtures;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.fixtures.XBlockExpressionFixtures;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.fixtures.XClosureFixtures;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.fixtures.XFeatureCallFixtures;
+
+import java.util.Optional;
+
+class FindAnyParserTest {
+    @Test
+    public void parseFindFirst() throws UnsupportedReferenceExpressionException {
+        // given
+        final JvmOperation findFirstOperation = JvmOperationFixtures.createJvmOperation();
+        findFirstOperation.setSimpleName("findFirst");
+
+        final XClosure closure = XClosureFixtures.createXClosure();
+        closure.setExpression(XBlockExpressionFixtures.createXBlockExpression());
+
+        final XMemberFeatureCall memberFeatureCall =
+                XFeatureCallFixtures.createXMemberFeatureCall(findFirstOperation);
+        memberFeatureCall.getMemberCallArguments().add(closure);
+
+        // TODO: Add additional expression to the end to check that the operators are parsed and
+        // appended in the correct order
+
+        // when
+        final ManualPatternMatchingStrategy strategy = new ManualPatternMatchingStrategy();
+        final FindAnyParser parser = new FindAnyParser();
+        final Optional<ReferenceOperator> resultOptional =
+                parser.parse(strategy, memberFeatureCall);
+
+        // then
+        assertTrue(resultOptional.isPresent());
+
+        final ReferenceOperator result = resultOptional.get();
+        assertInstanceOf(FindAny.class, result);
+
+        final FindAny resultFindAny = (FindAny) result;
+        assertNull(resultFindAny.getFollowingOperator());
+    }
+
+    @Test
+    public void parseFindLast() throws UnsupportedReferenceExpressionException {
+        // given
+        final JvmOperation findLastOperation = JvmOperationFixtures.createJvmOperation();
+        findLastOperation.setSimpleName("findLast");
+
+        final XClosure closure = XClosureFixtures.createXClosure();
+        closure.setExpression(XBlockExpressionFixtures.createXBlockExpression());
+
+        final XMemberFeatureCall memberFeatureCall =
+                XFeatureCallFixtures.createXMemberFeatureCall(findLastOperation);
+        memberFeatureCall.getMemberCallArguments().add(closure);
+
+        // TODO: Add additional expression to the end to check that the operators are parsed and
+        // appended in the correct order
+
+        // when
+        final ManualPatternMatchingStrategy strategy = new ManualPatternMatchingStrategy();
+        final FindAnyParser parser = new FindAnyParser();
+        final Optional<ReferenceOperator> resultOptional =
+                parser.parse(strategy, memberFeatureCall);
+
+        // then
+        assertTrue(resultOptional.isPresent());
+
+        final ReferenceOperator result = resultOptional.get();
+        assertInstanceOf(FindAny.class, result);
+
+        final FindAny resultFindAny = (FindAny) result;
+        assertNull(resultFindAny.getFollowingOperator());
+    }
+}
