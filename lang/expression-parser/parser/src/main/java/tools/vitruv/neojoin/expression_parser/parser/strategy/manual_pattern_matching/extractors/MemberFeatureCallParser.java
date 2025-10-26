@@ -66,10 +66,6 @@ public class MemberFeatureCallParser implements ReferenceOperatorParser {
                 .map(JvmField::getType)
                 .flatMap(
                         jvmTypeReference -> {
-                            if (isListType(jvmTypeReference)) {
-                                return getListFeatureInformation(jvmField);
-                            }
-
                             final JvmType jvmType = jvmTypeReference.getType();
                             return Optional.of(
                                     new FeatureInformation(

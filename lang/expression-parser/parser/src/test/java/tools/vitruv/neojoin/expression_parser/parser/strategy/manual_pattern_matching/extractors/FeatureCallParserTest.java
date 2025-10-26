@@ -21,16 +21,17 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 import java.util.Optional;
 
 class FeatureCallParserTest {
+    private static final FeatureCallParser parser = new FeatureCallParser();
+
     @Test
     public void parseEmptyFeatureCall() {
         // given
         final JvmFormalParameter emptyFormalParameter =
                 JvmFormalParameterFixtures.createJvmFormalParameter();
-        final XFeatureCall featureCall =
-                XFeatureCallFixtures.createXFeatureCall(emptyFormalParameter);
+        final XFeatureCall featureCall = XFeatureCallFixtures.createXFeatureCall();
+        featureCall.setFeature(emptyFormalParameter);
 
         // when
-        final FeatureCallParser parser = new FeatureCallParser();
         final Optional<ReferenceOperator> resultOptional = parser.parse(null, featureCall);
 
         // then
@@ -53,10 +54,10 @@ class FeatureCallParserTest {
                 JvmTypeReferenceFixtures.createJvmTypeReference(jvmType);
         final JvmFormalParameter formalParameter =
                 JvmFormalParameterFixtures.createJvmFormalParameter(jvmTypeReference);
-        final XFeatureCall featureCall = XFeatureCallFixtures.createXFeatureCall(formalParameter);
+        final XFeatureCall featureCall = XFeatureCallFixtures.createXFeatureCall();
+        featureCall.setFeature(formalParameter);
 
         // when
-        final FeatureCallParser parser = new FeatureCallParser();
         final Optional<ReferenceOperator> resultOptional = parser.parse(null, featureCall);
 
         // then

@@ -19,6 +19,8 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 import java.util.Optional;
 
 class FindAnyParserTest {
+    private static final FindAnyParser parser = new FindAnyParser();
+
     @Test
     public void parseFindFirst() throws UnsupportedReferenceExpressionException {
         // given
@@ -29,7 +31,8 @@ class FindAnyParserTest {
         closure.setExpression(XBlockExpressionFixtures.createXBlockExpression());
 
         final XMemberFeatureCall memberFeatureCall =
-                XFeatureCallFixtures.createXMemberFeatureCall(findFirstOperation);
+                XFeatureCallFixtures.createXMemberFeatureCall();
+        memberFeatureCall.setFeature(findFirstOperation);
         memberFeatureCall.getMemberCallArguments().add(closure);
 
         // TODO: Add additional expression to the end to check that the operators are parsed and
@@ -37,7 +40,6 @@ class FindAnyParserTest {
 
         // when
         final ManualPatternMatchingStrategy strategy = new ManualPatternMatchingStrategy();
-        final FindAnyParser parser = new FindAnyParser();
         final Optional<ReferenceOperator> resultOptional =
                 parser.parse(strategy, memberFeatureCall);
 
@@ -47,8 +49,8 @@ class FindAnyParserTest {
         final ReferenceOperator result = resultOptional.get();
         assertInstanceOf(FindAny.class, result);
 
-        final FindAny resultFindAny = (FindAny) result;
-        assertNull(resultFindAny.getFollowingOperator());
+        final FindAny resultAsFindAny = (FindAny) result;
+        assertNull(resultAsFindAny.getFollowingOperator());
     }
 
     @Test
@@ -61,7 +63,8 @@ class FindAnyParserTest {
         closure.setExpression(XBlockExpressionFixtures.createXBlockExpression());
 
         final XMemberFeatureCall memberFeatureCall =
-                XFeatureCallFixtures.createXMemberFeatureCall(findLastOperation);
+                XFeatureCallFixtures.createXMemberFeatureCall();
+        memberFeatureCall.setFeature(findLastOperation);
         memberFeatureCall.getMemberCallArguments().add(closure);
 
         // TODO: Add additional expression to the end to check that the operators are parsed and
@@ -69,7 +72,6 @@ class FindAnyParserTest {
 
         // when
         final ManualPatternMatchingStrategy strategy = new ManualPatternMatchingStrategy();
-        final FindAnyParser parser = new FindAnyParser();
         final Optional<ReferenceOperator> resultOptional =
                 parser.parse(strategy, memberFeatureCall);
 
@@ -79,7 +81,7 @@ class FindAnyParserTest {
         final ReferenceOperator result = resultOptional.get();
         assertInstanceOf(FindAny.class, result);
 
-        final FindAny resultFindAny = (FindAny) result;
-        assertNull(resultFindAny.getFollowingOperator());
+        final FindAny resultAsFindAny = (FindAny) result;
+        assertNull(resultAsFindAny.getFollowingOperator());
     }
 }

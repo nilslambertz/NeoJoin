@@ -12,4 +12,8 @@ public class JvmTypeReferenceFixtures {
         jvmTypeReference.setType(type);
         return jvmTypeReference;
     }
+
+    public static JvmParameterizedTypeReference createJvmParameterizedTypeReference() {
+        return TypesFactory.eINSTANCE.createJvmParameterizedTypeReference();
+    }
 }
