@@ -17,7 +17,7 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.fixtures.JvmFieldFixtures;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.fixtures.JvmTypeFixtures;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.fixtures.JvmTypeReferenceFixtures;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.fixtures.XFeatureCallFixtures;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.fixtures.XMemberFeatureCallFixtures;
 
 import java.util.Optional;
 
@@ -38,7 +38,7 @@ class MemberFeatureCallParserTest {
         jvmField.setType(typeReference);
 
         final XMemberFeatureCall memberFeatureCall =
-                XFeatureCallFixtures.createXMemberFeatureCall();
+                XMemberFeatureCallFixtures.createXMemberFeatureCall();
         memberFeatureCall.setFeature(jvmField);
 
         // TODO: Add additional expression to the end to check that the operators are parsed and
@@ -86,7 +86,7 @@ class MemberFeatureCallParserTest {
         jvmField.setType(typeReference);
 
         final XMemberFeatureCall memberFeatureCall =
-                XFeatureCallFixtures.createXMemberFeatureCall();
+                XMemberFeatureCallFixtures.createXMemberFeatureCall();
         memberFeatureCall.setFeature(jvmField);
 
         // TODO: Add additional expression to the end to check that the operators are parsed and
@@ -122,7 +122,7 @@ class MemberFeatureCallParserTest {
         jvmField.setType(null);
 
         final XMemberFeatureCall memberFeatureCall =
-                XFeatureCallFixtures.createXMemberFeatureCall();
+                XMemberFeatureCallFixtures.createXMemberFeatureCall();
         memberFeatureCall.setFeature(jvmField);
 
         // when & then

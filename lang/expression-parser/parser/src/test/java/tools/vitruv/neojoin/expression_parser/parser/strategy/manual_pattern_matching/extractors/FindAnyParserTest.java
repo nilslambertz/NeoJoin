@@ -14,7 +14,7 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.fixtures.JvmOperationFixtures;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.fixtures.XBlockExpressionFixtures;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.fixtures.XClosureFixtures;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.fixtures.XFeatureCallFixtures;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.fixtures.XMemberFeatureCallFixtures;
 
 import java.util.Optional;
 
@@ -31,7 +31,7 @@ class FindAnyParserTest {
         closure.setExpression(XBlockExpressionFixtures.createXBlockExpression());
 
         final XMemberFeatureCall memberFeatureCall =
-                XFeatureCallFixtures.createXMemberFeatureCall();
+                XMemberFeatureCallFixtures.createXMemberFeatureCall();
         memberFeatureCall.setFeature(findFirstOperation);
         memberFeatureCall.getMemberCallArguments().add(closure);
 
@@ -63,7 +63,7 @@ class FindAnyParserTest {
         closure.setExpression(XBlockExpressionFixtures.createXBlockExpression());
 
         final XMemberFeatureCall memberFeatureCall =
-                XFeatureCallFixtures.createXMemberFeatureCall();
+                XMemberFeatureCallFixtures.createXMemberFeatureCall();
         memberFeatureCall.setFeature(findLastOperation);
         memberFeatureCall.getMemberCallArguments().add(closure);
 
