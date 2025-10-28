@@ -16,6 +16,16 @@ public class XMemberFeatureCallFixtures {
         return new XMemberFeatureCallImplCustom();
     }
 
+    public static XMemberFeatureCall simpleFieldXMemberFeatureCall(String simpleName) {
+        final JvmField jvmField = JvmFieldFixtures.createJvmField();
+        jvmField.setSimpleName(simpleName);
+
+        final XMemberFeatureCall memberFeatureCall = createXMemberFeatureCall();
+        memberFeatureCall.setFeature(jvmField);
+
+        return memberFeatureCall;
+    }
+
     public static XMemberFeatureCall oneToOneFieldXMemberFeatureCall(
             String identifier, String simpleName, String referenceName) {
         final JvmType jvmType = JvmTypeFixtures.createJvmType(identifier, simpleName);
@@ -70,5 +80,40 @@ public class XMemberFeatureCallFixtures {
         mapMemberFeatureCall.setFeature(mapOperation);
 
         return mapMemberFeatureCall;
+    }
+
+    public static XMemberFeatureCall flatMapOperationMemberFeatureCall(
+            XExpression innerExpression) {
+        final XClosure closure = XClosureFixtures.createXClosure();
+        final XBlockExpression blockExpression = XBlockExpressionFixtures.createXBlockExpression();
+        blockExpression.getExpressions().add(innerExpression);
+        closure.setExpression(blockExpression);
+
+        final XMemberFeatureCall flatMapMemberFeatureCall =
+                XMemberFeatureCallFixtures.createXMemberFeatureCall();
+        flatMapMemberFeatureCall.getMemberCallArguments().add(closure);
+
+        final JvmOperation flatMapOperation = JvmOperationFixtures.createJvmOperation();
+        flatMapOperation.setSimpleName("flatMap");
+        flatMapMemberFeatureCall.setFeature(flatMapOperation);
+
+        return flatMapMemberFeatureCall;
+    }
+
+    public static XMemberFeatureCall filterOperationMemberFeatureCall(XExpression innerExpression) {
+        final XClosure closure = XClosureFixtures.createXClosure();
+        final XBlockExpression blockExpression = XBlockExpressionFixtures.createXBlockExpression();
+        blockExpression.getExpressions().add(innerExpression);
+        closure.setExpression(blockExpression);
+
+        final XMemberFeatureCall filterMemberFeatureCall =
+                XMemberFeatureCallFixtures.createXMemberFeatureCall();
+        filterMemberFeatureCall.getMemberCallArguments().add(closure);
+
+        final JvmOperation filterOperation = JvmOperationFixtures.createJvmOperation();
+        filterOperation.setSimpleName("filter");
+        filterMemberFeatureCall.setFeature(filterOperation);
+
+        return filterMemberFeatureCall;
     }
 }
