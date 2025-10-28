@@ -6,8 +6,11 @@ import tools.vitruv.optggs.operators.expressions.ConstantExpression;
 import tools.vitruv.optggs.operators.expressions.ValueExpression;
 import tools.vitruv.optggs.operators.expressions.VariableExpression;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -19,11 +22,17 @@ public class Node {
     private final NameRepository nameRepository;
     private final Map<String, Property> properties;
     private final Map<String, Link> links;
-    private final Map<String, Attribute> attributes;
+    private final List<Attribute> attributes;
 
     private static Node create(String id, FQN type, boolean green, NameRepository nameRepository) {
         return new Node(
-                id, type, green, nameRepository, new HashMap<>(), new HashMap<>(), new HashMap<>());
+                id,
+                type,
+                green,
+                nameRepository,
+                new HashMap<>(),
+                new HashMap<>(),
+                new ArrayList<>());
     }
 
     private Node(
@@ -33,7 +42,7 @@ public class Node {
             NameRepository nameRepository,
             Map<String, Property> properties,
             Map<String, Link> links,
-            Map<String, Attribute> attributes) {
+            List<Attribute> attributes) {
         this.id = id;
         this.type = type;
         this.green = green;
@@ -88,44 +97,21 @@ public class Node {
 
     public ValueExpression addVariableAttribute(
             String name, LogicOperator operator, VariableExpression variable) {
-        var existingAttribute = this.attribute(name);
-        if (existingAttribute != null) {
-            if (existingAttribute.operator() == operator
-                    && existingAttribute.value() instanceof VariableExpression v) {
-                // keep variable attribute if the same attribute already exists
-                return v;
-            } else if (existingAttribute.operator() == LogicOperator.Equals
-                    && operator == LogicOperator.Equals
-                    && existingAttribute.value() instanceof ConstantExpression c) {
-                return c;
-            }
-            throw new RuntimeException(
-                    "Tried to set attribute " + name + " on " + this.id + " twice (variable)");
-        }
         addAttribute(new Attribute(name, operator, variable));
         return variable;
     }
 
     public void addConstantAttribute(
             String name, LogicOperator operator, ConstantExpression value) {
-        var existingAttribute = this.attribute(name);
-        if (existingAttribute != null) {
-            throw new RuntimeException(
-                    "Tried to set attribute " + name + " on " + this.id + " twice (constant)");
-        }
         addAttribute(new Attribute(name, operator, value));
     }
 
     public void addAttribute(Attribute attribute) {
-        attributes.put(attribute.name(), attribute);
-    }
-
-    public Attribute attribute(String name) {
-        return attributes.get(name);
+        attributes.add(attribute);
     }
 
     public Collection<Attribute> attributes() {
-        return attributes.values();
+        return Collections.unmodifiableCollection(attributes);
     }
 
     private String variableNameForProperty(String propertyName) {
@@ -161,11 +147,8 @@ public class Node {
                                 Collectors.toMap(
                                         Map.Entry::getKey,
                                         entry -> entry.getValue().deepCopy(copyHelper)));
-        final Map<String, Attribute> copiedAttributes =
-                this.attributes.entrySet().stream()
-                        .collect(
-                                Collectors.toMap(
-                                        Map.Entry::getKey, entry -> entry.getValue().deepCopy()));
+        final List<Attribute> copiedAttributes =
+                this.attributes.stream().map(Attribute::deepCopy).toList();
 
         return new Node(
                 id,
@@ -180,7 +163,7 @@ public class Node {
     @Override
     public String toString() {
         var links = String.join(",", links().stream().map(Objects::toString).toList());
-        var attrbutes = String.join(",", attributes().stream().map(Objects::toString).toList());
+        var attributes = String.join(",", attributes().stream().map(Objects::toString).toList());
         return "<"
                 + (green ? "++" : "")
                 + id
@@ -189,7 +172,7 @@ public class Node {
                 + ";"
                 + links
                 + ";"
-                + attrbutes
+                + attributes
                 + ">";
     }
 }
