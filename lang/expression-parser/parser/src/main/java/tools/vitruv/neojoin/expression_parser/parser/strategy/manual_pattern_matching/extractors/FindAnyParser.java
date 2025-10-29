@@ -1,6 +1,8 @@
 package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors;
 
 import org.eclipse.xtext.common.types.JvmOperation;
+import org.eclipse.xtext.xbase.XAbstractFeatureCall;
+import org.eclipse.xtext.xbase.XClosure;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 
@@ -11,7 +13,6 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStr
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.BlockExpressionUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.ClosureUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmMemberCallUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmOperationUtils;
 
@@ -34,7 +35,7 @@ public class FindAnyParser implements ReferenceOperatorParser {
                         .filter(JvmMemberCallUtils::hasExactlyOneMemberCallArgument)
                         .flatMap(JvmMemberCallUtils::getFirstArgument)
                         .flatMap(ClosureUtils::asClosure)
-                        .flatMap(ClosureUtils::getExpression)
+                        .map(XClosure::getExpression)
                         .flatMap(BlockExpressionUtils::asBlockExpression)
                         .filter(BlockExpressionUtils::hasNoExpressions)
                         .isPresent();
@@ -46,7 +47,8 @@ public class FindAnyParser implements ReferenceOperatorParser {
     }
 
     private static boolean isFindAnyOperation(XMemberFeatureCall featureCall) {
-        return JvmFeatureUtils.getFeature(featureCall)
+        return Optional.ofNullable(featureCall)
+                .map(XAbstractFeatureCall::getFeature)
                 .flatMap(JvmOperationUtils::asJvmOperation)
                 .map(JvmOperation::getSimpleName)
                 .map(FIND_ANY_OPERATION_SIMPLE_NAMES::contains)

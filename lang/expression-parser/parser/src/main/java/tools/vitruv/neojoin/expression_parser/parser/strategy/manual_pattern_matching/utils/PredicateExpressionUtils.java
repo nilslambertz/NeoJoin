@@ -6,6 +6,7 @@ import lombok.Value;
 
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmOperation;
+import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XBinaryOperation;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XNumberLiteral;
@@ -47,7 +48,7 @@ public class PredicateExpressionUtils {
         final Optional<String> fieldSimpleName =
                 Optional.ofNullable(leftOperand)
                         .flatMap(JvmFeatureCallUtils::asMemberFeatureCall)
-                        .flatMap(JvmFeatureUtils::getFeature)
+                        .map(XAbstractFeatureCall::getFeature)
                         .flatMap(JvmFieldUtils::asJvmField)
                         .map(JvmField::getSimpleName);
         if (fieldSimpleName.isEmpty()) {
@@ -79,7 +80,7 @@ public class PredicateExpressionUtils {
 
     private static Optional<ComparisonOperator> getComparisonOperator(XBinaryOperation operation) {
         return Optional.ofNullable(operation)
-                .flatMap(JvmFeatureUtils::getFeature)
+                .map(XAbstractFeatureCall::getFeature)
                 .flatMap(JvmOperationUtils::asJvmOperation)
                 .map(JvmOperation::getSimpleName)
                 .map(OPERATOR_MAP::get);

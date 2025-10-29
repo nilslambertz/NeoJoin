@@ -1,6 +1,8 @@
 package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors;
 
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
+import org.eclipse.xtext.xbase.XAbstractFeatureCall;
+import org.eclipse.xtext.xbase.XClosure;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 
@@ -15,7 +17,6 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStr
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.BlockExpressionUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.ClosureUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmMemberCallUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmOperationUtils;
 
@@ -41,7 +42,7 @@ public class FlatMapParser implements ReferenceOperatorParser {
         final Optional<XExpression> flatMapArgumentExpression =
                 flatMapArgument
                         .flatMap(ClosureUtils::asClosure)
-                        .flatMap(ClosureUtils::getExpression)
+                        .map(XClosure::getExpression)
                         .flatMap(BlockExpressionUtils::asBlockExpression)
                         .filter(BlockExpressionUtils::hasExactlyOneExpression)
                         .flatMap(BlockExpressionUtils::getFirstExpression);
@@ -107,7 +108,8 @@ public class FlatMapParser implements ReferenceOperatorParser {
     }
 
     private static boolean isFlatMapOperation(XMemberFeatureCall featureCall) {
-        return JvmFeatureUtils.getFeature(featureCall)
+        return Optional.ofNullable(featureCall)
+                .map(XAbstractFeatureCall::getFeature)
                 .flatMap(JvmOperationUtils::asJvmOperation)
                 .map(JvmIdentifiableElement::getSimpleName)
                 .map(FLAT_MAP_OPERATION_SIMPLE_NAME::equals)

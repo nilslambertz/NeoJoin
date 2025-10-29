@@ -13,8 +13,4 @@ public class ClosureUtils {
     public static Optional<XClosure> asClosure(XExpression expression) {
         return CastingUtils.cast(expression, XClosure.class);
     }
-
-    public static Optional<XExpression> getExpression(XClosure closure) {
-        return Optional.ofNullable(closure).map(XClosure::getExpression);
-    }
 }

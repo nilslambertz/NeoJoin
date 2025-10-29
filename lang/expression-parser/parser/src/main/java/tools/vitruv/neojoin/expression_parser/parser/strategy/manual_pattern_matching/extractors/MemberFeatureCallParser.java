@@ -3,6 +3,7 @@ package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_ma
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
+import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 
@@ -12,7 +13,6 @@ import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFieldUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmTypeReferenceUtils;
 
@@ -32,7 +32,7 @@ public class MemberFeatureCallParser implements ReferenceOperatorParser {
 
         final Optional<JvmField> jvmField =
                 memberFeatureCall
-                        .flatMap(JvmFeatureUtils::getFeature)
+                        .map(XAbstractFeatureCall::getFeature)
                         .flatMap(JvmFieldUtils::asJvmField);
         if (jvmField.isEmpty()) {
             return Optional.empty();
