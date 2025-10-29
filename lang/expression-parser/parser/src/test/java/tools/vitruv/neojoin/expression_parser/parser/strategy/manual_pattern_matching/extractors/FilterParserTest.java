@@ -21,7 +21,7 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 
 import java.util.Optional;
 
-class FilterParserTest {
+class FilterParserTest implements ExpressionParserTest {
     private static final FilterParser parser = new FilterParser();
 
     @Test
@@ -39,9 +39,7 @@ class FilterParserTest {
 
         final XMemberFeatureCall filterMemberFeatureCall =
                 XMemberFeatureCallFixtures.filterOperationMemberFeatureCall(binaryOperation);
-
-        // TODO: Add additional expression to the end to check that the operators are parsed and
-        // appended in the correct order
+        filterMemberFeatureCall.setMemberCallTarget(exampleExpressionChain());
 
         // when
         final ManualPatternMatchingStrategy strategy = new ManualPatternMatchingStrategy();
@@ -51,7 +49,9 @@ class FilterParserTest {
         // then
         assertTrue(resultOptional.isPresent());
 
-        final ReferenceOperator result = resultOptional.get();
+        final ReferenceOperator result =
+                assertExampleExpressionChainResultAndGetFollowingReferenceOperator(
+                        resultOptional.get());
         assertInstanceOf(ReferenceFilter.class, result);
 
         final ReferenceFilter resultAsFilter = (ReferenceFilter) result;

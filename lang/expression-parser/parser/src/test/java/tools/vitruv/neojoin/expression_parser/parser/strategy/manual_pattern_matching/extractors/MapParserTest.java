@@ -17,7 +17,7 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 
 import java.util.Optional;
 
-class MapParserTest {
+class MapParserTest implements ExpressionParserTest {
     private static final MapParser parser = new MapParser();
 
     @Test
@@ -36,9 +36,7 @@ class MapParserTest {
         final XMemberFeatureCall mapMemberFeatureCall =
                 XMemberFeatureCallFixtures.mapOperationMemberFeatureCall(
                         mapExpressionMemberFeatureCall);
-
-        // TODO: Add additional expression to the end to check that the operators are parsed and
-        // appended in the correct order
+        mapMemberFeatureCall.setMemberCallTarget(exampleExpressionChain());
 
         // when
         final ManualPatternMatchingStrategy strategy = new ManualPatternMatchingStrategy();
@@ -48,7 +46,9 @@ class MapParserTest {
         // then
         assertTrue(resultOptional.isPresent());
 
-        final ReferenceOperator result = resultOptional.get();
+        final ReferenceOperator result =
+                assertExampleExpressionChainResultAndGetFollowingReferenceOperator(
+                        resultOptional.get());
         assertInstanceOf(Map.class, result);
 
         final Map resultAsMap = (Map) result;
@@ -93,9 +93,7 @@ class MapParserTest {
         final XMemberFeatureCall mapMemberFeatureCall =
                 XMemberFeatureCallFixtures.mapOperationMemberFeatureCall(
                         mapExpressionDeepestMemberFeatureCall);
-
-        // TODO: Add additional expression to the end to check that the operators are parsed and
-        // appended in the correct order
+        mapMemberFeatureCall.setMemberCallTarget(exampleExpressionChain());
 
         // when
         final ManualPatternMatchingStrategy strategy = new ManualPatternMatchingStrategy();
@@ -105,7 +103,9 @@ class MapParserTest {
         // then
         assertTrue(resultOptional.isPresent());
 
-        final ReferenceOperator result = resultOptional.get();
+        final ReferenceOperator result =
+                assertExampleExpressionChainResultAndGetFollowingReferenceOperator(
+                        resultOptional.get());
         assertInstanceOf(Map.class, result);
 
         final Map firstMapOperator = (Map) result;
@@ -174,9 +174,7 @@ class MapParserTest {
         final XMemberFeatureCall mapMemberFeatureCall =
                 XMemberFeatureCallFixtures.mapOperationMemberFeatureCall(
                         mapExpressionDeepestMemberFeatureCall);
-
-        // TODO: Add additional expression to the end to check that the operators are parsed and
-        // appended in the correct order
+        mapMemberFeatureCall.setMemberCallTarget(exampleExpressionChain());
 
         // when
         final ManualPatternMatchingStrategy strategy = new ManualPatternMatchingStrategy();
@@ -186,7 +184,9 @@ class MapParserTest {
         // then
         assertTrue(resultOptional.isPresent());
 
-        final ReferenceOperator result = resultOptional.get();
+        final ReferenceOperator result =
+                assertExampleExpressionChainResultAndGetFollowingReferenceOperator(
+                        resultOptional.get());
         assertInstanceOf(FlatMap.class, result);
 
         final FlatMap firstFlatMapOperator = (FlatMap) result;

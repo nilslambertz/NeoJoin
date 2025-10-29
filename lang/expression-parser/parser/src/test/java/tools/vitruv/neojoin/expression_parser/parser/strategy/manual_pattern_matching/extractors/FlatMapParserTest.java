@@ -17,7 +17,7 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 
 import java.util.Optional;
 
-class FlatMapParserTest {
+class FlatMapParserTest implements ExpressionParserTest {
     private static final FlatMapParser parser = new FlatMapParser();
 
     @Test
@@ -36,9 +36,7 @@ class FlatMapParserTest {
         final XMemberFeatureCall flatMapMemberFeatureCall =
                 XMemberFeatureCallFixtures.flatMapOperationMemberFeatureCall(
                         flatMapExpressionMemberFeatureCall);
-
-        // TODO: Add additional expression to the end to check that the operators are parsed and
-        // appended in the correct order
+        flatMapMemberFeatureCall.setMemberCallTarget(exampleExpressionChain());
 
         // when
         final ManualPatternMatchingStrategy strategy = new ManualPatternMatchingStrategy();
@@ -48,7 +46,9 @@ class FlatMapParserTest {
         // then
         assertTrue(resultOptional.isPresent());
 
-        final ReferenceOperator result = resultOptional.get();
+        final ReferenceOperator result =
+                assertExampleExpressionChainResultAndGetFollowingReferenceOperator(
+                        resultOptional.get());
         assertInstanceOf(FlatMap.class, result);
 
         final FlatMap resultAsFlatMap = (FlatMap) result;
@@ -95,9 +95,7 @@ class FlatMapParserTest {
         final XMemberFeatureCall flatMapMemberFeatureCall =
                 XMemberFeatureCallFixtures.flatMapOperationMemberFeatureCall(
                         flatMapExpressionDeepestMemberFeatureCall);
-
-        // TODO: Add additional expression to the end to check that the operators are parsed and
-        // appended in the correct order
+        flatMapMemberFeatureCall.setMemberCallTarget(exampleExpressionChain());
 
         // when
         final ManualPatternMatchingStrategy strategy = new ManualPatternMatchingStrategy();
@@ -107,7 +105,9 @@ class FlatMapParserTest {
         // then
         assertTrue(resultOptional.isPresent());
 
-        final ReferenceOperator result = resultOptional.get();
+        final ReferenceOperator result =
+                assertExampleExpressionChainResultAndGetFollowingReferenceOperator(
+                        resultOptional.get());
         assertInstanceOf(Map.class, result);
 
         final Map firstMapOperator = (Map) result;

@@ -21,7 +21,7 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 
 import java.util.Optional;
 
-class MemberFeatureCallParserTest {
+class MemberFeatureCallParserTest implements ExpressionParserTest {
     private static final MemberFeatureCallParser parser = new MemberFeatureCallParser();
 
     @Test
@@ -40,9 +40,7 @@ class MemberFeatureCallParserTest {
         final XMemberFeatureCall memberFeatureCall =
                 XMemberFeatureCallFixtures.createXMemberFeatureCall();
         memberFeatureCall.setFeature(jvmField);
-
-        // TODO: Add additional expression to the end to check that the operators are parsed and
-        // appended in the correct order
+        memberFeatureCall.setMemberCallTarget(exampleExpressionChain());
 
         // when
         final ManualPatternMatchingStrategy strategy = new ManualPatternMatchingStrategy();
@@ -52,7 +50,9 @@ class MemberFeatureCallParserTest {
         // then
         assertTrue(resultOptional.isPresent());
 
-        final ReferenceOperator result = resultOptional.get();
+        final ReferenceOperator result =
+                assertExampleExpressionChainResultAndGetFollowingReferenceOperator(
+                        resultOptional.get());
         assertInstanceOf(MemberFeatureCall.class, result);
 
         final MemberFeatureCall resultAsMemberFeatureCall = (MemberFeatureCall) result;
@@ -88,9 +88,7 @@ class MemberFeatureCallParserTest {
         final XMemberFeatureCall memberFeatureCall =
                 XMemberFeatureCallFixtures.createXMemberFeatureCall();
         memberFeatureCall.setFeature(jvmField);
-
-        // TODO: Add additional expression to the end to check that the operators are parsed and
-        // appended in the correct order
+        memberFeatureCall.setMemberCallTarget(exampleExpressionChain());
 
         // when
         final ManualPatternMatchingStrategy strategy = new ManualPatternMatchingStrategy();
@@ -100,7 +98,9 @@ class MemberFeatureCallParserTest {
         // then
         assertTrue(resultOptional.isPresent());
 
-        final ReferenceOperator result = resultOptional.get();
+        final ReferenceOperator result =
+                assertExampleExpressionChainResultAndGetFollowingReferenceOperator(
+                        resultOptional.get());
         assertInstanceOf(MemberFeatureCall.class, result);
 
         final MemberFeatureCall resultAsMemberFeatureCall = (MemberFeatureCall) result;

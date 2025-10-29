@@ -18,7 +18,7 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 
 import java.util.Optional;
 
-class FindAnyParserTest {
+class FindAnyParserTest implements ExpressionParserTest {
     private static final FindAnyParser parser = new FindAnyParser();
 
     @Test
@@ -34,9 +34,7 @@ class FindAnyParserTest {
                 XMemberFeatureCallFixtures.createXMemberFeatureCall();
         memberFeatureCall.setFeature(findFirstOperation);
         memberFeatureCall.getMemberCallArguments().add(closure);
-
-        // TODO: Add additional expression to the end to check that the operators are parsed and
-        // appended in the correct order
+        memberFeatureCall.setMemberCallTarget(exampleExpressionChain());
 
         // when
         final ManualPatternMatchingStrategy strategy = new ManualPatternMatchingStrategy();
@@ -46,7 +44,9 @@ class FindAnyParserTest {
         // then
         assertTrue(resultOptional.isPresent());
 
-        final ReferenceOperator result = resultOptional.get();
+        final ReferenceOperator result =
+                assertExampleExpressionChainResultAndGetFollowingReferenceOperator(
+                        resultOptional.get());
         assertInstanceOf(FindAny.class, result);
 
         final FindAny resultAsFindAny = (FindAny) result;
@@ -66,9 +66,7 @@ class FindAnyParserTest {
                 XMemberFeatureCallFixtures.createXMemberFeatureCall();
         memberFeatureCall.setFeature(findLastOperation);
         memberFeatureCall.getMemberCallArguments().add(closure);
-
-        // TODO: Add additional expression to the end to check that the operators are parsed and
-        // appended in the correct order
+        memberFeatureCall.setMemberCallTarget(exampleExpressionChain());
 
         // when
         final ManualPatternMatchingStrategy strategy = new ManualPatternMatchingStrategy();
@@ -78,7 +76,9 @@ class FindAnyParserTest {
         // then
         assertTrue(resultOptional.isPresent());
 
-        final ReferenceOperator result = resultOptional.get();
+        final ReferenceOperator result =
+                assertExampleExpressionChainResultAndGetFollowingReferenceOperator(
+                        resultOptional.get());
         assertInstanceOf(FindAny.class, result);
 
         final FindAny resultAsFindAny = (FindAny) result;
