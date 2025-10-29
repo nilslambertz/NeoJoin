@@ -11,36 +11,30 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmOperationUtils;
 
 import java.util.Optional;
+import java.util.Set;
 
 public class CollectReferencesParser implements ReferenceOperatorParser {
     private static final String TO_LIST_OPERATION_SIMPLE_NAME = "toList";
     private static final String FLATTEN_OPERATION_SIMPLE_NAME = "flatten";
+    private static final Set<String> COLLECT_OPERATIONS_SIMPLE_NAMES =
+            Set.of(TO_LIST_OPERATION_SIMPLE_NAME, FLATTEN_OPERATION_SIMPLE_NAME);
 
     public Optional<ReferenceOperator> parse(
             PatternMatchingStrategy strategy, XExpression expression)
             throws UnsupportedReferenceExpressionException {
-        if (!isToListOperation(expression) && !isFlattenOperation(expression)) {
+        final Optional<String> jvmOperationSimpleName =
+                JvmFeatureCallUtils.asMemberFeatureCall(expression)
+                        .flatMap(JvmFeatureUtils::getFeature)
+                        .flatMap(JvmOperationUtils::asJvmOperation)
+                        .map(JvmIdentifiableElement::getSimpleName);
+        if (jvmOperationSimpleName.isEmpty()) {
+            return Optional.empty();
+        }
+
+        if (!COLLECT_OPERATIONS_SIMPLE_NAMES.contains(jvmOperationSimpleName.get())) {
             return Optional.empty();
         }
 
         return parseAndAppendFollowingExpressionOperators(strategy, expression, null);
-    }
-
-    private static boolean isToListOperation(XExpression expression) {
-        return JvmFeatureCallUtils.asMemberFeatureCall(expression)
-                .flatMap(JvmFeatureUtils::getFeature)
-                .flatMap(JvmOperationUtils::asJvmOperation)
-                .map(JvmIdentifiableElement::getSimpleName)
-                .map(TO_LIST_OPERATION_SIMPLE_NAME::equals)
-                .orElse(false);
-    }
-
-    private static boolean isFlattenOperation(XExpression expression) {
-        return JvmFeatureCallUtils.asMemberFeatureCall(expression)
-                .flatMap(JvmFeatureUtils::getFeature)
-                .flatMap(JvmOperationUtils::asJvmOperation)
-                .map(JvmIdentifiableElement::getSimpleName)
-                .map(FLATTEN_OPERATION_SIMPLE_NAME::equals)
-                .orElse(false);
     }
 }
