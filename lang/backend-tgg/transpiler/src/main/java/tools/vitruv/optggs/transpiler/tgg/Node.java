@@ -146,9 +146,13 @@ public class Node {
                                 Collectors.toMap(
                                         Map.Entry::getKey, entry -> entry.getValue().deepCopy()));
         final List<Link> copiedLinks =
-                this.links.stream().map(link -> link.deepCopy(copyHelper)).toList();
+                this.links.stream()
+                        .map(link -> link.deepCopy(copyHelper))
+                        .collect(Collectors.toCollection(ArrayList::new));
         final List<Attribute> copiedAttributes =
-                this.attributes.stream().map(Attribute::deepCopy).toList();
+                this.attributes.stream()
+                        .map(Attribute::deepCopy)
+                        .collect(Collectors.toCollection(ArrayList::new));
 
         return new Node(
                 id,
