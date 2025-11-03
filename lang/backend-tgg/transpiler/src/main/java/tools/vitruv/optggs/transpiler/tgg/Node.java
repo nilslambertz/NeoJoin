@@ -21,7 +21,7 @@ public class Node {
     private boolean green;
     private final NameRepository nameRepository;
     private final Map<String, Property> properties;
-    private final Map<String, Link> links;
+    private final List<Link> links;
     private final List<Attribute> attributes;
 
     private static Node create(String id, FQN type, boolean green, NameRepository nameRepository) {
@@ -31,7 +31,7 @@ public class Node {
                 green,
                 nameRepository,
                 new HashMap<>(),
-                new HashMap<>(),
+                new ArrayList<>(),
                 new ArrayList<>());
     }
 
@@ -41,7 +41,7 @@ public class Node {
             boolean green,
             NameRepository nameRepository,
             Map<String, Property> properties,
-            Map<String, Link> links,
+            List<Link> links,
             List<Attribute> attributes) {
         this.id = id;
         this.type = type;
@@ -124,15 +124,19 @@ public class Node {
     }
 
     public Collection<Link> links() {
-        return this.links.values();
+        return Collections.unmodifiableList(links);
     }
 
-    public Node getLinkTarget(String link) {
-        return this.links.get(link).target();
+    public Node getFirstLinkTarget(String link) {
+        return this.links.stream()
+                .filter(someLink -> someLink.name().equals(link))
+                .findFirst()
+                .orElseThrow()
+                .target();
     }
 
     public void addLink(Link link) {
-        this.links.put(link.name(), link);
+        this.links.add(link);
     }
 
     Node deepCopy(TripleRuleCopyHelper copyHelper) {
@@ -141,12 +145,8 @@ public class Node {
                         .collect(
                                 Collectors.toMap(
                                         Map.Entry::getKey, entry -> entry.getValue().deepCopy()));
-        final Map<String, Link> copiedLinks =
-                this.links.entrySet().stream()
-                        .collect(
-                                Collectors.toMap(
-                                        Map.Entry::getKey,
-                                        entry -> entry.getValue().deepCopy(copyHelper)));
+        final List<Link> copiedLinks =
+                this.links.stream().map(link -> link.deepCopy(copyHelper)).toList();
         final List<Attribute> copiedAttributes =
                 this.attributes.stream().map(Attribute::deepCopy).toList();
 
