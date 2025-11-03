@@ -152,7 +152,7 @@ public class Node {
 
         return new Node(
                 id,
-                type.deepCopy(),
+                type,
                 green,
                 copyHelper.getCopiedNameRepository(),
                 copiedProperties,

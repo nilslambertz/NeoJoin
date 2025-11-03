@@ -31,10 +31,6 @@ public class FQN {
         return new FQN(metamodel, localName);
     }
 
-    public FQN deepCopy() {
-        return new FQN(metamodelName, localName);
-    }
-
     public FQN withLocalName(String localName) {
         return new FQN(metamodelName, localName);
     }
