@@ -15,7 +15,7 @@ public class ResolvedReferenceOperatorChain {
     FQN targetLeaf;
     String targetReference;
 
-    public List<TripleRule> generateRules() {
+    public TripleRulesBuilder generateRulesAndConstraints() {
         TripleRulesBuilder builder = new TripleRulesBuilder();
 
         final TripleRule featureCallRule;
@@ -42,6 +42,6 @@ public class ResolvedReferenceOperatorChain {
             builder.removeRule(featureCallRule);
         }
 
-        return builder.getTripleRules();
+        return builder;
     }
 }

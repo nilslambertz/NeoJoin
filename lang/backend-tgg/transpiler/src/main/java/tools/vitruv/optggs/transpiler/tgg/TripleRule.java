@@ -170,7 +170,7 @@ public class TripleRule {
     public Node findNestedSourceNode(TripleRulePathToNode path) {
         Node lastSourceNode = findSourceNodeByType(path.getRoot()).orElseThrow();
         for (String nextReference : path.getLinkPath()) {
-            lastSourceNode = lastSourceNode.getLinkTarget(nextReference);
+            lastSourceNode = lastSourceNode.getFirstLinkTarget(nextReference);
         }
         return lastSourceNode;
     }

@@ -1,20 +1,28 @@
 package tools.vitruv.optggs.transpiler.tgg;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class TripleGrammar {
     private final String name;
     private final Collection<TripleRule> rules;
+    private final List<GraphConstraint> constraints;
     private final Set<String> sourceMetamodels;
     private final Set<String> targetMetamodels;
 
-    public TripleGrammar(String name, Set<String> sourceMetamodels, Set<String> targetMetamodels, Collection<TripleRule> rules) {
+    public TripleGrammar(
+            String name,
+            Set<String> sourceMetamodels,
+            Set<String> targetMetamodels,
+            Collection<TripleRule> rules,
+            List<GraphConstraint> constraints) {
         this.name = name;
         this.sourceMetamodels = sourceMetamodels;
         this.targetMetamodels = targetMetamodels;
         this.rules = rules;
+        this.constraints = constraints;
     }
 
     public String name() {

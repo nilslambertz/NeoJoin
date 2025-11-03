@@ -1,17 +1,20 @@
 package tools.vitruv.optggs.transpiler.operators;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.Value;
 
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedReferenceOperatorChain;
+import tools.vitruv.optggs.transpiler.tgg.GraphConstraint;
 import tools.vitruv.optggs.transpiler.tgg.TripleRule;
 import tools.vitruv.optggs.transpiler.tgg.TripleRulesBuilder;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Value
+@Getter(AccessLevel.NONE)
 public class ResolvedQuery {
     ResolvedSelection selection;
     List<ResolvedProjection> projections;
@@ -20,23 +23,43 @@ public class ResolvedQuery {
     Optional<ResolvedContainment> container;
     List<ResolvedLink> links;
 
-    TripleRulesBuilder rulesBuilder = new TripleRulesBuilder();
+    @Getter(AccessLevel.PUBLIC)
+    List<TripleRule> generatedRules;
 
-    public Collection<TripleRule> toRules() {
-        createPrimaryRule();
-        links.forEach(this::createLinkRule);
+    @Getter(AccessLevel.PUBLIC)
+    List<GraphConstraint> generatedConstraints;
 
-        final Stream<TripleRule> referenceOperatorRules =
-                referenceOperatorChains.stream()
-                        .map(ResolvedReferenceOperatorChain::generateRules)
-                        .flatMap(List::stream);
+    public ResolvedQuery(
+            ResolvedSelection selection,
+            List<ResolvedProjection> projections,
+            List<ResolvedReferenceOperatorChain> referenceOperatorChains,
+            List<ResolvedFilter> filters,
+            Optional<ResolvedContainment> container,
+            List<ResolvedLink> links) {
+        this.selection = selection;
+        this.projections = projections;
+        this.referenceOperatorChains = referenceOperatorChains;
+        this.filters = filters;
+        this.container = container;
+        this.links = links;
 
-        return Stream.concat(rulesBuilder.getTripleRules().stream(), referenceOperatorRules)
-                .toList();
+        // Generate rules and constraints
+        final TripleRule primaryRule = createPrimaryRule();
+        final List<TripleRule> linkRules = links.stream().map(this::createLinkRule).toList();
+        final TripleRulesAndConstraints referenceOperatorRulesAndConstraints =
+                createRulesAndConstraintsForReferenceOperators();
+
+        final List<TripleRule> allGeneratedRules = new ArrayList<>();
+        allGeneratedRules.add(primaryRule);
+        allGeneratedRules.addAll(linkRules);
+        allGeneratedRules.addAll(referenceOperatorRulesAndConstraints.rules());
+
+        this.generatedRules = allGeneratedRules;
+        this.generatedConstraints = referenceOperatorRulesAndConstraints.constraints();
     }
 
-    public void createPrimaryRule() {
-        final TripleRule rule = rulesBuilder.addRule();
+    private TripleRule createPrimaryRule() {
+        final TripleRule rule = new TripleRule();
         selection.extendRule(rule);
         rule.allSourcesAsSlice().makeGreen();
         rule.allTargetsAsSlice().makeGreen();
@@ -47,13 +70,36 @@ public class ResolvedQuery {
             projection.extendRule(rule);
         }
         container.ifPresent(value -> value.extendRule(rule));
+
+        return rule;
     }
 
-    public void createLinkRule(ResolvedLink link) {
-        final TripleRule rule = rulesBuilder.addRule();
+    private TripleRule createLinkRule(ResolvedLink link) {
+        final TripleRule rule = new TripleRule();
         rule.setLinkRule(true);
         selection.extendRule(rule);
         link.extendRule(rule);
+
+        return rule;
+    }
+
+    private TripleRulesAndConstraints createRulesAndConstraintsForReferenceOperators() {
+        final List<TripleRulesBuilder> referenceOperatorRulesAndConstraints =
+                referenceOperatorChains.stream()
+                        .map(ResolvedReferenceOperatorChain::generateRulesAndConstraints)
+                        .toList();
+        final List<TripleRule> referenceOperatorRules =
+                referenceOperatorRulesAndConstraints.stream()
+                        .map(TripleRulesBuilder::getTripleRules)
+                        .flatMap(List::stream)
+                        .toList();
+        final List<GraphConstraint> referenceOperatorConstraints =
+                referenceOperatorRulesAndConstraints.stream()
+                        .map(TripleRulesBuilder::getConstraints)
+                        .flatMap(List::stream)
+                        .toList();
+
+        return new TripleRulesAndConstraints(referenceOperatorRules, referenceOperatorConstraints);
     }
 
     @Override
@@ -64,4 +110,7 @@ public class ResolvedQuery {
         var l = String.join(".", links.stream().map(Object::toString).toList());
         return selection + f + p + c + l;
     }
+
+    private record TripleRulesAndConstraints(
+            List<TripleRule> rules, List<GraphConstraint> constraints) {}
 }

@@ -25,17 +25,27 @@ public class ResolvedView {
      * @return triple grammar
      */
     public TripleGrammar toGrammar(String name) {
-        var rules = queries.stream().map(ResolvedQuery::toRules).flatMap(Collection::stream).toList();
+        var rules =
+                queries.stream()
+                        .map(ResolvedQuery::getGeneratedRules)
+                        .flatMap(Collection::stream)
+                        .toList();
+        var constraints =
+                queries.stream()
+                        .map(ResolvedQuery::getGeneratedConstraints)
+                        .flatMap(Collection::stream)
+                        .toList();
         var sourceMetamodels = extractSourceMetamodels(rules);
         var targetMetamodels = extractTargetMetamodels(rules);
-        return new TripleGrammar(name, sourceMetamodels, targetMetamodels, rules);
+        return new TripleGrammar(name, sourceMetamodels, targetMetamodels, rules, constraints);
     }
 
     private Set<String> extractMetamodels(Stream<Slice> slices) {
         var metamodels = new HashSet<String>();
-        slices.forEach(slice -> {
-            metamodels.addAll(slice.mapNodes(node -> node.type().metamodelName()));
-        });
+        slices.forEach(
+                slice -> {
+                    metamodels.addAll(slice.mapNodes(node -> node.type().metamodelName()));
+                });
         return metamodels;
     }
 

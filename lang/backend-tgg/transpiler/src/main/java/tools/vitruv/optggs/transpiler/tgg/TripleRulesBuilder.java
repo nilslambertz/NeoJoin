@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 public class TripleRulesBuilder {
     private final List<TripleRule> tripleRules = new ArrayList<>();
+    private final List<GraphConstraint> constraints = new ArrayList<>();
     private TripleRule latestRule = null;
 
     @Setter private TripleRulePathToNode pathToLastNode = null;
@@ -31,5 +32,9 @@ public class TripleRulesBuilder {
 
     public void addLinkToPathToLastNode(String link) {
         pathToLastNode.addLinkToPath(link);
+    }
+
+    public void addConstraint(GraphConstraint constraint) {
+        constraints.add(constraint);
     }
 }
