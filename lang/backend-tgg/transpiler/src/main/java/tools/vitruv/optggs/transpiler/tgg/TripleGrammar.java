@@ -1,51 +1,25 @@
 package tools.vitruv.optggs.transpiler.tgg;
 
+import lombok.Value;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Value
 public class TripleGrammar {
-    private final String name;
-    private final Collection<TripleRule> rules;
-    private final List<GraphConstraint> constraints;
-    private final Set<String> sourceMetamodels;
-    private final Set<String> targetMetamodels;
+    String name;
+    Collection<TripleRule> rules;
+    List<GraphConstraint> constraints;
+    Set<String> sourceMetamodels;
+    Set<String> targetMetamodels;
 
-    public TripleGrammar(
-            String name,
-            Set<String> sourceMetamodels,
-            Set<String> targetMetamodels,
-            Collection<TripleRule> rules,
-            List<GraphConstraint> constraints) {
-        this.name = name;
-        this.sourceMetamodels = sourceMetamodels;
-        this.targetMetamodels = targetMetamodels;
-        this.rules = rules;
-        this.constraints = constraints;
-    }
-
-    public String name() {
-        return name;
-    }
-
-    public Collection<TripleRule> rules() {
-        return rules;
-    }
-
-    public Set<CorrespondenceType> correspondenceTypes() {
+    public Set<CorrespondenceType> getCorrespondenceTypes() {
         return rules.stream()
                 .map(TripleRule::correspondences)
                 .flatMap(Collection::stream)
                 .map(Correspondence::toCorrespondenceType)
                 .collect(Collectors.toSet());
-    }
-
-    public Set<String> sourceMetamodels() {
-        return sourceMetamodels;
-    }
-
-    public Set<String> targetMetamodels() {
-        return targetMetamodels;
     }
 }
