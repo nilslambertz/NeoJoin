@@ -6,7 +6,7 @@ import org.eclipse.xtext.xbase.XClosure;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 
-import tools.vitruv.neojoin.expression_parser.model.FindAny;
+import tools.vitruv.neojoin.expression_parser.model.MapAny;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
@@ -19,7 +19,7 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 import java.util.Optional;
 import java.util.Set;
 
-public class FindAnyParser implements ReferenceOperatorParser {
+public class MapAnyParser implements ReferenceOperatorParser {
     private static final String FIND_FIRST_OPERATION_SIMPLE_NAME = "findFirst";
     private static final String FIND_LAST_OPERATION_SIMPLE_NAME = "findLast";
     private static final Set<String> FIND_ANY_OPERATION_SIMPLE_NAMES =
@@ -31,7 +31,7 @@ public class FindAnyParser implements ReferenceOperatorParser {
         boolean isFindAnyWithoutArguments =
                 Optional.ofNullable(expression)
                         .flatMap(JvmFeatureCallUtils::asMemberFeatureCall)
-                        .filter(FindAnyParser::isFindAnyOperation)
+                        .filter(MapAnyParser::isFindAnyOperation)
                         .filter(JvmMemberCallUtils::hasExactlyOneMemberCallArgument)
                         .flatMap(JvmMemberCallUtils::getFirstArgument)
                         .flatMap(ClosureUtils::asClosure)
@@ -43,7 +43,7 @@ public class FindAnyParser implements ReferenceOperatorParser {
             return Optional.empty();
         }
 
-        return parseAndAppendFollowingExpressionOperators(strategy, expression, new FindAny());
+        return parseAndAppendFollowingExpressionOperators(strategy, expression, new MapAny());
     }
 
     private static boolean isFindAnyOperation(XMemberFeatureCall featureCall) {

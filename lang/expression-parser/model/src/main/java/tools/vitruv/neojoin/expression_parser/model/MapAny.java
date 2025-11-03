@@ -7,6 +7,6 @@ import org.jspecify.annotations.Nullable;
 
 @Data
 @RequiredArgsConstructor
-public class FindAny implements ReferenceOperator {
+public class MapAny implements ReferenceOperator {
     @Nullable ReferenceOperator followingOperator;
 }
