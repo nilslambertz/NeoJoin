@@ -1,5 +1,7 @@
 package tools.vitruv.optggs.transpiler.tgg;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -9,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class TripleRulePathToNode {
     private final FQN root;
@@ -16,5 +19,13 @@ public class TripleRulePathToNode {
 
     public void addLinkToPath(String reference) {
         linkPath.add(reference);
+    }
+
+    public TripleRulePathToNode pathToSecondLastNode() {
+        return new TripleRulePathToNode(root, linkPath.subList(1, linkPath.size()));
+    }
+
+    public String getLastLink() {
+        return linkPath.getLast();
     }
 }

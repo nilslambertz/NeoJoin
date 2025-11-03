@@ -4,6 +4,7 @@ import tools.vitruv.neojoin.expression_parser.model.FeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.FeatureInformation;
 import tools.vitruv.neojoin.expression_parser.model.FlatMap;
 import tools.vitruv.neojoin.expression_parser.model.Map;
+import tools.vitruv.neojoin.expression_parser.model.MapAny;
 import tools.vitruv.neojoin.expression_parser.model.MemberFeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceFilter;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
@@ -48,6 +49,7 @@ import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedColl
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedFeatureCall;
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedFlatMap;
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedMap;
+import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedMapAny;
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedReferenceFilter;
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedReferenceOperator;
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedReferenceOperatorChain;
@@ -165,6 +167,7 @@ public class TranspilerQueryResolver
                                     toLogicOperator(filter.getOperator()),
                                     toConstantExpression(filter.getConstantValue()));
                 }
+                case MapAny mapAny -> resolvedOperator = new ResolvedMapAny();
                 default -> throw new IllegalStateException("Unsupported reference operator chain");
             }
             referenceOperatorChain.add(resolvedOperator);
