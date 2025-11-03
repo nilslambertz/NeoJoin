@@ -1,4 +1,4 @@
-package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors;
+package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.parsers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;

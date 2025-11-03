@@ -1,4 +1,4 @@
-package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors;
+package tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.parsers;
 
 import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmType;

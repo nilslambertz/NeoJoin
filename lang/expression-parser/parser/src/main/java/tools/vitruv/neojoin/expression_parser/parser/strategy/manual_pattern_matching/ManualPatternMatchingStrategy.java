@@ -6,14 +6,14 @@ import org.jspecify.annotations.NonNull;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.CollectReferencesParser;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FeatureCallParser;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FilterParser;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.MapAnyParser;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.FlatMapParser;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.MapParser;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.MemberFeatureCallParser;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.extractors.ReferenceOperatorParser;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.parsers.CollectReferencesParser;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.parsers.FeatureCallParser;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.parsers.FilterParser;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.parsers.MapAnyParser;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.parsers.FlatMapParser;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.parsers.MapParser;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.parsers.MemberFeatureCallParser;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.parsers.ReferenceOperatorParser;
 
 import java.util.List;
 
