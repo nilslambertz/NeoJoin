@@ -72,8 +72,9 @@ Provides basic IDE support (syntax highlighting, code-completion, etc.) and a si
 ### Command Line Interface
 
 ```
-Usage: neojoin [-hV] -m=MODEL-PATH [-g=OUTPUT] [-i=MODEL-PATH -t=OUTPUT] QUERY
-
+Usage: neojoin [-hV] -m=MODEL-PATH [-g=OUTPUT] [-i=MODEL-PATH -t=OUTPUT]
+               [-tgg=GENERATE TGG RULES [--source-model-path=SOURCE_MODEL_PATH]
+               [--target-model-path=TARGET_MODEL_PATH]] QUERY
       QUERY                Path to the query file.
 
   -h, --help               Show this help message and exit.
@@ -92,6 +93,16 @@ Transform the input models:
   -t, --transform=OUTPUT   Transform the input models based on the query and
                              write the result to the given output file or
                              directory.
+Generate Triple Graph Grammar (TGG) rules:
+      --source-model-path=SOURCE_MODEL_PATH
+                           Optional: Path to the source model for the TGG
+                             transformation
+      --target-model-path=TARGET_MODEL_PATH
+                           Optional: Path to the target model for the TGG
+                             transformation
+      -tgg, --generate-tgg-rules=GENERATE TGG RULES
+                           Generate the corresponding TGG rules and write them
+                             to the given output directory
 
 Model Path
   A semicolon separated list of paths to search for models
