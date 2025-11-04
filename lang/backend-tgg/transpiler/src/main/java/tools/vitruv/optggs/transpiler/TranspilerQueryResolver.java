@@ -167,7 +167,7 @@ public class TranspilerQueryResolver
                                     toLogicOperator(filter.getOperator()),
                                     toConstantExpression(filter.getConstantValue()));
                 }
-                case MapAny mapAny -> resolvedOperator = new ResolvedMapAny();
+                case MapAny ignored -> resolvedOperator = new ResolvedMapAny();
                 default -> throw new IllegalStateException("Unsupported reference operator chain");
             }
             referenceOperatorChain.add(resolvedOperator);
@@ -176,12 +176,13 @@ public class TranspilerQueryResolver
         }
 
         // Add a collector at the end of the reference chain
-        referenceOperatorChain.add(new ResolvedCollectReferences());
+        referenceOperatorChain.add(
+                new ResolvedCollectReferences(
+                        referenceOperator.targetRoot(),
+                        referenceOperator.targetLeaf(),
+                        referenceOperator.targetField()));
         return new ResolvedReferenceOperatorChain(
-                referenceOperatorChain,
-                referenceOperator.targetRoot(),
-                referenceOperator.targetLeaf(),
-                referenceOperator.targetField());
+                referenceOperatorChain, referenceOperator.targetRoot());
     }
 
     @Override

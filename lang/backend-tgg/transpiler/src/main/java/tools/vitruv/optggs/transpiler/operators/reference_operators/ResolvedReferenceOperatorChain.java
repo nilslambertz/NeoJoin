@@ -12,8 +12,6 @@ import java.util.List;
 public class ResolvedReferenceOperatorChain {
     List<ResolvedReferenceOperator> referenceOperators;
     FQN targetRoot;
-    FQN targetLeaf;
-    String targetReference;
 
     public TripleRulesBuilder generateRulesAndConstraints() {
         TripleRulesBuilder builder = new TripleRulesBuilder();
@@ -25,17 +23,10 @@ public class ResolvedReferenceOperatorChain {
             throw new IllegalStateException("First Reference Operator must be a FeatureCall");
         }
 
-        final List<ResolvedReferenceOperator> intermediaryOperators =
-                referenceOperators.subList(1, referenceOperators.size() - 1);
-        intermediaryOperators.forEach(
+        final List<ResolvedReferenceOperator> remainingOperators =
+                referenceOperators.subList(1, referenceOperators.size());
+        remainingOperators.forEach(
                 resolvedReferenceOperator -> resolvedReferenceOperator.extendRules(builder));
-
-        if (referenceOperators.getLast() instanceof ResolvedCollectReferences collectReferences) {
-            collectReferences.extendRulesForCollect(
-                    targetRoot, targetLeaf, targetReference, builder);
-        } else {
-            throw new IllegalStateException("Last Reference Operator must be a CollectReferences");
-        }
 
         // If the feature call rule wasn't extended with any green elements, we need to remove it to
         // avoid conflicting rules

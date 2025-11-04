@@ -12,29 +12,24 @@ import tools.vitruv.optggs.transpiler.tgg.TripleRulesBuilder;
 
 @Value
 public class ResolvedCollectReferences implements ResolvedReferenceOperator {
+    FQN targetRoot;
+    FQN targetLeaf;
+    String targetField;
+
     @Override
     public void extendRules(TripleRulesBuilder builder) {
-        throw new IllegalStateException(
-                "CollectReferences needs the target element to connect to, use custom method");
-    }
-
-    public void extendRulesForCollect(
-            FQN targetTop,
-            FQN targetChildType,
-            String targetReference,
-            TripleRulesBuilder builder) {
         final TripleRule latestRule = builder.getLatestRule();
 
         final TripleRulePathToNode pathToLastNode = builder.getPathToLastNode();
         final Node lastSourceNode = latestRule.findNestedSourceNode(pathToLastNode);
         lastSourceNode.makeBlack();
 
-        final Node targetSourceNode = latestRule.findTargetNodeByType(targetTop).orElseThrow();
+        final Node targetSourceNode = latestRule.findTargetNodeByType(targetRoot).orElseThrow();
 
         final Slice targetSlice = latestRule.addTargetSlice();
-        Node targetChildNode = targetSlice.addNode(targetChildType);
+        Node targetChildNode = targetSlice.addNode(targetLeaf);
 
-        Link targetParentLinkToChild = Link.Green(targetReference, targetChildNode);
+        Link targetParentLinkToChild = Link.Green(targetField, targetChildNode);
         targetSourceNode.addLink(targetParentLinkToChild);
 
         latestRule.addCorrespondenceRule(lastSourceNode, targetChildNode);
