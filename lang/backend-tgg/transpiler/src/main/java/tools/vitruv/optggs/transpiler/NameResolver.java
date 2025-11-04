@@ -46,7 +46,7 @@ public interface NameResolver {
     }
 
     default String resolvePatternName(GraphConstraint constraint) {
-        return "Constraint" + constraint.getId().toString().replace("-", "");
+        return "Pattern" + constraint.getId().toString().replace("-", "");
     }
 
     default String resolveConstraintName(GraphConstraint constraint) {
