@@ -22,6 +22,8 @@ public class ResolvedReferenceFilter implements ResolvedReferenceOperator {
         final TripleRulePathToNode pathToLastNode = builder.getPathToLastNode();
         final Node lastSourceNode = latestRule.findNestedSourceNode(pathToLastNode);
 
+        // TODO: The operator "!=" is not allowed in green nodes.
+        // We need to use attribute constraints for this operator
         lastSourceNode.addConstantAttribute(feature, operator, constantExpression);
     }
 }
