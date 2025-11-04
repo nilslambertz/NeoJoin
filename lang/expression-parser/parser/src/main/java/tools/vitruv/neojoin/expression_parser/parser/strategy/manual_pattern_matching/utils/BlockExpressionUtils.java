@@ -33,7 +33,7 @@ public class BlockExpressionUtils {
     public static Optional<XExpression> getFirstExpression(XBlockExpression blockExpression) {
         return Optional.ofNullable(blockExpression)
                 .map(XBlockExpression::getExpressions)
-                .filter(expressions -> !expressions.isEmpty())
-                .map(List::getFirst);
+                .map(EList::stream)
+                .flatMap(Stream::findFirst);
     }
 }
