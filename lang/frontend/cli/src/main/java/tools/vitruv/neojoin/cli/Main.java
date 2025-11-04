@@ -24,11 +24,13 @@ import picocli.CommandLine.Parameters;
 import tools.vitruv.neojoin.NeoJoinStandaloneSetup;
 import tools.vitruv.neojoin.Parser;
 import tools.vitruv.neojoin.SourceLocation;
+import tools.vitruv.neojoin.aqr.AQR;
 import tools.vitruv.neojoin.collector.InstanceModelCollector;
 import tools.vitruv.neojoin.collector.PackageModelCollector;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.ManualPatternMatchingStrategy;
 import tools.vitruv.neojoin.generation.MetaModelGenerator;
+import tools.vitruv.neojoin.generation.ModelInfo;
 import tools.vitruv.neojoin.tgg.emsl_utils.EmslMetamodelGenerator;
 import tools.vitruv.neojoin.tgg.emsl_utils.EmslModelGenerator;
 import tools.vitruv.neojoin.tgg.emsl_utils.EmslUtils;
@@ -219,46 +221,57 @@ public class Main implements Callable<Integer> {
                 return 1;
             }
 
-            // Generate metamodel(s) for eMoflon
-            final Path sourceMetamodelPath = Path.of("target/emsl-source-metamodel.msl");
-            EmslMetamodelGenerator.generateMetamodels(
-                    sourceMetaModelResourceSet, sourceMetamodelPath);
-
-            final ResourceSet targetMetaModelResourceSet = new ResourceSetImpl();
-            targetMetaModelResourceSet.getResources().add(targetMetaModel.pack().eResource());
-            final Path targetMetamodelPath = Path.of("target/emsl-target-metamodel.msl");
-            EmslMetamodelGenerator.generateMetamodels(
-                    targetMetaModelResourceSet, targetMetamodelPath);
-
-            // TODO: How to choose Project name?
-            final Project project = new Project("TestTGGProjectV2");
-            project.addSourceMetamodel(new Metamodel(sourceMetamodelPath));
-            project.addTargetMetamodel(new Metamodel(targetMetamodelPath));
-            final View view = ViewExtractor.viewFromAQR(aqr, new ManualPatternMatchingStrategy());
-
-            if (tggRuleGeneration.sourceModelPath != null) {
-                final Path sourceModelOutputPath = Path.of("target/emsl-source-model.msl");
-                final String sourceModelName =
-                        convertEcoreModelToEmslAndGetModelName(
-                                registry, tggRuleGeneration.sourceModelPath, sourceModelOutputPath);
-
-                project.addSourceModel(new Model(sourceModelName, sourceModelOutputPath));
-            }
-
-            if (tggRuleGeneration.targetModelPath != null) {
-                final Path targetModelOutputPath = Path.of("target/emsl-target-model.msl");
-                final String targetModelName =
-                        convertEcoreModelToEmslAndGetModelName(
-                                registry, tggRuleGeneration.targetModelPath, targetModelOutputPath);
-
-                project.addTargetModel(new Model(targetModelName, targetModelOutputPath));
-            }
-
-            API.generateProjectForView(
-                    project, view, tggRuleGeneration.output, new LocalNameResolver());
+            generateTripleGraphGrammarProject(sourceMetaModelResourceSet, targetMetaModel, aqr, registry);
         }
 
         return 0;
+    }
+
+    private void generateTripleGraphGrammarProject(
+            ResourceSet sourceMetaModelResourceSet,
+            ModelInfo targetMetaModel,
+            AQR aqr,
+            EPackage.Registry registry)
+            throws UnsupportedReferenceExpressionException {
+        if (tggRuleGeneration == null) {
+            return;
+        }
+
+        // Generate metamodel(s) for eMoflon
+        final Path sourceMetamodelPath = Path.of("target/emsl-source-metamodel.msl");
+        EmslMetamodelGenerator.generateMetamodels(sourceMetaModelResourceSet, sourceMetamodelPath);
+
+        final ResourceSet targetMetaModelResourceSet = new ResourceSetImpl();
+        targetMetaModelResourceSet.getResources().add(targetMetaModel.pack().eResource());
+        final Path targetMetamodelPath = Path.of("target/emsl-target-metamodel.msl");
+        EmslMetamodelGenerator.generateMetamodels(targetMetaModelResourceSet, targetMetamodelPath);
+
+        // TODO: How to choose Project name?
+        final Project project = new Project("TestTGGProjectV2");
+        project.addSourceMetamodel(new Metamodel(sourceMetamodelPath));
+        project.addTargetMetamodel(new Metamodel(targetMetamodelPath));
+        final View view = ViewExtractor.viewFromAQR(aqr, new ManualPatternMatchingStrategy());
+
+        if (tggRuleGeneration.sourceModelPath != null) {
+            final Path sourceModelOutputPath = Path.of("target/emsl-source-model.msl");
+            final String sourceModelName =
+                    convertEcoreModelToEmslAndGetModelName(
+                            registry, tggRuleGeneration.sourceModelPath, sourceModelOutputPath);
+
+            project.addSourceModel(new Model(sourceModelName, sourceModelOutputPath));
+        }
+
+        if (tggRuleGeneration.targetModelPath != null) {
+            final Path targetModelOutputPath = Path.of("target/emsl-target-model.msl");
+            final String targetModelName =
+                    convertEcoreModelToEmslAndGetModelName(
+                            registry, tggRuleGeneration.targetModelPath, targetModelOutputPath);
+
+            project.addTargetModel(new Model(targetModelName, targetModelOutputPath));
+        }
+
+        API.generateProjectForView(
+                project, view, tggRuleGeneration.output, new LocalNameResolver());
     }
 
     private static String convertEcoreModelToEmslAndGetModelName(
