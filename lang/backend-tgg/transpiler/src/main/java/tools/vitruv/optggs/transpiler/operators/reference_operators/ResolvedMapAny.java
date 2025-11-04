@@ -16,13 +16,12 @@ public class ResolvedMapAny implements ResolvedReferenceOperator {
 
         final TripleRule copiedRule = latestRule.deepCopy();
         final TripleRulePathToNode pathToLastNode = builder.getPathToLastNode();
-        final String lastLink = pathToLastNode.getLastLink();
         final FQN lastNodeType = copiedRule.findNestedSourceNode(pathToLastNode).type();
 
         // Duplicate last source node and incoming link
-        final Slice sourceSlice = latestRule.addSourceSlice();
+        final Slice sourceSlice = copiedRule.addSourceSlice();
         Node duplicatedLastNode = sourceSlice.addNode(lastNodeType);
-        Link linkToLastDuplicatedLastNode = Link.Black(lastLink, duplicatedLastNode);
+        Link linkToLastDuplicatedLastNode = Link.Black(pathToLastNode.getLastLink(), duplicatedLastNode);
 
         // Add the "duplicated" link to the node "above"
         final Node nodeBeforeLastNode =
