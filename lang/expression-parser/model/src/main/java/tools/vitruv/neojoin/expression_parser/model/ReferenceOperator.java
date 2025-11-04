@@ -3,6 +3,11 @@ package tools.vitruv.neojoin.expression_parser.model;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * A ReferenceOperator is a (partial) parsed expression that can be used for model transformations.
+ * It contains the required properties (e.g. type, field names) for the following steps and possibly
+ * the following ReferenceOperator-chain
+ */
 public interface ReferenceOperator {
     @Nullable ReferenceOperator getFollowingOperator();
 

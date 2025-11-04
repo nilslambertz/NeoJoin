@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.jspecify.annotations.Nullable;
 
+// WIP, required information must be defined
 @Data
 @RequiredArgsConstructor
 public class MapAny implements ReferenceOperator {

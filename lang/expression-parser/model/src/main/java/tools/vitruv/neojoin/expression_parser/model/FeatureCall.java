@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.jspecify.annotations.Nullable;
 
+/** A FeatureCall is the first operation in a reference chain and defines the root type */
 @Data
 @RequiredArgsConstructor
 public class FeatureCall implements ReferenceOperator {
