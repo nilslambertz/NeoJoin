@@ -37,7 +37,7 @@ public class ResolvedView {
                         .toList();
         var sourceMetamodels = extractSourceMetamodels(rules);
         var targetMetamodels = extractTargetMetamodels(rules);
-        return new TripleGrammar(name, sourceMetamodels, targetMetamodels, rules, constraints);
+        return new TripleGrammar(name, rules, constraints, sourceMetamodels, targetMetamodels);
     }
 
     private Set<String> extractMetamodels(Stream<Slice> slices) {
