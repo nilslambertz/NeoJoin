@@ -30,10 +30,6 @@ public class PredicateExpressionUtils {
                     Map.entry("operator_greaterThan", ComparisonOperator.GreaterThan),
                     Map.entry("operator_greaterEqualsThan", ComparisonOperator.GreaterEquals));
 
-    public static Optional<XBinaryOperation> asBinaryOperation(XExpression expression) {
-        return CastingUtils.cast(expression, XBinaryOperation.class);
-    }
-
     /**
      * Extracts a ConstantPredicate out of the binary operation. The order of operations is expected
      * to be FIELD - COMPARISON_OPERATOR - CONSTANT_VALUE
@@ -47,9 +43,9 @@ public class PredicateExpressionUtils {
         final XExpression leftOperand = operation.getLeftOperand();
         final Optional<String> fieldSimpleName =
                 Optional.ofNullable(leftOperand)
-                        .flatMap(JvmFeatureCallUtils::asMemberFeatureCall)
+                        .flatMap(CastingUtils::asMemberFeatureCall)
                         .map(XAbstractFeatureCall::getFeature)
-                        .flatMap(JvmFieldUtils::asJvmField)
+                        .flatMap(CastingUtils::asJvmField)
                         .map(JvmField::getSimpleName);
         if (fieldSimpleName.isEmpty()) {
             throw new UnsupportedReferenceExpressionException(
@@ -81,7 +77,7 @@ public class PredicateExpressionUtils {
     private static Optional<ComparisonOperator> getComparisonOperator(XBinaryOperation operation) {
         return Optional.ofNullable(operation)
                 .map(XAbstractFeatureCall::getFeature)
-                .flatMap(JvmOperationUtils::asJvmOperation)
+                .flatMap(CastingUtils::asJvmOperation)
                 .map(JvmOperation::getSimpleName)
                 .map(OPERATOR_MAP::get);
     }

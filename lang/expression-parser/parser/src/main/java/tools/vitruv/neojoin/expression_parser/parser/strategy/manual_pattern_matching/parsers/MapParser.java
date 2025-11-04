@@ -14,10 +14,8 @@ import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.BlockExpressionUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.ClosureUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.CastingUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmMemberCallUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmOperationUtils;
 
 import java.util.Optional;
 
@@ -29,7 +27,7 @@ public class MapParser implements ReferenceOperatorParser {
             throws UnsupportedReferenceExpressionException {
         // Check that expression is map and get single argument
         final Optional<XExpression> mapArgument =
-                JvmFeatureCallUtils.asMemberFeatureCall(expression)
+                CastingUtils.asMemberFeatureCall(expression)
                         .filter(MapParser::isMapOperation)
                         .filter(JvmMemberCallUtils::hasExactlyOneMemberCallArgument)
                         .flatMap(JvmMemberCallUtils::getFirstArgument);
@@ -40,9 +38,9 @@ public class MapParser implements ReferenceOperatorParser {
         // Check that expression can be parsed
         final Optional<XExpression> mapArgumentExpression =
                 mapArgument
-                        .flatMap(ClosureUtils::asClosure)
+                        .flatMap(CastingUtils::asClosure)
                         .map(XClosure::getExpression)
-                        .flatMap(BlockExpressionUtils::asBlockExpression)
+                        .flatMap(CastingUtils::asBlockExpression)
                         .filter(BlockExpressionUtils::hasExactlyOneExpression)
                         .flatMap(BlockExpressionUtils::getFirstExpression);
         if (mapArgumentExpression.isEmpty()) {
@@ -105,7 +103,7 @@ public class MapParser implements ReferenceOperatorParser {
     private static boolean isMapOperation(XMemberFeatureCall featureCall) {
         return Optional.ofNullable(featureCall)
                 .map(XAbstractFeatureCall::getFeature)
-                .flatMap(JvmOperationUtils::asJvmOperation)
+                .flatMap(CastingUtils::asJvmOperation)
                 .map(JvmIdentifiableElement::getSimpleName)
                 .map(MAP_OPERATION_SIMPLE_NAME::equals)
                 .orElse(false);

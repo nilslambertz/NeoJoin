@@ -11,10 +11,8 @@ import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.BlockExpressionUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.ClosureUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.CastingUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmMemberCallUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmOperationUtils;
 
 import java.util.Optional;
 import java.util.Set;
@@ -30,13 +28,13 @@ public class MapAnyParser implements ReferenceOperatorParser {
             throws UnsupportedReferenceExpressionException {
         boolean isFindAnyWithoutArguments =
                 Optional.ofNullable(expression)
-                        .flatMap(JvmFeatureCallUtils::asMemberFeatureCall)
+                        .flatMap(CastingUtils::asMemberFeatureCall)
                         .filter(MapAnyParser::isFindAnyOperation)
                         .filter(JvmMemberCallUtils::hasExactlyOneMemberCallArgument)
                         .flatMap(JvmMemberCallUtils::getFirstArgument)
-                        .flatMap(ClosureUtils::asClosure)
+                        .flatMap(CastingUtils::asClosure)
                         .map(XClosure::getExpression)
-                        .flatMap(BlockExpressionUtils::asBlockExpression)
+                        .flatMap(CastingUtils::asBlockExpression)
                         .filter(BlockExpressionUtils::hasNoExpressions)
                         .isPresent();
         if (!isFindAnyWithoutArguments) {
@@ -49,7 +47,7 @@ public class MapAnyParser implements ReferenceOperatorParser {
     private static boolean isFindAnyOperation(XMemberFeatureCall featureCall) {
         return Optional.ofNullable(featureCall)
                 .map(XAbstractFeatureCall::getFeature)
-                .flatMap(JvmOperationUtils::asJvmOperation)
+                .flatMap(CastingUtils::asJvmOperation)
                 .map(JvmOperation::getSimpleName)
                 .map(FIND_ANY_OPERATION_SIMPLE_NAMES::contains)
                 .orElse(false);

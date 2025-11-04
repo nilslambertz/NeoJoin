@@ -7,8 +7,7 @@ import org.eclipse.xtext.xbase.XExpression;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmOperationUtils;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.CastingUtils;
 
 import java.util.Optional;
 import java.util.Set;
@@ -23,9 +22,9 @@ public class CollectReferencesParser implements ReferenceOperatorParser {
             PatternMatchingStrategy strategy, XExpression expression)
             throws UnsupportedReferenceExpressionException {
         final Optional<String> jvmOperationSimpleName =
-                JvmFeatureCallUtils.asMemberFeatureCall(expression)
+                CastingUtils.asMemberFeatureCall(expression)
                         .map(XAbstractFeatureCall::getFeature)
-                        .flatMap(JvmOperationUtils::asJvmOperation)
+                        .flatMap(CastingUtils::asJvmOperation)
                         .map(JvmIdentifiableElement::getSimpleName);
         if (jvmOperationSimpleName.isEmpty()) {
             return Optional.empty();

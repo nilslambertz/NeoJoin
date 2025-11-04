@@ -12,8 +12,7 @@ import tools.vitruv.neojoin.expression_parser.model.MemberFeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFieldUtils;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.CastingUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmTypeReferenceUtils;
 
 import java.util.Optional;
@@ -25,7 +24,7 @@ public class MemberFeatureCallParser implements ReferenceOperatorParser {
             PatternMatchingStrategy strategy, XExpression expression)
             throws UnsupportedReferenceExpressionException {
         final Optional<XMemberFeatureCall> memberFeatureCall =
-                JvmFeatureCallUtils.asMemberFeatureCall(expression);
+                CastingUtils.asMemberFeatureCall(expression);
         if (memberFeatureCall.isEmpty()) {
             return Optional.empty();
         }
@@ -33,7 +32,7 @@ public class MemberFeatureCallParser implements ReferenceOperatorParser {
         final Optional<JvmField> jvmField =
                 memberFeatureCall
                         .map(XAbstractFeatureCall::getFeature)
-                        .flatMap(JvmFieldUtils::asJvmField);
+                        .flatMap(CastingUtils::asJvmField);
         if (jvmField.isEmpty()) {
             return Optional.empty();
         }
@@ -86,10 +85,10 @@ public class MemberFeatureCallParser implements ReferenceOperatorParser {
     private static Optional<FeatureInformation> getListFeatureInformation(JvmField jvmField) {
         return Optional.ofNullable(jvmField)
                 .map(JvmField::getType)
-                .flatMap(JvmTypeReferenceUtils::asParameterizedTypeReference)
+                .flatMap(CastingUtils::asParameterizedTypeReference)
                 .filter(JvmTypeReferenceUtils::hasExactlyOneArgument)
                 .flatMap(JvmTypeReferenceUtils::getFirstArgument)
-                .flatMap(JvmTypeReferenceUtils::asParameterizedTypeReference)
+                .flatMap(CastingUtils::asParameterizedTypeReference)
                 .map(
                         field ->
                                 new FeatureInformation(

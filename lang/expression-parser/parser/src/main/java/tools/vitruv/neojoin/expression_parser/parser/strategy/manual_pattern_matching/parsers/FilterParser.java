@@ -12,10 +12,8 @@ import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.BlockExpressionUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.ClosureUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.CastingUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmMemberCallUtils;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmOperationUtils;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.PredicateExpressionUtils;
 
 import java.util.Optional;
@@ -28,16 +26,16 @@ public class FilterParser implements ReferenceOperatorParser {
             throws UnsupportedReferenceExpressionException {
         final Optional<XBinaryOperation> binaryOperation =
                 Optional.of(expression)
-                        .flatMap(JvmFeatureCallUtils::asMemberFeatureCall)
+                        .flatMap(CastingUtils::asMemberFeatureCall)
                         .filter(FilterParser::isFilterOperation)
                         .filter(JvmMemberCallUtils::hasExactlyOneMemberCallArgument)
                         .flatMap(JvmMemberCallUtils::getFirstArgument)
-                        .flatMap(ClosureUtils::asClosure)
+                        .flatMap(CastingUtils::asClosure)
                         .map(XClosure::getExpression)
-                        .flatMap(BlockExpressionUtils::asBlockExpression)
+                        .flatMap(CastingUtils::asBlockExpression)
                         .filter(BlockExpressionUtils::hasExactlyOneExpression)
                         .flatMap(BlockExpressionUtils::getFirstExpression)
-                        .flatMap(PredicateExpressionUtils::asBinaryOperation);
+                        .flatMap(CastingUtils::asBinaryOperation);
         if (binaryOperation.isEmpty()) {
             return Optional.empty();
         }
@@ -58,7 +56,7 @@ public class FilterParser implements ReferenceOperatorParser {
     private static boolean isFilterOperation(XMemberFeatureCall featureCall) {
         return Optional.ofNullable(featureCall)
                 .map(XAbstractFeatureCall::getFeature)
-                .flatMap(JvmOperationUtils::asJvmOperation)
+                .flatMap(CastingUtils::asJvmOperation)
                 .map(JvmIdentifiableElement::getSimpleName)
                 .map(FILTER_MAP_OPERATION_SIMPLE_NAME::equals)
                 .orElse(false);

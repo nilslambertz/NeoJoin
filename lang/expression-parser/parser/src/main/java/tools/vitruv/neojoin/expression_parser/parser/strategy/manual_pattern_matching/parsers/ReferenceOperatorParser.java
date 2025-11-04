@@ -8,7 +8,7 @@ import org.jspecify.annotations.Nullable;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.JvmFeatureCallUtils;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.utils.CastingUtils;
 
 import java.util.Optional;
 
@@ -18,9 +18,9 @@ public interface ReferenceOperatorParser {
 
     /** Returns the next call target if the expression is a {@code XMemberFeatureCall} */
     default Optional<XAbstractFeatureCall> findNextCallTarget(XExpression expression) {
-        return JvmFeatureCallUtils.asMemberFeatureCall(expression)
+        return CastingUtils.asMemberFeatureCall(expression)
                 .map(XMemberFeatureCall::getMemberCallTarget)
-                .flatMap(JvmFeatureCallUtils::asAbstractFeatureCall);
+                .flatMap(CastingUtils::asAbstractFeatureCall);
     }
 
     /**

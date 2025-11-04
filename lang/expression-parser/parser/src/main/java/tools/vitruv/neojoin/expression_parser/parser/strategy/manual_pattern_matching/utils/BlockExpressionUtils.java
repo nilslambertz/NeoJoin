@@ -7,15 +7,11 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtext.xbase.XBlockExpression;
 import org.eclipse.xtext.xbase.XExpression;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BlockExpressionUtils {
-    public static Optional<XBlockExpression> asBlockExpression(XExpression expression) {
-        return CastingUtils.cast(expression, XBlockExpression.class);
-    }
-
     public static boolean hasNoExpressions(XBlockExpression blockExpression) {
         return Optional.ofNullable(blockExpression)
                 .map(XBlockExpression::getExpressions)
