@@ -22,7 +22,7 @@ public class TripleRulePathToNode {
     }
 
     public TripleRulePathToNode pathToSecondLastNode() {
-        return new TripleRulePathToNode(root, linkPath.subList(1, linkPath.size()));
+        return new TripleRulePathToNode(root, linkPath.subList(0, linkPath.size() - 1));
     }
 
     public String getLastLink() {
