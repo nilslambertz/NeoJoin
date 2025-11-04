@@ -7,7 +7,7 @@
 
 *NeoJoin* is a declarative query language for view-based model-driven software development. It allows to easily create views based on one or more source models using a declarative SQL-like syntax. It supports multiple backends for the model-view transformation, one of which is based on triple graph grammars (TGGs) and supports bidirectional and incremental transformations between models and views.
 
-*Note: The frontend is currently not connected to the TGG backend, so an automatic transformation of the queries in NeoJoin syntax is only possible with the EMF backend. We plan to add support for this in the future.*
+*Note: The frontend is currently not fully connected to the TGG backend, so not all queries in NeoJoin syntax can be transformed into TGG projects.*
 
 ### Syntax Example
 
