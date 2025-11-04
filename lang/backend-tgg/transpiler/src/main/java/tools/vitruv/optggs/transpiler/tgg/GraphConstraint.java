@@ -9,5 +9,6 @@ import java.util.UUID;
 public class GraphConstraint {
     UUID id = UUID.randomUUID();
 
+    // TODO: Add specific Node-class for Patterns without TGG properties
     List<Node> nodes;
 }
