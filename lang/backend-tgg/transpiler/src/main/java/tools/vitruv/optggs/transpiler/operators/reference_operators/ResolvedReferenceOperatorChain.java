@@ -37,7 +37,8 @@ public class ResolvedReferenceOperatorChain {
             throw new IllegalStateException("Last Reference Operator must be a CollectReferences");
         }
 
-        // If the feature call rule wasn't extended with any green elements, we can remove it
+        // If the feature call rule wasn't extended with any green elements, we need to remove it to
+        // avoid conflicting rules
         if (!featureCallRule.hasAnyGreenElements()) {
             builder.removeRule(featureCallRule);
         }
