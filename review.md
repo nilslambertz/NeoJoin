@@ -85,6 +85,36 @@ review order:
 ### TGG project generation
 
 1. [TranspilerQueryResolver.resolveReferenceOperatorChain](./lang/backend-tgg/transpiler/src/main/java/tools/vitruv/optggs/transpiler/TranspilerQueryResolver.java)
+   transforms the ReferenceOperators
+   into [ResolvedReferenceOperators](./lang/backend-tgg/transpiler/src/main/java/tools/vitruv/optggs/transpiler/operators/reference_operators),
+   which are a lot closer to the TGG rules
+2. Check out
+   the [ResolvedReferenceOperators](./lang/backend-tgg/transpiler/src/main/java/tools/vitruv/optggs/transpiler/operators/reference_operators)
+   and their `extendRules` method.
+3. This method uses
+   the [TripleRulesBuilder](./lang/backend-tgg/transpiler/src/main/java/tools/vitruv/optggs/transpiler/tgg/TripleRulesBuilder.java)
+   and
+   the [TripleRuleCopyHelper](./lang/backend-tgg/transpiler/src/main/java/tools/vitruv/optggs/transpiler/tgg/TripleRuleCopyHelper.java)
+   to create/update the TGG rules for the refernence operators
+3. Take a look
+   at [ResolvedView](./lang/backend-tgg/transpiler/src/main/java/tools/vitruv/optggs/transpiler/operators/ResolvedView.java)
+   and [ResolvedQuery](./lang/backend-tgg/transpiler/src/main/java/tools/vitruv/optggs/transpiler/operators/ResolvedQuery.java),
+   which are responsible for collecting the generated TGG rules, constraints and queries
+4. Review the logic in
+   the [transpiler.tgg](./lang/backend-tgg/transpiler/src/main/java/tools/vitruv/optggs/transpiler/tgg) package, which
+   is the basis for the TGG project generation
+5. Now you can take a look at
+   the [templates](./lang/backend-tgg/transpiler/src/main/resources/tools/vitruv/optggs/transpiler/templates) for the
+   TGG project
+
+### Remarks
+
+- Lombok is not used consistently throughout the project. I've started using it for my contributions, but most of the
+  existing code has not been adapted yet
+- The [GraphConstraint](./lang/backend-tgg/transpiler/src/main/java/tools/vitruv/optggs/transpiler/tgg/GraphConstraint.java)
+currently uses the
+same [Nodes](./lang/backend-tgg/transpiler/src/main/java/tools/vitruv/optggs/transpiler/tgg/Node.java) as the TGG
+classes. However, since constraints are only patterns and not graph rules, their semantics and properties are different from TGG elements. For example, there are no green (created) or black (context) nodes. The idea is to create a shared parent "GraphNode" from which the special types of nodes are derived
 
 ## Building and running the project
 
