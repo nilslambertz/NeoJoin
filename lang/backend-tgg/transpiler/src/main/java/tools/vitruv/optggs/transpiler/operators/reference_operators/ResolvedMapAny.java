@@ -9,6 +9,8 @@ import tools.vitruv.optggs.transpiler.tgg.TripleRule;
 import tools.vitruv.optggs.transpiler.tgg.TripleRulePathToNode;
 import tools.vitruv.optggs.transpiler.tgg.TripleRulesBuilder;
 
+// TODO: Not fully working yet, we need additional information on how to build the constraint, e.g.
+// if the operator was only used inside an argument
 public class ResolvedMapAny implements ResolvedReferenceOperator {
     @Override
     public void extendRules(TripleRulesBuilder builder) {
@@ -21,7 +23,8 @@ public class ResolvedMapAny implements ResolvedReferenceOperator {
         // Duplicate last source node and incoming link
         final Slice sourceSlice = copiedRule.addSourceSlice();
         Node duplicatedLastNode = sourceSlice.addNode(lastNodeType);
-        Link linkToLastDuplicatedLastNode = Link.Black(pathToLastNode.getLastLink(), duplicatedLastNode);
+        Link linkToLastDuplicatedLastNode =
+                Link.Black(pathToLastNode.getLastLink(), duplicatedLastNode);
 
         // Add the "duplicated" link to the node "above"
         final Node nodeBeforeLastNode =
