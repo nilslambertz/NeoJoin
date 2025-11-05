@@ -25,6 +25,13 @@ We receive the query expressions (here `car.axis.flatMap[it.wheels].toList()`) f
 that these are supported by our TGG backend. Then we need to transform them into a representation that can be used to
 generate the corresponding TGG rules for the expression chain.
 
+Expressions can also be nested, as the arguments themselves can be expressions again. Some more expression examples:
+```
+car.axis.flatMap[oneAxis | oneAxis.wheels.flatMap[oneWheel | oneWheel.parts].flatMap[onePart | onePart.details]].toList()
+car.axis.map[oneAxis | oneAxis.axisInfos.deeperInfos.veryVeryDeepInfos]
+car.axis.filter[axis | axis.position == "front"].flatMap[oneAxis | oneAxis.wheels].findFirst[oneWheel | oneWheel.pressure > 2.3]
+```
+
 ## Structure of this repository
 
 The entry point for NeoJoin commands is the [CLI](./lang/frontend/cli/src/main/java/tools/vitruv/neojoin/cli/Main.java).
