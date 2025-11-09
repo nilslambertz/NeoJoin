@@ -4,10 +4,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Value;
 
-import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedReferenceOperatorChain;
 import tools.vitruv.optggs.transpiler.graph.GraphConstraint;
 import tools.vitruv.optggs.transpiler.graph.TripleRule;
 import tools.vitruv.optggs.transpiler.graph.TripleRulesBuilder;
+import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedReferenceOperatorChain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,8 +75,7 @@ public class ResolvedQuery {
     }
 
     private TripleRule createLinkRule(ResolvedLink link) {
-        final TripleRule rule = new TripleRule();
-        rule.setLinkRule(true);
+        final TripleRule rule = TripleRule.LinkTripleRule();
         selection.extendRule(rule);
         link.extendRule(rule);
 

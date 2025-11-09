@@ -1,5 +1,7 @@
 package tools.vitruv.optggs.transpiler.graph;
 
+import lombok.Getter;
+
 import tools.vitruv.optggs.operators.FQN;
 
 import java.util.ArrayList;
@@ -21,7 +23,7 @@ public class TripleRule {
     private final List<Node> targetNodes;
     private final List<Correspondence> correspondences;
     private final List<AttributeConstraint> constraints;
-    private boolean isLinkRule;
+    @Getter private final boolean isLinkRule;
 
     public TripleRule() {
         nameRepository = new NameRepository();
@@ -30,6 +32,16 @@ public class TripleRule {
         correspondences = new ArrayList<>();
         constraints = new ArrayList<>();
         isLinkRule = false;
+    }
+
+    public static TripleRule LinkTripleRule() {
+        return new TripleRule(
+                new NameRepository(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                true);
     }
 
     private TripleRule(
@@ -151,14 +163,6 @@ public class TripleRule {
 
     public Collection<AttributeConstraint> constraints() {
         return constraints;
-    }
-
-    public boolean isLinkRule() {
-        return isLinkRule;
-    }
-
-    public void setLinkRule(boolean linkRule) {
-        isLinkRule = linkRule;
     }
 
     public TripleRule makeBlack() {
