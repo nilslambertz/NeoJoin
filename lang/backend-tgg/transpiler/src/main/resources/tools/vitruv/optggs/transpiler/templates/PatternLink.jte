@@ -1,3 +1,3 @@
-@import tools.vitruv.optggs.transpiler.tgg.Link
-@param Link link
--${link.name()}->${link.target().id()}
+@import tools.vitruv.optggs.transpiler.graph.pattern.PatternLink
+@param PatternLink link
+-${link.getName()}->${link.getTarget().getId()}
