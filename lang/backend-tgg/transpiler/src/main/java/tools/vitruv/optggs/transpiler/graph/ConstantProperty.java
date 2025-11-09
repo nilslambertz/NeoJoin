@@ -1,4 +1,4 @@
-package tools.vitruv.optggs.transpiler.tgg;
+package tools.vitruv.optggs.transpiler.graph;
 
 import tools.vitruv.optggs.operators.LogicOperator;
 
@@ -7,7 +7,6 @@ public record ConstantProperty(String name, LogicOperator operator, String value
 
     @Override
     public String toExpression(Node node) {
-
         if (node.isGreen()) {
             return "." + name + " := " + value;
         } else {

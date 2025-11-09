@@ -1,6 +1,6 @@
 @import tools.vitruv.optggs.transpiler.NameResolver
-@import tools.vitruv.optggs.transpiler.tgg.GraphConstraint
-@import tools.vitruv.optggs.transpiler.tgg.Node
+@import tools.vitruv.optggs.transpiler.graph.GraphConstraint
+@import tools.vitruv.optggs.transpiler.graph.Node
 @param GraphConstraint constraint
 @param NameResolver nameResolver
 constraint ${nameResolver.resolveConstraintName(constraint)} = forbid ${nameResolver.resolvePatternName(constraint)}

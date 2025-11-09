@@ -1,4 +1,4 @@
-package tools.vitruv.optggs.transpiler.tgg;
+package tools.vitruv.optggs.transpiler.graph;
 
 import tools.vitruv.optggs.operators.FQN;
 
@@ -130,11 +130,11 @@ public class TripleRule {
     }
 
     public Optional<Node> findSourceNodeByType(FQN type) {
-        return sourceNodes.stream().filter(node -> node.type().equals(type)).findFirst();
+        return sourceNodes.stream().filter(node -> node.getType().equals(type)).findFirst();
     }
 
     public Optional<Node> findTargetNodeByType(FQN type) {
-        return targetNodes.stream().filter(node -> node.type().equals(type)).findFirst();
+        return targetNodes.stream().filter(node -> node.getType().equals(type)).findFirst();
     }
 
     public Slice allSourcesAsSlice() {

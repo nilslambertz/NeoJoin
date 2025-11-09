@@ -5,9 +5,9 @@ import tools.vitruv.optggs.operators.LogicOperator;
 import tools.vitruv.optggs.operators.expressions.ConstantExpression;
 import tools.vitruv.optggs.operators.filters.FunctionFilter;
 import tools.vitruv.optggs.transpiler.operators.ResolvedFilter;
-import tools.vitruv.optggs.transpiler.tgg.AttributeConstraint;
-import tools.vitruv.optggs.transpiler.tgg.Node;
-import tools.vitruv.optggs.transpiler.tgg.TripleRule;
+import tools.vitruv.optggs.transpiler.graph.AttributeConstraint;
+import tools.vitruv.optggs.transpiler.graph.Node;
+import tools.vitruv.optggs.transpiler.graph.TripleRule;
 
 public class ResolvedFunctionFilter implements ResolvedFilter {
     private final FunctionInvocation function;

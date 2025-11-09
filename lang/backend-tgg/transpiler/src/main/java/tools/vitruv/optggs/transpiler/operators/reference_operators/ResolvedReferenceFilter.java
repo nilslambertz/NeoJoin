@@ -4,10 +4,10 @@ import lombok.Value;
 
 import tools.vitruv.optggs.operators.LogicOperator;
 import tools.vitruv.optggs.operators.expressions.ConstantExpression;
-import tools.vitruv.optggs.transpiler.tgg.Node;
-import tools.vitruv.optggs.transpiler.tgg.TripleRule;
-import tools.vitruv.optggs.transpiler.tgg.TripleRulePathToNode;
-import tools.vitruv.optggs.transpiler.tgg.TripleRulesBuilder;
+import tools.vitruv.optggs.transpiler.graph.Node;
+import tools.vitruv.optggs.transpiler.graph.TripleRule;
+import tools.vitruv.optggs.transpiler.graph.TripleRulePathToNode;
+import tools.vitruv.optggs.transpiler.graph.TripleRulesBuilder;
 
 @Value
 public class ResolvedReferenceFilter implements ResolvedReferenceOperator {

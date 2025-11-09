@@ -3,8 +3,8 @@ package tools.vitruv.optggs.transpiler.operators.reference_operators;
 import lombok.Value;
 
 import tools.vitruv.optggs.operators.FQN;
-import tools.vitruv.optggs.transpiler.tgg.TripleRule;
-import tools.vitruv.optggs.transpiler.tgg.TripleRulesBuilder;
+import tools.vitruv.optggs.transpiler.graph.TripleRule;
+import tools.vitruv.optggs.transpiler.graph.TripleRulesBuilder;
 
 import java.util.List;
 

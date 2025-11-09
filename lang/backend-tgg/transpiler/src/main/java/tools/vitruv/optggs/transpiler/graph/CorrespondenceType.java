@@ -1,4 +1,4 @@
-package tools.vitruv.optggs.transpiler.tgg;
+package tools.vitruv.optggs.transpiler.graph;
 
 import tools.vitruv.optggs.operators.FQN;
 
@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public record CorrespondenceType(FQN source, FQN target) {
     public CorrespondenceType(Node source, Node target) {
-        this(source.type(), target.type());
+        this(source.getType(), target.getType());
     }
 
     @Override

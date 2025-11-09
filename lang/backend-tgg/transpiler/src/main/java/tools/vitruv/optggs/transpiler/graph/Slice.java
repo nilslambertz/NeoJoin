@@ -1,4 +1,4 @@
-package tools.vitruv.optggs.transpiler.tgg;
+package tools.vitruv.optggs.transpiler.graph;
 
 import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.operators.selection.PatternLink;
@@ -30,7 +30,7 @@ public class Slice {
 
     public Optional<Node> findByType(FQN type) {
         for (var node : nodes) {
-            if (node.type().equals(type)) {
+            if (node.getType().equals(type)) {
                 return Optional.of(node);
             }
         }

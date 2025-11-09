@@ -1,7 +1,7 @@
 @import tools.vitruv.optggs.transpiler.NameResolver
-@import tools.vitruv.optggs.transpiler.tgg.GraphConstraint
-@import tools.vitruv.optggs.transpiler.tgg.TripleGrammar
-@import tools.vitruv.optggs.transpiler.tgg.TripleRule
+@import tools.vitruv.optggs.transpiler.graph.GraphConstraint
+@import tools.vitruv.optggs.transpiler.graph.TripleGrammar
+@import tools.vitruv.optggs.transpiler.graph.TripleRule
 @param TripleGrammar grammar
 @param NameResolver nameResolver
 import "platform:/resource/${grammar.getName()}/src/SourceMetamodel.msl"

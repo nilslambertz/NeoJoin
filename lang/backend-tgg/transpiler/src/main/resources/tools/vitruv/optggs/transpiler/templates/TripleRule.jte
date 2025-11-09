@@ -1,9 +1,9 @@
 @import gg.jte.support.ForSupport
 @import tools.vitruv.optggs.transpiler.NameResolver
-@import tools.vitruv.optggs.transpiler.tgg.AttributeConstraint
-@import tools.vitruv.optggs.transpiler.tgg.Correspondence
-@import tools.vitruv.optggs.transpiler.tgg.TripleRule
-@import tools.vitruv.optggs.transpiler.tgg.Node
+@import tools.vitruv.optggs.transpiler.graph.AttributeConstraint
+@import tools.vitruv.optggs.transpiler.graph.Correspondence
+@import tools.vitruv.optggs.transpiler.graph.TripleRule
+@import tools.vitruv.optggs.transpiler.graph.Node
 @param TripleRule rule
 @param String schema
 @param NameResolver nameResolver
@@ -17,11 +17,11 @@ tripleRule ${nameResolver.resolveRuleName(rule)} : ${schema} {
     @endfor
     }
     correspondence {
-    @for(Correspondence corr: rule.correspondences())@if(corr.isGreen())++@endif ${corr.source().id()} <- :${nameResolver.resolveCorrespondenceName(corr)} -> ${corr.target().id()}
+    @for(Correspondence corr: rule.correspondences())@if(corr.isGreen())++@endif ${corr.getSource().getId()} <- :${nameResolver.resolveCorrespondenceName(corr)} -> ${corr.getTarget().getId()}
     @endfor
     }
     attributeConstraints {
-    @for(AttributeConstraint constraint: rule.constraints())${constraint.name()}(
+    @for(AttributeConstraint constraint: rule.constraints())${constraint.getName()}(
         @for(var param: ForSupport.of(constraint.parameters())) ${param.get().attribute()} = @template.ValueExpression(expression=param.get().value()) @if(!param.isLast()),@endif@endfor
         )
     @endfor

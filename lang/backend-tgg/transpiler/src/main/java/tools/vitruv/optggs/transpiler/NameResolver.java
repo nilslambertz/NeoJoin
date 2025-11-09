@@ -1,11 +1,11 @@
 package tools.vitruv.optggs.transpiler;
 
 import tools.vitruv.optggs.operators.FQN;
-import tools.vitruv.optggs.transpiler.tgg.Correspondence;
-import tools.vitruv.optggs.transpiler.tgg.CorrespondenceType;
-import tools.vitruv.optggs.transpiler.tgg.GraphConstraint;
-import tools.vitruv.optggs.transpiler.tgg.Node;
-import tools.vitruv.optggs.transpiler.tgg.TripleRule;
+import tools.vitruv.optggs.transpiler.graph.Correspondence;
+import tools.vitruv.optggs.transpiler.graph.CorrespondenceType;
+import tools.vitruv.optggs.transpiler.graph.GraphConstraint;
+import tools.vitruv.optggs.transpiler.graph.Node;
+import tools.vitruv.optggs.transpiler.graph.TripleRule;
 
 public interface NameResolver {
     String resolveName(FQN fqn);
@@ -25,12 +25,12 @@ public interface NameResolver {
                     rule.allSourcesAsSlice()
                             .filterMapNodes(
                                     node -> !node.links().isEmpty(),
-                                    node -> node.type().localName());
+                                    node -> node.getType().localName());
             var destinationNodes =
                     rule.allSourcesAsSlice()
                             .filterMapNodes(
                                     node -> node.links().isEmpty(),
-                                    node -> node.type().localName());
+                                    node -> node.getType().localName());
             return "Link"
                     + String.join("And", originNodes)
                     + "To"
@@ -39,8 +39,8 @@ public interface NameResolver {
             // Select rule
             var greenSources = rule.allSourcesAsSlice().findNodes(Node::isGreen);
             var greenTargets = rule.allTargetsAsSlice().findNodes(Node::isGreen);
-            var sources = greenSources.stream().map(node -> node.type().localName()).toList();
-            var targets = greenTargets.stream().map(node -> node.type().localName()).toList();
+            var sources = greenSources.stream().map(node -> node.getType().localName()).toList();
+            var targets = greenTargets.stream().map(node -> node.getType().localName()).toList();
             return "Select" + String.join("And", sources) + "As" + String.join("And", targets);
         }
     }

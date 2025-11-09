@@ -2,8 +2,8 @@ package tools.vitruv.optggs.transpiler.operators;
 
 import tools.vitruv.optggs.operators.Mapping;
 import tools.vitruv.optggs.transpiler.operators.patterns.ResolvedPattern;
-import tools.vitruv.optggs.transpiler.tgg.Slice;
-import tools.vitruv.optggs.transpiler.tgg.TripleRule;
+import tools.vitruv.optggs.transpiler.graph.Slice;
+import tools.vitruv.optggs.transpiler.graph.TripleRule;
 
 import java.util.HashSet;
 import java.util.Set;
