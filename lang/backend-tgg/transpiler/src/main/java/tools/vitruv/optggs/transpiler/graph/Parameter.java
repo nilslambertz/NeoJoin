@@ -1,8 +1,6 @@
-package tools.vitruv.optggs.transpiler.tgg;
+package tools.vitruv.optggs.transpiler.graph;
 
-import tools.vitruv.optggs.operators.expressions.ConstantExpression;
 import tools.vitruv.optggs.operators.expressions.ValueExpression;
-import tools.vitruv.optggs.operators.expressions.VariableExpression;
 
 public final class Parameter {
     private final String attribute;
@@ -23,13 +21,5 @@ public final class Parameter {
 
     Parameter deepCopy() {
         return new Parameter(attribute, value.deepCopy());
-    }
-
-    public void propagateConstant(VariableExpression variable, ConstantExpression constant) {
-        if (value instanceof VariableExpression v) {
-            if (v == variable) {
-                value = constant;
-            }
-        }
     }
 }
