@@ -1,4 +1,4 @@
-package tools.vitruv.optggs.transpiler.tgg;
+package tools.vitruv.optggs.transpiler.graph;
 
 import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.operators.LogicOperator;
@@ -60,11 +60,11 @@ public class Node {
         return create(id, type, true, nameRepository);
     }
 
-    public String id() {
+    public String getId() {
         return id;
     }
 
-    public FQN type() {
+    public FQN getType() {
         return type;
     }
 
@@ -82,7 +82,7 @@ public class Node {
         return this;
     }
 
-    public Collection<Property> properties() {
+    public Collection<Property> getProperties() {
         return properties.values();
     }
 
@@ -129,10 +129,10 @@ public class Node {
 
     public Node getFirstLinkTarget(String link) {
         return this.links.stream()
-                .filter(someLink -> someLink.name().equals(link))
+                .filter(someLink -> someLink.getName().equals(link))
                 .findFirst()
                 .orElseThrow()
-                .target();
+                .getTarget();
     }
 
     public void addLink(Link link) {

@@ -1,4 +1,4 @@
-package tools.vitruv.optggs.transpiler.tgg;
+package tools.vitruv.optggs.transpiler.graph;
 
 public final class Link {
     private final String name;
