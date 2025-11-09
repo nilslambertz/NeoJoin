@@ -1,16 +1,17 @@
-package tools.vitruv.optggs.transpiler.tgg;
+package tools.vitruv.optggs.transpiler.graph;
 
-import tools.vitruv.optggs.operators.expressions.ConstantExpression;
+import lombok.Value;
+
 import tools.vitruv.optggs.operators.expressions.ValueExpression;
-import tools.vitruv.optggs.operators.expressions.VariableExpression;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@Value
 public class AttributeConstraint {
-    public final String name;
-    public final List<Parameter> parameters;
+    String name;
+    List<Parameter> parameters;
 
     public AttributeConstraint(String name) {
         this(name, new ArrayList<>());
@@ -19,10 +20,6 @@ public class AttributeConstraint {
     public AttributeConstraint(String name, List<Parameter> parameters) {
         this.name = name;
         this.parameters = parameters;
-    }
-
-    public String name() {
-        return name;
     }
 
     public Collection<Parameter> parameters() {
@@ -53,12 +50,6 @@ public class AttributeConstraint {
 
     public void addParameter(String name, ValueExpression value) {
         parameters.add(new Parameter(name, value));
-    }
-
-    public void propagateConstant(VariableExpression variable, ConstantExpression constant) {
-        for (var param : parameters) {
-            param.propagateConstant(variable, constant);
-        }
     }
 
     AttributeConstraint deepCopy() {

@@ -1,9 +1,10 @@
-package tools.vitruv.optggs.transpiler.tgg;
-
-import org.junit.jupiter.api.Test;
-import tools.vitruv.optggs.operators.expressions.ConstantExpression;
+package tools.vitruv.optggs.transpiler.graph;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
+
+import tools.vitruv.optggs.operators.expressions.ConstantExpression;
 
 class AttributeConstraintTest {
     @Test
