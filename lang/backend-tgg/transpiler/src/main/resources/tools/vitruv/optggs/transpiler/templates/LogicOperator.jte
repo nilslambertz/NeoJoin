@@ -1,5 +1,5 @@
 @import tools.vitruv.optggs.operators.LogicOperator
-@import tools.vitruv.optggs.transpiler.tgg.Node
+@import tools.vitruv.optggs.transpiler.graph.Node
 @param LogicOperator operator
 @param Node node
 @if(operator == LogicOperator.Equals && node.isGreen()):=
