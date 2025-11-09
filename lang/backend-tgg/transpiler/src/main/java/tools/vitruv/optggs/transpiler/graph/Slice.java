@@ -54,15 +54,8 @@ public class Slice {
     }
 
     public Slice makeGreen() {
-        for (var node : nodes) {
-            node.makeGreen();
-            for (var link : node.links()) {
-                link.makeGreen();
-            }
-        }
-        for (var correspondence : correspondences) {
-            correspondence.makeGreen();
-        }
+        nodes.forEach(Node::makeGreen);
+        correspondences.forEach(Correspondence::makeGreen);
         return this;
     }
 

@@ -74,6 +74,7 @@ public class Node {
 
     public Node makeGreen() {
         this.green = true;
+        links.forEach(Link::makeGreen);
         return this;
     }
 
