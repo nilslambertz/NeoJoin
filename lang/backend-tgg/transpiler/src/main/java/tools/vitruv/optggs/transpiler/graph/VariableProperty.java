@@ -3,8 +3,8 @@ package tools.vitruv.optggs.transpiler.graph;
 public record VariableProperty(String name, String value) implements Property {
 
     @Override
-    public String toExpression(Node node) {
-        if (node.isGreen()) {
+    public String toExpression(boolean green) {
+        if (green) {
             return "." + name + " := <" + value + ">";
         } else {
             return "." + name + " : <" + value + ">";

@@ -5,7 +5,7 @@ public interface Property {
 
     String value();
 
-    String toExpression(Node node);
+    String toExpression(boolean green);
 
     Property deepCopy();
 }

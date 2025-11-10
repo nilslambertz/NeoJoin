@@ -2,6 +2,8 @@ package tools.vitruv.optggs.transpiler.graph;
 
 import lombok.Value;
 
+import tools.vitruv.optggs.transpiler.graph.pattern.PatternNode;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -9,6 +11,5 @@ import java.util.UUID;
 public class GraphConstraint {
     UUID id = UUID.randomUUID();
 
-    // TODO: Add specific Node-class for Patterns without TGG properties
-    List<Node> nodes;
+    List<PatternNode> nodes;
 }

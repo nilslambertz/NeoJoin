@@ -79,6 +79,10 @@ public abstract class AbstractGraphNode<
         return Collections.unmodifiableCollection(links);
     }
 
+    public List<Property> getProperties() {
+        return Collections.unmodifiableList(properties);
+    }
+
     public N getFirstLinkTarget(String link) {
         return this.links.stream()
                 .filter(someLink -> someLink.getName().equals(link))

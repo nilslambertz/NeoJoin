@@ -3,13 +3,16 @@
 @import tools.vitruv.optggs.transpiler.graph.Link
 @import tools.vitruv.optggs.transpiler.graph.Node
 @import tools.vitruv.optggs.transpiler.graph.Property
-@param Node node
+@import tools.vitruv.optggs.transpiler.graph.pattern.PatternLink;import tools.vitruv.optggs.transpiler.graph.pattern.PatternNode
+@param PatternNode node
 @param NameResolver nameResolver
 ${node.getId()}: ${nameResolver.resolveName(node.getType())} {
-@for(Property prop : node.getProperties())${prop.toExpression(node)}
-@endfor
-@for(Attribute attr : node.attributes())@template.Attribute(node = node, attribute = attr)
-@endfor
-@for(Link link : node.links())@template.PatternLink(link = link)
-@endfor
+    @for(Property prop : node.getProperties())${prop.toExpression(false)}
+    @endfor
+
+    @for(Attribute attr : node.attributes())@template.Attribute(node = node, attribute = attr)
+    @endfor
+
+    @for(PatternLink link : node.links())@template.PatternLink(link = link)
+    @endfor
 }
