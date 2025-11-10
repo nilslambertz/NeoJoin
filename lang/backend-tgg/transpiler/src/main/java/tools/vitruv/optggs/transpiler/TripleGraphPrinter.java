@@ -5,7 +5,7 @@ import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.output.FileOutput;
 import gg.jte.resolve.ResourceCodeResolver;
-import tools.vitruv.optggs.transpiler.graph.TripleGrammar;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleGrammar;
 
 import java.io.IOException;
 import java.nio.file.Path;

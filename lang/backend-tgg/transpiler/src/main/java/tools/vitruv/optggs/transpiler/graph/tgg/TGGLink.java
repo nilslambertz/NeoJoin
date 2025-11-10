@@ -1,9 +1,9 @@
 package tools.vitruv.optggs.transpiler.graph.tgg;
 
 import lombok.Getter;
+
 import tools.vitruv.optggs.transpiler.graph.AbstractGraphLink;
 import tools.vitruv.optggs.transpiler.graph.GraphNodeCopyHelper;
-import tools.vitruv.optggs.transpiler.graph.TGGNode;
 
 @Getter
 public class TGGLink extends AbstractGraphLink<TGGNode> implements Greenable<TGGLink> {

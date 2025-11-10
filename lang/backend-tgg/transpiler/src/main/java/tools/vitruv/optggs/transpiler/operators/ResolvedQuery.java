@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.Value;
 
 import tools.vitruv.optggs.transpiler.graph.pattern.ConstraintPattern;
-import tools.vitruv.optggs.transpiler.graph.TripleRule;
-import tools.vitruv.optggs.transpiler.graph.TripleRulesBuilder;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleRule;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleRulesBuilder;
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedReferenceOperatorChain;
 
 import java.util.ArrayList;

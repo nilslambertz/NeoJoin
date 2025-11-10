@@ -5,7 +5,7 @@ import tools.vitruv.optggs.operators.LogicOperator;
 import tools.vitruv.optggs.transpiler.operators.ResolvedProjection;
 import tools.vitruv.optggs.transpiler.operators.patterns.ResolvedPattern;
 import tools.vitruv.optggs.transpiler.graph.Attribute;
-import tools.vitruv.optggs.transpiler.graph.TripleRule;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleRule;
 
 public class ResolvedSimpleProjection implements ResolvedProjection {
     private final ResolvedPattern source;

@@ -1,4 +1,4 @@
-package tools.vitruv.optggs.transpiler.graph;
+package tools.vitruv.optggs.transpiler.graph.tgg;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

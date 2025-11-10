@@ -1,10 +1,13 @@
-package tools.vitruv.optggs.transpiler.graph;
+package tools.vitruv.optggs.transpiler.graph.tgg;
 
 import lombok.Getter;
 
 import tools.vitruv.optggs.operators.FQN;
-import tools.vitruv.optggs.transpiler.graph.tgg.Greenable;
-import tools.vitruv.optggs.transpiler.graph.tgg.TGGLink;
+import tools.vitruv.optggs.transpiler.graph.AbstractGraphNode;
+import tools.vitruv.optggs.transpiler.graph.Attribute;
+import tools.vitruv.optggs.transpiler.graph.GraphNodeCopyHelper;
+import tools.vitruv.optggs.transpiler.graph.NameRepository;
+import tools.vitruv.optggs.transpiler.graph.Property;
 
 import java.util.ArrayList;
 import java.util.List;

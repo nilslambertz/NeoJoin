@@ -1,12 +1,11 @@
 package tools.vitruv.optggs.transpiler.operators.reference_operators;
 
 import tools.vitruv.optggs.operators.FQN;
-import tools.vitruv.optggs.transpiler.graph.Slice;
-import tools.vitruv.optggs.transpiler.graph.TGGNode;
-import tools.vitruv.optggs.transpiler.graph.TripleRule;
-import tools.vitruv.optggs.transpiler.graph.TripleRulePathToNode;
-import tools.vitruv.optggs.transpiler.graph.TripleRulesBuilder;
-import tools.vitruv.optggs.transpiler.graph.pattern.ConstraintPattern;
+import tools.vitruv.optggs.transpiler.graph.tgg.TGGSlice;
+import tools.vitruv.optggs.transpiler.graph.tgg.TGGNode;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleRule;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleRulePathToNode;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleRulesBuilder;
 import tools.vitruv.optggs.transpiler.graph.tgg.TGGLink;
 
 // TODO: Not fully working yet, we need additional information on how to build the constraint, e.g.
@@ -21,7 +20,7 @@ public class ResolvedMapAny implements ResolvedReferenceOperator {
         final FQN lastNodeType = copiedRule.findNestedSourceNode(pathToLastNode).getType();
 
         // Duplicate last source node and incoming link
-        final Slice sourceSlice = copiedRule.addSourceSlice();
+        final TGGSlice sourceSlice = copiedRule.addSourceSlice();
         TGGNode duplicatedLastNode = sourceSlice.addNode(lastNodeType);
         TGGLink linkToLastDuplicatedLastNode =
                 TGGLink.Black(pathToLastNode.getLastLink(), duplicatedLastNode);

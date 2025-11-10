@@ -1,10 +1,7 @@
-package tools.vitruv.optggs.transpiler.graph;
+package tools.vitruv.optggs.transpiler.graph.tgg;
 
 import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.operators.selection.PatternLink;
-import tools.vitruv.optggs.transpiler.graph.tgg.AttributeConstraint;
-import tools.vitruv.optggs.transpiler.graph.tgg.Correspondence;
-import tools.vitruv.optggs.transpiler.graph.tgg.TGGLink;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,12 +10,12 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class Slice {
+public class TGGSlice {
     private final TripleRule.RuleExtender ruleExtender;
     private final List<TGGNode> nodes = new ArrayList<>();
     private final List<Correspondence> correspondences = new ArrayList<>();
 
-    public Slice(
+    public TGGSlice(
             TripleRule.RuleExtender ruleExtender,
             Collection<TGGNode> initialNodes,
             Collection<Correspondence> initialCorrespondences) {
@@ -56,13 +53,13 @@ public class Slice {
         return ruleExtender.addConstraint(constraint);
     }
 
-    public Slice makeGreen() {
+    public TGGSlice makeGreen() {
         nodes.forEach(TGGNode::makeGreen);
         correspondences.forEach(Correspondence::makeGreen);
         return this;
     }
 
-    public Slice makeBlack() {
+    public TGGSlice makeBlack() {
         for (var node : nodes) {
             node.makeBlack();
             for (var link : node.links()) {

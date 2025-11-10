@@ -3,11 +3,11 @@ package tools.vitruv.optggs.transpiler.operators.reference_operators;
 import lombok.Value;
 
 import tools.vitruv.optggs.operators.FQN;
-import tools.vitruv.optggs.transpiler.graph.Slice;
-import tools.vitruv.optggs.transpiler.graph.TGGNode;
-import tools.vitruv.optggs.transpiler.graph.TripleRule;
-import tools.vitruv.optggs.transpiler.graph.TripleRulePathToNode;
-import tools.vitruv.optggs.transpiler.graph.TripleRulesBuilder;
+import tools.vitruv.optggs.transpiler.graph.tgg.TGGSlice;
+import tools.vitruv.optggs.transpiler.graph.tgg.TGGNode;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleRule;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleRulePathToNode;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleRulesBuilder;
 import tools.vitruv.optggs.transpiler.graph.tgg.TGGLink;
 
 @Value
@@ -26,7 +26,7 @@ public class ResolvedCollectReferences implements ResolvedReferenceOperator {
 
         final TGGNode targetSourceNode = latestRule.findTargetNodeByType(targetRoot).orElseThrow();
 
-        final Slice targetSlice = latestRule.addTargetSlice();
+        final TGGSlice targetSlice = latestRule.addTargetSlice();
         TGGNode targetChildNode = targetSlice.addNode(targetLeaf);
 
         TGGLink targetParentLinkToChild = TGGLink.Green(targetField, targetChildNode);

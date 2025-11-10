@@ -4,8 +4,8 @@ import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.operators.LogicOperator;
 import tools.vitruv.optggs.operators.Tuple;
 import tools.vitruv.optggs.transpiler.graph.Attribute;
-import tools.vitruv.optggs.transpiler.graph.Slice;
-import tools.vitruv.optggs.transpiler.graph.TGGNode;
+import tools.vitruv.optggs.transpiler.graph.tgg.TGGSlice;
+import tools.vitruv.optggs.transpiler.graph.tgg.TGGNode;
 
 import java.util.Collection;
 import java.util.List;
@@ -26,7 +26,7 @@ public class ResolvedJoin implements ResolvedPatternLink {
     }
 
     @Override
-    public TGGNode extendSlice(Slice slice, TGGNode lastNode) {
+    public TGGNode extendSlice(TGGSlice slice, TGGNode lastNode) {
         TGGNode node = slice.findByType(element).orElseGet(() -> slice.addNode(element));
         for (var property : constrainedProperties) {
 

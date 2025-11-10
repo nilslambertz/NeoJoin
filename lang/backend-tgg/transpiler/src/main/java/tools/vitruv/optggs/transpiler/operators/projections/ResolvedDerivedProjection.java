@@ -4,8 +4,8 @@ import tools.vitruv.optggs.operators.FunctionInvocation;
 import tools.vitruv.optggs.operators.LogicOperator;
 import tools.vitruv.optggs.operators.expressions.ConstantExpression;
 import tools.vitruv.optggs.operators.projections.DerivedProjection;
-import tools.vitruv.optggs.transpiler.graph.TGGNode;
-import tools.vitruv.optggs.transpiler.graph.TripleRule;
+import tools.vitruv.optggs.transpiler.graph.tgg.TGGNode;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleRule;
 import tools.vitruv.optggs.transpiler.graph.tgg.AttributeConstraint;
 import tools.vitruv.optggs.transpiler.operators.ResolvedProjection;
 

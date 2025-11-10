@@ -3,11 +3,11 @@ package tools.vitruv.optggs.transpiler.operators.reference_operators;
 import lombok.Value;
 
 import tools.vitruv.optggs.operators.FQN;
-import tools.vitruv.optggs.transpiler.graph.Slice;
-import tools.vitruv.optggs.transpiler.graph.TGGNode;
-import tools.vitruv.optggs.transpiler.graph.TripleRule;
-import tools.vitruv.optggs.transpiler.graph.TripleRulePathToNode;
-import tools.vitruv.optggs.transpiler.graph.TripleRulesBuilder;
+import tools.vitruv.optggs.transpiler.graph.tgg.TGGSlice;
+import tools.vitruv.optggs.transpiler.graph.tgg.TGGNode;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleRule;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleRulePathToNode;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleRulesBuilder;
 import tools.vitruv.optggs.transpiler.graph.tgg.TGGLink;
 
 @Value
@@ -22,7 +22,7 @@ public class ResolvedSingleMemberFeatureCall implements ResolvedReferenceOperato
         final TripleRulePathToNode pathToLastNode = builder.getPathToLastNode();
         final TGGNode lastSourceNode = rule.findNestedSourceNode(pathToLastNode);
 
-        final Slice sourceSlice = rule.addSourceSlice();
+        final TGGSlice sourceSlice = rule.addSourceSlice();
         TGGNode childNode = sourceSlice.addNode(featureElement);
         childNode.makeGreen();
 

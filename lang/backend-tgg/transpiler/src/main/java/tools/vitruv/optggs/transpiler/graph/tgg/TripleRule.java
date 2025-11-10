@@ -1,11 +1,9 @@
-package tools.vitruv.optggs.transpiler.graph;
+package tools.vitruv.optggs.transpiler.graph.tgg;
 
 import lombok.Getter;
 
 import tools.vitruv.optggs.operators.FQN;
-import tools.vitruv.optggs.transpiler.graph.tgg.AttributeConstraint;
-import tools.vitruv.optggs.transpiler.graph.tgg.Correspondence;
-import tools.vitruv.optggs.transpiler.graph.tgg.TGGNodeCopyHelper;
+import tools.vitruv.optggs.transpiler.graph.NameRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -90,9 +88,9 @@ public class TripleRule {
         return constraint;
     }
 
-    public Slice addSourceSlice(
+    public TGGSlice addSourceSlice(
             Collection<TGGNode> initialNodes, Collection<Correspondence> initialCorrespondences) {
-        return new Slice(
+        return new TGGSlice(
                 new RuleExtender() {
                     @Override
                     public TGGNode addNode(FQN type) {
@@ -113,13 +111,13 @@ public class TripleRule {
                 initialCorrespondences);
     }
 
-    public Slice addSourceSlice() {
+    public TGGSlice addSourceSlice() {
         return addSourceSlice(List.of(), List.of());
     }
 
-    public Slice addTargetSlice(
+    public TGGSlice addTargetSlice(
             Collection<TGGNode> initialNodes, Collection<Correspondence> initalCorrespondences) {
-        return new Slice(
+        return new TGGSlice(
                 new RuleExtender() {
                     @Override
                     public TGGNode addNode(FQN type) {
@@ -140,7 +138,7 @@ public class TripleRule {
                 initalCorrespondences);
     }
 
-    public Slice addTargetSlice() {
+    public TGGSlice addTargetSlice() {
         return addTargetSlice(List.of(), List.of());
     }
 
@@ -152,11 +150,11 @@ public class TripleRule {
         return targetNodes.stream().filter(node -> node.getType().equals(type)).findFirst();
     }
 
-    public Slice allSourcesAsSlice() {
+    public TGGSlice allSourcesAsSlice() {
         return addSourceSlice(sourceNodes, correspondences);
     }
 
-    public Slice allTargetsAsSlice() {
+    public TGGSlice allTargetsAsSlice() {
         return addSourceSlice(targetNodes, correspondences);
     }
 

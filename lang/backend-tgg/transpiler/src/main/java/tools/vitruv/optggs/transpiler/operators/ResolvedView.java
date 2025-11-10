@@ -1,8 +1,8 @@
 package tools.vitruv.optggs.transpiler.operators;
 
-import tools.vitruv.optggs.transpiler.graph.Slice;
-import tools.vitruv.optggs.transpiler.graph.TripleGrammar;
-import tools.vitruv.optggs.transpiler.graph.TripleRule;
+import tools.vitruv.optggs.transpiler.graph.tgg.TGGSlice;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleGrammar;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleRule;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -40,7 +40,7 @@ public class ResolvedView {
         return new TripleGrammar(name, rules, constraints, sourceMetamodels, targetMetamodels);
     }
 
-    private Set<String> extractMetamodels(Stream<Slice> slices) {
+    private Set<String> extractMetamodels(Stream<TGGSlice> slices) {
         var metamodels = new HashSet<String>();
         slices.forEach(
                 slice -> {

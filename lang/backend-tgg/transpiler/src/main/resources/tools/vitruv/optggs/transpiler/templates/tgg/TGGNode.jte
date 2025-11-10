@@ -1,7 +1,7 @@
 @import tools.vitruv.optggs.transpiler.NameResolver
 @import tools.vitruv.optggs.transpiler.graph.Attribute
 @import tools.vitruv.optggs.transpiler.graph.Property
-@import tools.vitruv.optggs.transpiler.graph.TGGNode
+@import tools.vitruv.optggs.transpiler.graph.tgg.TGGNode
 @import tools.vitruv.optggs.transpiler.graph.tgg.TGGLink
 @param TGGNode node
 @param NameResolver nameResolver

@@ -3,11 +3,11 @@ package tools.vitruv.optggs.transpiler.operators.reference_operators;
 import lombok.Value;
 
 import tools.vitruv.optggs.operators.FQN;
-import tools.vitruv.optggs.transpiler.graph.Slice;
-import tools.vitruv.optggs.transpiler.graph.TGGNode;
-import tools.vitruv.optggs.transpiler.graph.TripleRule;
-import tools.vitruv.optggs.transpiler.graph.TripleRulePathToNode;
-import tools.vitruv.optggs.transpiler.graph.TripleRulesBuilder;
+import tools.vitruv.optggs.transpiler.graph.tgg.TGGSlice;
+import tools.vitruv.optggs.transpiler.graph.tgg.TGGNode;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleRule;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleRulePathToNode;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleRulesBuilder;
 
 @Value
 public class ResolvedFeatureCall implements ResolvedReferenceOperator {
@@ -23,10 +23,10 @@ public class ResolvedFeatureCall implements ResolvedReferenceOperator {
         builder.setPathToLastNode(new TripleRulePathToNode(element));
 
         final TripleRule featureCallRule = builder.addRule();
-        final Slice sourceSlice = featureCallRule.addSourceSlice();
+        final TGGSlice sourceSlice = featureCallRule.addSourceSlice();
         final TGGNode sourceNode = sourceSlice.addNode(element);
 
-        final Slice targetSlice = featureCallRule.addTargetSlice();
+        final TGGSlice targetSlice = featureCallRule.addTargetSlice();
         final TGGNode targetNode = targetSlice.addNode(targetTop);
 
         featureCallRule.addCorrespondenceRule(sourceNode, targetNode);
