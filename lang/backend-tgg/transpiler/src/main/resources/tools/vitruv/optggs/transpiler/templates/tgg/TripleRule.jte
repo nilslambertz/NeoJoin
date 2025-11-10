@@ -9,11 +9,11 @@
 @param NameResolver nameResolver
 tripleRule ${nameResolver.resolveRuleName(rule)} : ${schema} {
     source {
-    @for(TGGNode node: rule.allSourcesAsSlice().nodes())@template.TGGNode(node = node, nameResolver = nameResolver)
+    @for(TGGNode node: rule.allSourcesAsSlice().nodes())@template.tgg.TGGNode(node = node, nameResolver = nameResolver)
     @endfor
     }
     target {
-    @for(TGGNode node: rule.allTargetsAsSlice().nodes())@template.TGGNode(node = node, nameResolver = nameResolver)
+    @for(TGGNode node: rule.allTargetsAsSlice().nodes())@template.tgg.TGGNode(node = node, nameResolver = nameResolver)
     @endfor
     }
     correspondence {

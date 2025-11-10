@@ -5,6 +5,6 @@
 @param NameResolver nameResolver
 constraint ${nameResolver.resolveConstraintName(constraint)} = forbid ${nameResolver.resolvePatternName(constraint)}
 pattern ${nameResolver.resolvePatternName(constraint)} {
-    @for(PatternNode node: constraint.getNodes())@template.PatternNode(node = node, nameResolver = nameResolver)
+    @for(PatternNode node: constraint.getNodes())@template.pattern.PatternNode(node = node, nameResolver = nameResolver)
     @endfor
 }

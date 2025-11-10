@@ -8,9 +8,9 @@ ${node.getId()}: ${nameResolver.resolveName(node.getType())} {
     @for(Property prop : node.getProperties())${prop.toExpression(false)}
     @endfor
 
-    @for(Attribute attr : node.attributes())@template.Attribute(node = node, attribute = attr)
+    @for(Attribute attr : node.attributes())@template.pattern.PatternAttribute(node = node, attribute = attr)
     @endfor
 
-    @for(PatternLink link : node.links())@template.PatternLink(link = link)
+    @for(PatternLink link : node.links())@template.pattern.PatternLink(link = link)
     @endfor
 }

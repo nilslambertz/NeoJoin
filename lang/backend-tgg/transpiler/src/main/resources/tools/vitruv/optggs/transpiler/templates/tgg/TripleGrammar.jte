@@ -8,7 +8,7 @@ import "platform:/resource/${grammar.getName()}/src/SourceMetamodel.msl"
 import "platform:/resource/${grammar.getName()}/src/TargetMetamodel.msl"
 import "platform:/resource/${grammar.getName()}/src/AttributeConstraints.msl"
 @template.Schema(grammar = grammar, nameResolver = nameResolver)
-@for(TripleRule rule : grammar.getRules())@template.TripleRule(rule = rule, schema = grammar.getName(), nameResolver = nameResolver)
+@for(TripleRule rule : grammar.getRules())@template.tgg.TripleRule(rule = rule, schema = grammar.getName(), nameResolver = nameResolver)
 @endfor
-@for(ConstraintPattern constraint : grammar.getConstraints())@template.ConstraintPattern(constraint = constraint, nameResolver = nameResolver)
+@for(ConstraintPattern constraint : grammar.getConstraints())@template.pattern.ConstraintPattern(constraint = constraint, nameResolver = nameResolver)
 @endfor

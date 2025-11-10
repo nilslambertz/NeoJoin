@@ -9,9 +9,9 @@
     @for(Property prop : node.getProperties())${prop.toExpression(node.isGreen())}
     @endfor
 
-    @for(Attribute attr : node.attributes())@template.Attribute(node = node, attribute = attr)
+    @for(Attribute attr : node.attributes())@template.tgg.TGGAttribute(node = node, attribute = attr)
     @endfor
 
-    @for(TGGLink link : node.links())@template.TGGLink(link = link)
+    @for(TGGLink link : node.links())@template.tgg.TGGLink(link = link)
     @endfor
 }
