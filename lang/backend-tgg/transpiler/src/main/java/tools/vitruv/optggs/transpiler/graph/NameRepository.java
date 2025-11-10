@@ -7,6 +7,7 @@ import java.util.ArrayList;
 public class NameRepository {
     private final ArrayList<String> names = new ArrayList<>();
 
+    /** Returns a variable name for the given String that is not already taken */
     public String get(String preference) {
         String name = preference;
         int suffix = 1;
@@ -18,14 +19,17 @@ public class NameRepository {
         return name;
     }
 
+    /** Returns a variable name for the given FQN that is not already taken */
     public String get(FQN preference) {
         return get(preference.localName());
     }
 
+    /** Returns a lowercase variable name for the given String that is not already taken */
     public String getLower(String preference) {
         return get(preference.toLowerCase());
     }
 
+    /** Returns a lowercase variable name for the given FQN that is not already taken */
     public String getLower(FQN preference) {
         return get(preference.localName().toLowerCase());
     }
