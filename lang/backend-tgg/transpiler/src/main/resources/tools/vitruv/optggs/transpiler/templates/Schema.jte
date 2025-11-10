@@ -1,6 +1,6 @@
 @import tools.vitruv.optggs.transpiler.NameResolver
 @import tools.vitruv.optggs.transpiler.graph.tgg.CorrespondenceType
-@import tools.vitruv.optggs.transpiler.graph.GraphConstraint
+@import tools.vitruv.optggs.transpiler.graph.pattern.ConstraintPattern
 @import tools.vitruv.optggs.transpiler.graph.TripleGrammar
 @import tools.vitruv.optggs.transpiler.graph.TripleRule
 @param TripleGrammar grammar
@@ -27,7 +27,7 @@ tripleGrammar ${grammar.getName()} {
         @endfor
     }
     constraints {
-        @for(GraphConstraint constraint : grammar.getConstraints())
+        @for(ConstraintPattern constraint : grammar.getConstraints())
             ${nameResolver.resolveConstraintName(constraint)}
         @endfor
     }

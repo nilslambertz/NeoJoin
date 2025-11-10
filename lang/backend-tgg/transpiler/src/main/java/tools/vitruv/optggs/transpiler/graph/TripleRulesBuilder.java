@@ -3,6 +3,7 @@ package tools.vitruv.optggs.transpiler.graph;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import tools.vitruv.optggs.transpiler.graph.pattern.ConstraintPattern;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 @Getter
 public class TripleRulesBuilder {
     private final List<TripleRule> tripleRules = new ArrayList<>();
-    private final List<GraphConstraint> constraints = new ArrayList<>();
+    private final List<ConstraintPattern> constraints = new ArrayList<>();
     private TripleRule latestRule = null;
 
     @Setter private TripleRulePathToNode pathToLastNode = null;
@@ -34,7 +35,7 @@ public class TripleRulesBuilder {
         pathToLastNode.addLinkToPath(link);
     }
 
-    public void addConstraint(GraphConstraint constraint) {
+    public void addConstraint(ConstraintPattern constraint) {
         constraints.add(constraint);
     }
 }

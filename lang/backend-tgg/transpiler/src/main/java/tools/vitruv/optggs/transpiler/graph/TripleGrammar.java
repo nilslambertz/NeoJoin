@@ -1,6 +1,7 @@
 package tools.vitruv.optggs.transpiler.graph;
 
 import lombok.Value;
+import tools.vitruv.optggs.transpiler.graph.pattern.ConstraintPattern;
 import tools.vitruv.optggs.transpiler.graph.tgg.Correspondence;
 import tools.vitruv.optggs.transpiler.graph.tgg.CorrespondenceType;
 
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 public class TripleGrammar {
     String name;
     Collection<TripleRule> rules;
-    List<GraphConstraint> constraints;
+    List<ConstraintPattern> constraints;
     Set<String> sourceMetamodels;
     Set<String> targetMetamodels;
 

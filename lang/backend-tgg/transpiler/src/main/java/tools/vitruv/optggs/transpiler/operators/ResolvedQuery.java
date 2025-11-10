@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Value;
 
-import tools.vitruv.optggs.transpiler.graph.GraphConstraint;
+import tools.vitruv.optggs.transpiler.graph.pattern.ConstraintPattern;
 import tools.vitruv.optggs.transpiler.graph.TripleRule;
 import tools.vitruv.optggs.transpiler.graph.TripleRulesBuilder;
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedReferenceOperatorChain;
@@ -27,7 +27,7 @@ public class ResolvedQuery {
     List<TripleRule> generatedRules;
 
     @Getter(AccessLevel.PUBLIC)
-    List<GraphConstraint> generatedConstraints;
+    List<ConstraintPattern> generatedConstraints;
 
     public ResolvedQuery(
             ResolvedSelection selection,
@@ -92,7 +92,7 @@ public class ResolvedQuery {
                         .map(TripleRulesBuilder::getTripleRules)
                         .flatMap(List::stream)
                         .toList();
-        final List<GraphConstraint> referenceOperatorConstraints =
+        final List<ConstraintPattern> referenceOperatorConstraints =
                 referenceOperatorRulesAndConstraints.stream()
                         .map(TripleRulesBuilder::getConstraints)
                         .flatMap(List::stream)
@@ -111,5 +111,5 @@ public class ResolvedQuery {
     }
 
     private record TripleRulesAndConstraints(
-            List<TripleRule> rules, List<GraphConstraint> constraints) {}
+            List<TripleRule> rules, List<ConstraintPattern> constraints) {}
 }

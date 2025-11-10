@@ -1,7 +1,7 @@
 package tools.vitruv.optggs.transpiler.operators.reference_operators;
 
 import tools.vitruv.optggs.operators.FQN;
-import tools.vitruv.optggs.transpiler.graph.GraphConstraint;
+import tools.vitruv.optggs.transpiler.graph.pattern.ConstraintPattern;
 import tools.vitruv.optggs.transpiler.graph.Node;
 import tools.vitruv.optggs.transpiler.graph.Slice;
 import tools.vitruv.optggs.transpiler.graph.TripleRule;
@@ -33,6 +33,6 @@ public class ResolvedMapAny implements ResolvedReferenceOperator {
         // Now we can create a new constraint with the full chain and the last link and node
         // duplicated
         builder.addConstraint(
-                new GraphConstraint(copiedRule.allSourcesAsSlice().nodes().stream().toList()));
+                new ConstraintPattern(copiedRule.allSourcesAsSlice().nodes().stream().toList()));
     }
 }
