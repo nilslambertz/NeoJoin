@@ -1,7 +1,7 @@
 @import gg.jte.support.ForSupport
 @import tools.vitruv.optggs.transpiler.NameResolver
-@import tools.vitruv.optggs.transpiler.graph.AttributeConstraint
-@import tools.vitruv.optggs.transpiler.graph.Correspondence
+@import tools.vitruv.optggs.transpiler.graph.tgg.AttributeConstraint
+@import tools.vitruv.optggs.transpiler.graph.tgg.Correspondence
 @import tools.vitruv.optggs.transpiler.graph.TripleRule
 @import tools.vitruv.optggs.transpiler.graph.Node
 @param TripleRule rule

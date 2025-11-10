@@ -1,8 +1,8 @@
 package tools.vitruv.optggs.transpiler;
 
 import tools.vitruv.optggs.operators.FQN;
-import tools.vitruv.optggs.transpiler.graph.Correspondence;
-import tools.vitruv.optggs.transpiler.graph.CorrespondenceType;
+import tools.vitruv.optggs.transpiler.graph.tgg.Correspondence;
+import tools.vitruv.optggs.transpiler.graph.tgg.CorrespondenceType;
 import tools.vitruv.optggs.transpiler.graph.GraphConstraint;
 import tools.vitruv.optggs.transpiler.graph.Node;
 import tools.vitruv.optggs.transpiler.graph.TripleRule;

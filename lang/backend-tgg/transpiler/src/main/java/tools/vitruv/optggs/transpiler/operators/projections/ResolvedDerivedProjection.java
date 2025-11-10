@@ -5,7 +5,7 @@ import tools.vitruv.optggs.operators.LogicOperator;
 import tools.vitruv.optggs.operators.expressions.ConstantExpression;
 import tools.vitruv.optggs.operators.projections.DerivedProjection;
 import tools.vitruv.optggs.transpiler.operators.ResolvedProjection;
-import tools.vitruv.optggs.transpiler.graph.AttributeConstraint;
+import tools.vitruv.optggs.transpiler.graph.tgg.AttributeConstraint;
 import tools.vitruv.optggs.transpiler.graph.Node;
 import tools.vitruv.optggs.transpiler.graph.TripleRule;
 

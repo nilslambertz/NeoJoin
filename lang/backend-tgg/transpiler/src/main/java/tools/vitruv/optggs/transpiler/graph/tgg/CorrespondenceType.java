@@ -1,6 +1,7 @@
-package tools.vitruv.optggs.transpiler.graph;
+package tools.vitruv.optggs.transpiler.graph.tgg;
 
 import tools.vitruv.optggs.operators.FQN;
+import tools.vitruv.optggs.transpiler.graph.Node;
 
 import java.util.Objects;
 

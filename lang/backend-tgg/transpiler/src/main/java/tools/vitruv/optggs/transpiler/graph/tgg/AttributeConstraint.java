@@ -1,4 +1,4 @@
-package tools.vitruv.optggs.transpiler.graph;
+package tools.vitruv.optggs.transpiler.graph.tgg;
 
 import lombok.Value;
 
@@ -52,7 +52,7 @@ public class AttributeConstraint {
         parameters.add(new Parameter(name, value));
     }
 
-    AttributeConstraint deepCopy() {
+    public AttributeConstraint deepCopy() {
         return new AttributeConstraint(name, parameters.stream().map(Parameter::deepCopy).toList());
     }
 

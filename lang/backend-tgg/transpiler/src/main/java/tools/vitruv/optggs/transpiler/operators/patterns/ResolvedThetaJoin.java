@@ -4,7 +4,7 @@ import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.operators.FunctionInvocation;
 import tools.vitruv.optggs.operators.LogicOperator;
 import tools.vitruv.optggs.operators.expressions.ConstantExpression;
-import tools.vitruv.optggs.transpiler.graph.AttributeConstraint;
+import tools.vitruv.optggs.transpiler.graph.tgg.AttributeConstraint;
 import tools.vitruv.optggs.transpiler.graph.Node;
 import tools.vitruv.optggs.transpiler.graph.Slice;
 

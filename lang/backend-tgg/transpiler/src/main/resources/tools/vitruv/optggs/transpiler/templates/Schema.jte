@@ -1,5 +1,5 @@
 @import tools.vitruv.optggs.transpiler.NameResolver
-@import tools.vitruv.optggs.transpiler.graph.CorrespondenceType
+@import tools.vitruv.optggs.transpiler.graph.tgg.CorrespondenceType
 @import tools.vitruv.optggs.transpiler.graph.GraphConstraint
 @import tools.vitruv.optggs.transpiler.graph.TripleGrammar
 @import tools.vitruv.optggs.transpiler.graph.TripleRule

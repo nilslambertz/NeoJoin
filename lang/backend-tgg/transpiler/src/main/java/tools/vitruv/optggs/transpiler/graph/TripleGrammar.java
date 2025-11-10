@@ -1,6 +1,8 @@
 package tools.vitruv.optggs.transpiler.graph;
 
 import lombok.Value;
+import tools.vitruv.optggs.transpiler.graph.tgg.Correspondence;
+import tools.vitruv.optggs.transpiler.graph.tgg.CorrespondenceType;
 
 import java.util.Collection;
 import java.util.List;
