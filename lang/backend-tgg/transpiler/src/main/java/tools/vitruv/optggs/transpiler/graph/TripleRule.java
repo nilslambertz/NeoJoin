@@ -5,6 +5,7 @@ import lombok.Getter;
 import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.transpiler.graph.tgg.AttributeConstraint;
 import tools.vitruv.optggs.transpiler.graph.tgg.Correspondence;
+import tools.vitruv.optggs.transpiler.graph.tgg.TGGNodeCopyHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,16 +14,16 @@ import java.util.Optional;
 
 public class TripleRule {
     public interface RuleExtender {
-        Node addNode(FQN type);
+        TGGNode addNode(FQN type);
 
-        Correspondence addCorrespondence(Node source, Node target);
+        Correspondence addCorrespondence(TGGNode source, TGGNode target);
 
         AttributeConstraint addConstraint(AttributeConstraint constraint);
     }
 
     private final NameRepository nameRepository;
-    private final List<Node> sourceNodes;
-    private final List<Node> targetNodes;
+    private final List<TGGNode> sourceNodes;
+    private final List<TGGNode> targetNodes;
     private final List<Correspondence> correspondences;
     private final List<AttributeConstraint> constraints;
     @Getter private final boolean isLinkRule;
@@ -48,8 +49,8 @@ public class TripleRule {
 
     private TripleRule(
             NameRepository nameRepository,
-            List<Node> sourceNodes,
-            List<Node> targetNodes,
+            List<TGGNode> sourceNodes,
+            List<TGGNode> targetNodes,
             List<Correspondence> correspondences,
             List<AttributeConstraint> constraints,
             boolean isLinkRule) {
@@ -61,24 +62,24 @@ public class TripleRule {
         this.isLinkRule = isLinkRule;
     }
 
-    private Node createNode(FQN type) {
+    private TGGNode createNode(FQN type) {
         var name = nameRepository.getLower(type);
-        return Node.Black(name, type, nameRepository);
+        return TGGNode.Black(name, type, nameRepository);
     }
 
-    private Node addSourceNode(FQN type) {
+    private TGGNode addSourceNode(FQN type) {
         var node = createNode(type);
         sourceNodes.add(node);
         return node;
     }
 
-    private Node addTargetNode(FQN type) {
+    private TGGNode addTargetNode(FQN type) {
         var node = createNode(type);
         targetNodes.add(node);
         return node;
     }
 
-    public Correspondence addCorrespondenceRule(Node source, Node target) {
+    public Correspondence addCorrespondenceRule(TGGNode source, TGGNode target) {
         Correspondence correspondence = Correspondence.Black(source, target);
         correspondences.add(correspondence);
         return correspondence;
@@ -90,16 +91,16 @@ public class TripleRule {
     }
 
     public Slice addSourceSlice(
-            Collection<Node> initialNodes, Collection<Correspondence> initialCorrespondences) {
+            Collection<TGGNode> initialNodes, Collection<Correspondence> initialCorrespondences) {
         return new Slice(
                 new RuleExtender() {
                     @Override
-                    public Node addNode(FQN type) {
+                    public TGGNode addNode(FQN type) {
                         return addSourceNode(type);
                     }
 
                     @Override
-                    public Correspondence addCorrespondence(Node source, Node target) {
+                    public Correspondence addCorrespondence(TGGNode source, TGGNode target) {
                         return addCorrespondenceRule(source, target);
                     }
 
@@ -117,16 +118,16 @@ public class TripleRule {
     }
 
     public Slice addTargetSlice(
-            Collection<Node> initialNodes, Collection<Correspondence> initalCorrespondences) {
+            Collection<TGGNode> initialNodes, Collection<Correspondence> initalCorrespondences) {
         return new Slice(
                 new RuleExtender() {
                     @Override
-                    public Node addNode(FQN type) {
+                    public TGGNode addNode(FQN type) {
                         return addTargetNode(type);
                     }
 
                     @Override
-                    public Correspondence addCorrespondence(Node source, Node target) {
+                    public Correspondence addCorrespondence(TGGNode source, TGGNode target) {
                         return addCorrespondenceRule(source, target);
                     }
 
@@ -143,11 +144,11 @@ public class TripleRule {
         return addTargetSlice(List.of(), List.of());
     }
 
-    public Optional<Node> findSourceNodeByType(FQN type) {
+    public Optional<TGGNode> findSourceNodeByType(FQN type) {
         return sourceNodes.stream().filter(node -> node.getType().equals(type)).findFirst();
     }
 
-    public Optional<Node> findTargetNodeByType(FQN type) {
+    public Optional<TGGNode> findTargetNodeByType(FQN type) {
         return targetNodes.stream().filter(node -> node.getType().equals(type)).findFirst();
     }
 
@@ -173,8 +174,8 @@ public class TripleRule {
         return this;
     }
 
-    public Node findNestedSourceNode(TripleRulePathToNode path) {
-        Node lastSourceNode = findSourceNodeByType(path.getRoot()).orElseThrow();
+    public TGGNode findNestedSourceNode(TripleRulePathToNode path) {
+        TGGNode lastSourceNode = findSourceNodeByType(path.getRoot()).orElseThrow();
         for (String nextReference : path.getLinkPath()) {
             lastSourceNode = lastSourceNode.getFirstLinkTarget(nextReference);
         }
@@ -187,17 +188,17 @@ public class TripleRule {
     }
 
     public TripleRule deepCopy() {
-        final TripleRuleCopyHelper copyHelper = new TripleRuleCopyHelper(nameRepository);
+        final TGGNodeCopyHelper copyHelper = new TGGNodeCopyHelper(nameRepository);
 
-        final List<Node> newSourceNodes = new ArrayList<>();
-        for (final Node oldSourceNode : sourceNodes) {
-            final Node copiedSourceNode = copyHelper.getCopiedNode(oldSourceNode);
+        final List<TGGNode> newSourceNodes = new ArrayList<>();
+        for (final TGGNode oldSourceNode : sourceNodes) {
+            final TGGNode copiedSourceNode = copyHelper.getCopiedNode(oldSourceNode);
             newSourceNodes.add(copiedSourceNode);
         }
 
-        final List<Node> newTargetNodes = new ArrayList<>();
-        for (final Node oldTargetNode : targetNodes) {
-            final Node copiedTargetNode = copyHelper.getCopiedNode(oldTargetNode);
+        final List<TGGNode> newTargetNodes = new ArrayList<>();
+        for (final TGGNode oldTargetNode : targetNodes) {
+            final TGGNode copiedTargetNode = copyHelper.getCopiedNode(oldTargetNode);
             newTargetNodes.add(copiedTargetNode);
         }
 

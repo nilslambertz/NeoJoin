@@ -4,7 +4,7 @@ import lombok.Value;
 
 import tools.vitruv.optggs.operators.LogicOperator;
 import tools.vitruv.optggs.operators.expressions.ConstantExpression;
-import tools.vitruv.optggs.transpiler.graph.Node;
+import tools.vitruv.optggs.transpiler.graph.TGGNode;
 import tools.vitruv.optggs.transpiler.graph.TripleRule;
 import tools.vitruv.optggs.transpiler.graph.TripleRulePathToNode;
 import tools.vitruv.optggs.transpiler.graph.TripleRulesBuilder;
@@ -20,7 +20,7 @@ public class ResolvedReferenceFilter implements ResolvedReferenceOperator {
         final TripleRule latestRule = builder.getLatestRule();
 
         final TripleRulePathToNode pathToLastNode = builder.getPathToLastNode();
-        final Node lastSourceNode = latestRule.findNestedSourceNode(pathToLastNode);
+        final TGGNode lastSourceNode = latestRule.findNestedSourceNode(pathToLastNode);
 
         // TODO: The operator "!=" is not allowed in green nodes.
         // We need to use attribute constraints for this operator

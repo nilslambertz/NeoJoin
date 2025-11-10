@@ -4,10 +4,10 @@ import tools.vitruv.optggs.operators.FunctionInvocation;
 import tools.vitruv.optggs.operators.LogicOperator;
 import tools.vitruv.optggs.operators.expressions.ConstantExpression;
 import tools.vitruv.optggs.operators.projections.DerivedProjection;
-import tools.vitruv.optggs.transpiler.operators.ResolvedProjection;
-import tools.vitruv.optggs.transpiler.graph.tgg.AttributeConstraint;
-import tools.vitruv.optggs.transpiler.graph.Node;
+import tools.vitruv.optggs.transpiler.graph.TGGNode;
 import tools.vitruv.optggs.transpiler.graph.TripleRule;
+import tools.vitruv.optggs.transpiler.graph.tgg.AttributeConstraint;
+import tools.vitruv.optggs.transpiler.operators.ResolvedProjection;
 
 public class ResolvedDerivedProjection implements ResolvedProjection {
     private final FunctionInvocation function;
@@ -27,7 +27,7 @@ public class ResolvedDerivedProjection implements ResolvedProjection {
             var argument = function.argument(parameter);
             if (parameter.equals("return")) {
                 if (argument instanceof FunctionInvocation.ConstrainedArgument arg) {
-                    Node node =
+                    final TGGNode node =
                             rule.allTargetsAsSlice()
                                     .findByType(arg.node())
                                     .orElseThrow(
@@ -46,7 +46,7 @@ public class ResolvedDerivedProjection implements ResolvedProjection {
             } else if (argument instanceof FunctionInvocation.ConstantArgument c) {
                 constraint.addParameter(parameter, new ConstantExpression(c.value()));
             } else if (argument instanceof FunctionInvocation.ConstrainedArgument arg) {
-                Node node =
+                final TGGNode node =
                         rule.allSourcesAsSlice()
                                 .findByType(arg.node())
                                 .orElseThrow(

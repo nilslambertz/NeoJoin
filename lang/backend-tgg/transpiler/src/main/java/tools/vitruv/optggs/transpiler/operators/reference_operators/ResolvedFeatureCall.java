@@ -3,8 +3,8 @@ package tools.vitruv.optggs.transpiler.operators.reference_operators;
 import lombok.Value;
 
 import tools.vitruv.optggs.operators.FQN;
-import tools.vitruv.optggs.transpiler.graph.Node;
 import tools.vitruv.optggs.transpiler.graph.Slice;
+import tools.vitruv.optggs.transpiler.graph.TGGNode;
 import tools.vitruv.optggs.transpiler.graph.TripleRule;
 import tools.vitruv.optggs.transpiler.graph.TripleRulePathToNode;
 import tools.vitruv.optggs.transpiler.graph.TripleRulesBuilder;
@@ -24,10 +24,10 @@ public class ResolvedFeatureCall implements ResolvedReferenceOperator {
 
         final TripleRule featureCallRule = builder.addRule();
         final Slice sourceSlice = featureCallRule.addSourceSlice();
-        final Node sourceNode = sourceSlice.addNode(element);
+        final TGGNode sourceNode = sourceSlice.addNode(element);
 
         final Slice targetSlice = featureCallRule.addTargetSlice();
-        final Node targetNode = targetSlice.addNode(targetTop);
+        final TGGNode targetNode = targetSlice.addNode(targetTop);
 
         featureCallRule.addCorrespondenceRule(sourceNode, targetNode);
 

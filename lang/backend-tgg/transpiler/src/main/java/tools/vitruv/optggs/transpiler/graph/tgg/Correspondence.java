@@ -4,21 +4,21 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import tools.vitruv.optggs.transpiler.graph.Node;
-import tools.vitruv.optggs.transpiler.graph.TripleRuleCopyHelper;
+import tools.vitruv.optggs.transpiler.graph.GraphNodeCopyHelper;
+import tools.vitruv.optggs.transpiler.graph.TGGNode;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Correspondence implements Greenable<Correspondence> {
-    private final Node source;
-    private final Node target;
+    private final TGGNode source;
+    private final TGGNode target;
     private boolean green;
 
-    public static Correspondence Green(Node source, Node target) {
+    public static Correspondence Green(TGGNode source, TGGNode target) {
         return new Correspondence(source, target, true);
     }
 
-    public static Correspondence Black(Node source, Node target) {
+    public static Correspondence Black(TGGNode source, TGGNode target) {
         return new Correspondence(source, target, false);
     }
 
@@ -36,7 +36,7 @@ public class Correspondence implements Greenable<Correspondence> {
         return new CorrespondenceType(source, target);
     }
 
-    public Correspondence deepCopy(TripleRuleCopyHelper copyHelper) {
+    public Correspondence deepCopy(GraphNodeCopyHelper<TGGNode> copyHelper) {
         return new Correspondence(
                 copyHelper.getCopiedNode(source), copyHelper.getCopiedNode(target), green);
     }

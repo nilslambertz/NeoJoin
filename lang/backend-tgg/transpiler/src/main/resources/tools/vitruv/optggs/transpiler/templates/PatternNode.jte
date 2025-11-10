@@ -1,7 +1,5 @@
 @import tools.vitruv.optggs.transpiler.NameResolver
 @import tools.vitruv.optggs.transpiler.graph.Attribute
-@import tools.vitruv.optggs.transpiler.graph.Link
-@import tools.vitruv.optggs.transpiler.graph.Node
 @import tools.vitruv.optggs.transpiler.graph.Property
 @import tools.vitruv.optggs.transpiler.graph.pattern.PatternLink;import tools.vitruv.optggs.transpiler.graph.pattern.PatternNode
 @param PatternNode node

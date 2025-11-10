@@ -4,8 +4,8 @@ import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.operators.LogicOperator;
 import tools.vitruv.optggs.operators.Tuple;
 import tools.vitruv.optggs.transpiler.graph.Attribute;
-import tools.vitruv.optggs.transpiler.graph.Node;
 import tools.vitruv.optggs.transpiler.graph.Slice;
+import tools.vitruv.optggs.transpiler.graph.TGGNode;
 
 import java.util.Collection;
 import java.util.List;
@@ -26,8 +26,8 @@ public class ResolvedJoin implements ResolvedPatternLink {
     }
 
     @Override
-    public Node extendSlice(Slice slice, Node lastNode) {
-        var node = slice.findByType(element).orElseGet(() -> slice.addNode(element));
+    public TGGNode extendSlice(Slice slice, TGGNode lastNode) {
+        TGGNode node = slice.findByType(element).orElseGet(() -> slice.addNode(element));
         for (var property : constrainedProperties) {
 
             var variable = lastNode.addVariableAttribute(property.first(), LogicOperator.Equals);
@@ -38,14 +38,20 @@ public class ResolvedJoin implements ResolvedPatternLink {
 
     @Override
     public String toString() {
-        var conditions = String.join(",", constrainedProperties.stream().map(props -> props.first() + "==" + props.last()).toList());
+        var conditions =
+                String.join(
+                        ",",
+                        constrainedProperties.stream()
+                                .map(props -> props.first() + "==" + props.last())
+                                .toList());
         return " ⨝(" + conditions + ") " + element.fqn();
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof ResolvedJoin join)) return false;
-        return Objects.equals(element, join.element) && Objects.equals(constrainedProperties, join.constrainedProperties);
+        return Objects.equals(element, join.element)
+                && Objects.equals(constrainedProperties, join.constrainedProperties);
     }
 
     @Override

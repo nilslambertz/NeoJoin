@@ -1,11 +1,11 @@
 package tools.vitruv.optggs.transpiler;
 
 import tools.vitruv.optggs.operators.FQN;
+import tools.vitruv.optggs.transpiler.graph.TGGNode;
+import tools.vitruv.optggs.transpiler.graph.TripleRule;
+import tools.vitruv.optggs.transpiler.graph.pattern.ConstraintPattern;
 import tools.vitruv.optggs.transpiler.graph.tgg.Correspondence;
 import tools.vitruv.optggs.transpiler.graph.tgg.CorrespondenceType;
-import tools.vitruv.optggs.transpiler.graph.pattern.ConstraintPattern;
-import tools.vitruv.optggs.transpiler.graph.Node;
-import tools.vitruv.optggs.transpiler.graph.TripleRule;
 
 public interface NameResolver {
     String resolveName(FQN fqn);
@@ -37,8 +37,8 @@ public interface NameResolver {
                     + String.join("And", destinationNodes);
         } else {
             // Select rule
-            var greenSources = rule.allSourcesAsSlice().findNodes(Node::isGreen);
-            var greenTargets = rule.allTargetsAsSlice().findNodes(Node::isGreen);
+            var greenSources = rule.allSourcesAsSlice().findNodes(TGGNode::isGreen);
+            var greenTargets = rule.allTargetsAsSlice().findNodes(TGGNode::isGreen);
             var sources = greenSources.stream().map(node -> node.getType().localName()).toList();
             var targets = greenTargets.stream().map(node -> node.getType().localName()).toList();
             return "Select" + String.join("And", sources) + "As" + String.join("And", targets);

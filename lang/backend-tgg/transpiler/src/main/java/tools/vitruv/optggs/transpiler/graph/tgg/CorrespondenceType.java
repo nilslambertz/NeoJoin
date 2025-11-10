@@ -1,12 +1,12 @@
 package tools.vitruv.optggs.transpiler.graph.tgg;
 
 import tools.vitruv.optggs.operators.FQN;
-import tools.vitruv.optggs.transpiler.graph.Node;
+import tools.vitruv.optggs.transpiler.graph.TGGNode;
 
 import java.util.Objects;
 
 public record CorrespondenceType(FQN source, FQN target) {
-    public CorrespondenceType(Node source, Node target) {
+    public CorrespondenceType(TGGNode source, TGGNode target) {
         this(source.getType(), target.getType());
     }
 

@@ -4,6 +4,7 @@ import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.operators.selection.PatternLink;
 import tools.vitruv.optggs.transpiler.graph.tgg.AttributeConstraint;
 import tools.vitruv.optggs.transpiler.graph.tgg.Correspondence;
+import tools.vitruv.optggs.transpiler.graph.tgg.TGGLink;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,23 +15,23 @@ import java.util.function.Predicate;
 
 public class Slice {
     private final TripleRule.RuleExtender ruleExtender;
-    private final List<Node> nodes = new ArrayList<>();
+    private final List<TGGNode> nodes = new ArrayList<>();
     private final List<Correspondence> correspondences = new ArrayList<>();
 
     public Slice(
             TripleRule.RuleExtender ruleExtender,
-            Collection<Node> initialNodes,
+            Collection<TGGNode> initialNodes,
             Collection<Correspondence> initialCorrespondences) {
         this.ruleExtender = ruleExtender;
         this.nodes.addAll(initialNodes);
         this.correspondences.addAll(initialCorrespondences);
     }
 
-    public Collection<Node> nodes() {
+    public Collection<TGGNode> nodes() {
         return nodes;
     }
 
-    public Optional<Node> findByType(FQN type) {
+    public Optional<TGGNode> findByType(FQN type) {
         for (var node : nodes) {
             if (node.getType().equals(type)) {
                 return Optional.of(node);
@@ -39,13 +40,13 @@ public class Slice {
         return Optional.empty();
     }
 
-    public Node addNode(FQN type) {
+    public TGGNode addNode(FQN type) {
         var node = ruleExtender.addNode(type);
         nodes.add(node);
         return node;
     }
 
-    public Correspondence addCorrespondence(Node source, Node target) {
+    public Correspondence addCorrespondence(TGGNode source, TGGNode target) {
         var correspondence = ruleExtender.addCorrespondence(source, target);
         correspondences.add(correspondence);
         return correspondence;
@@ -56,7 +57,7 @@ public class Slice {
     }
 
     public Slice makeGreen() {
-        nodes.forEach(Node::makeGreen);
+        nodes.forEach(TGGNode::makeGreen);
         correspondences.forEach(Correspondence::makeGreen);
         return this;
     }
@@ -75,23 +76,27 @@ public class Slice {
     }
 
     public boolean hasAnyGreenElements() {
-        final boolean anyNodesAreGreen = nodes.stream().anyMatch(Node::isGreen);
+        final boolean anyNodesAreGreen = nodes.stream().anyMatch(TGGNode::isGreen);
         final boolean anyLinksAreGreen =
-                nodes.stream().map(Node::links).flatMap(Collection::stream).anyMatch(Link::isGreen);
+                nodes.stream()
+                        .map(TGGNode::links)
+                        .flatMap(Collection::stream)
+                        .anyMatch(TGGLink::isGreen);
         final boolean anyCorrespondencesAreGreen =
                 correspondences.stream().anyMatch(Correspondence::isGreen);
         return anyNodesAreGreen || anyLinksAreGreen || anyCorrespondencesAreGreen;
     }
 
-    public <T> Collection<T> mapNodes(Function<Node, T> function) {
+    public <T> Collection<T> mapNodes(Function<TGGNode, T> function) {
         return nodes.stream().map(function).toList();
     }
 
-    public <T> Collection<T> filterMapNodes(Predicate<Node> predicate, Function<Node, T> function) {
+    public <T> Collection<T> filterMapNodes(
+            Predicate<TGGNode> predicate, Function<TGGNode, T> function) {
         return nodes.stream().filter(predicate).map(function).toList();
     }
 
-    public Collection<Node> findNodes(Predicate<Node> predicate) {
+    public Collection<TGGNode> findNodes(Predicate<TGGNode> predicate) {
         return nodes.stream().filter(predicate).toList();
     }
 
