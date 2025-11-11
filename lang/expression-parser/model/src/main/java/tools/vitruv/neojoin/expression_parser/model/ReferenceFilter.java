@@ -3,6 +3,7 @@ package tools.vitruv.neojoin.expression_parser.model;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import tools.vitruv.neojoin.expression_parser.model.predicate_expression.ComparisonOperator;
@@ -23,9 +24,26 @@ import tools.vitruv.neojoin.expression_parser.model.predicate_expression.Constan
 @Data
 @RequiredArgsConstructor
 public class ReferenceFilter implements ReferenceOperator {
-    final String feature;
-    final ComparisonOperator operator;
-    final ConstantValue constantValue;
+    @NonNull final String feature;
+    @NonNull final ComparisonOperator operator;
+    @NonNull final ConstantValue constantValue;
 
     @Nullable ReferenceOperator followingOperator;
+
+    @Override
+    public String toString() {
+        final String stringRepresentation =
+                "ReferenceFilter("
+                        + feature
+                        + " "
+                        + operator.getRepresentation()
+                        + " "
+                        + constantValue
+                        + ")";
+        if (followingOperator == null) {
+            return stringRepresentation;
+        }
+
+        return stringRepresentation + "->" + followingOperator;
+    }
 }

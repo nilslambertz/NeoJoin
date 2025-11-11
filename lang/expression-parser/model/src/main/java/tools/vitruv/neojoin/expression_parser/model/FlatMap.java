@@ -24,4 +24,14 @@ public class FlatMap implements ReferenceOperator {
     @NonNull final FeatureInformation featureInformation;
 
     @Nullable ReferenceOperator followingOperator;
+
+    @Override
+    public String toString() {
+        final String stringRepresentation = "FlatMap(" + featureInformation.getFeatureName() + ")";
+        if (followingOperator == null) {
+            return stringRepresentation;
+        }
+
+        return stringRepresentation + "->" + followingOperator;
+    }
 }

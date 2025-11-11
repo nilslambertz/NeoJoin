@@ -14,4 +14,12 @@ public class ConstantValue {
     public static ConstantValue of(String value) {
         return new ConstantValue(value, false);
     }
+
+    @Override
+    public String toString() {
+        if (isString) {
+            return "\"" + value + "\"";
+        }
+        return value;
+    }
 }

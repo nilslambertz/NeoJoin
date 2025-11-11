@@ -11,6 +11,6 @@ public record ReferenceOperatorChain(
         ReferenceOperator referenceOperator) {
     @Override
     public String toString() {
-        return "π( TODO: Reference Operator projection )";
+        return "π(" + referenceOperator.toString() + ")";
     }
 }

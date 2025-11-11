@@ -25,4 +25,14 @@ public class MemberFeatureCall implements ReferenceOperator {
     final boolean isCollection;
 
     @Nullable ReferenceOperator followingOperator;
+
+    @Override
+    public String toString() {
+        final String stringRepresentation = "MemberFeatureCall(" + featureInformation.getFeatureName() + ")";
+        if (followingOperator == null) {
+            return stringRepresentation;
+        }
+
+        return stringRepresentation + "->" + followingOperator;
+    }
 }

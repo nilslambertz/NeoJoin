@@ -16,8 +16,8 @@ import org.jspecify.annotations.Nullable;
  * </pre>
  *
  * Here, {@code car} is a FeatureCall
- * <p>
- * A FeatureCall is also the first operation in a nested expression:
+ *
+ * <p>A FeatureCall is also the first operation in a nested expression:
  *
  * <pre>
  *     {@code someResult = car.axis.flatMap(oneAxis -> oneAxis.wheels).toList()}
@@ -35,5 +35,15 @@ public class FeatureCall implements ReferenceOperator {
 
     public static FeatureCall empty() {
         return new FeatureCall(null, null);
+    }
+
+    @Override
+    public String toString() {
+        final String stringRepresentation = "FeatureCall(" + simpleName + ")";
+        if (followingOperator == null) {
+            return stringRepresentation;
+        }
+
+        return stringRepresentation + "->" + followingOperator;
     }
 }
