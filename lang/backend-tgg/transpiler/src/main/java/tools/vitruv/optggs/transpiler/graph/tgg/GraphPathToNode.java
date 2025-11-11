@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-public class TripleRulePathToNode {
+public class GraphPathToNode {
     private final FQN root;
     List<String> linkPath = new ArrayList<>();
 
@@ -21,8 +21,8 @@ public class TripleRulePathToNode {
         linkPath.add(reference);
     }
 
-    public TripleRulePathToNode pathToSecondLastNode() {
-        return new TripleRulePathToNode(root, linkPath.subList(0, linkPath.size() - 1));
+    public GraphPathToNode pathToSecondLastNode() {
+        return new GraphPathToNode(root, linkPath.subList(0, linkPath.size() - 1));
     }
 
     public String getLastLink() {

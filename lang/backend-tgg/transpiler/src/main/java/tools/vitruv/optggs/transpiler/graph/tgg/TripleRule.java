@@ -5,7 +5,7 @@ import lombok.Getter;
 import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.transpiler.graph.NameRepository;
 import tools.vitruv.optggs.transpiler.graph.TGGNodeToPatternNodeConversionHelper;
-import tools.vitruv.optggs.transpiler.graph.pattern.PatternNode;
+import tools.vitruv.optggs.transpiler.graph.pattern.GraphPattern;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -174,7 +174,7 @@ public class TripleRule {
         return this;
     }
 
-    public TGGNode findNestedSourceNode(TripleRulePathToNode path) {
+    public TGGNode findNestedSourceNode(GraphPathToNode path) {
         TGGNode lastSourceNode = findSourceNodeByType(path.getRoot()).orElseThrow();
         for (String nextReference : path.getLinkPath()) {
             lastSourceNode = lastSourceNode.getFirstLinkTarget(nextReference);
@@ -221,10 +221,12 @@ public class TripleRule {
                 isLinkRule);
     }
 
-    public List<PatternNode> convertSourceNodesToPatternNodes() {
+    public GraphPattern convertSourceNodesToGraphPattern() {
         final TGGNodeToPatternNodeConversionHelper conversionHelper =
                 new TGGNodeToPatternNodeConversionHelper(nameRepository.deepCopy());
-        return sourceNodes.stream().map(conversionHelper::getConvertedNode).toList();
+        return new GraphPattern(
+                conversionHelper.getCopiedNameRepository(),
+                sourceNodes.stream().map(conversionHelper::getConvertedNode).toList());
     }
 
     @Override

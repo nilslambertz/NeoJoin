@@ -6,7 +6,7 @@ import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.transpiler.graph.tgg.TGGSlice;
 import tools.vitruv.optggs.transpiler.graph.tgg.TGGNode;
 import tools.vitruv.optggs.transpiler.graph.tgg.TripleRule;
-import tools.vitruv.optggs.transpiler.graph.tgg.TripleRulePathToNode;
+import tools.vitruv.optggs.transpiler.graph.tgg.GraphPathToNode;
 import tools.vitruv.optggs.transpiler.graph.tgg.TripleRulesBuilder;
 import tools.vitruv.optggs.transpiler.graph.tgg.TGGLink;
 
@@ -19,7 +19,7 @@ public class ResolvedMap implements ResolvedReferenceOperator {
     public void extendRules(TripleRulesBuilder builder) {
         final TripleRule latestRule = builder.getLatestRule();
 
-        final TripleRulePathToNode pathToLastNode = builder.getPathToLastNode();
+        final GraphPathToNode pathToLastNode = builder.getPathToLastNode();
         final TGGNode lastSourceNode = latestRule.findNestedSourceNode(pathToLastNode);
 
         final TGGSlice sourceSlice = latestRule.addSourceSlice();

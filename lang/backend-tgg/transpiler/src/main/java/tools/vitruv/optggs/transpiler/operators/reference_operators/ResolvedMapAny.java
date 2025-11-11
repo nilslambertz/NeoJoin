@@ -1,12 +1,12 @@
 package tools.vitruv.optggs.transpiler.operators.reference_operators;
 
 import tools.vitruv.optggs.operators.FQN;
-import tools.vitruv.optggs.transpiler.graph.tgg.TGGSlice;
-import tools.vitruv.optggs.transpiler.graph.tgg.TGGNode;
+import tools.vitruv.optggs.transpiler.graph.pattern.GraphPattern;
+import tools.vitruv.optggs.transpiler.graph.pattern.PatternLink;
+import tools.vitruv.optggs.transpiler.graph.pattern.PatternNode;
+import tools.vitruv.optggs.transpiler.graph.tgg.GraphPathToNode;
 import tools.vitruv.optggs.transpiler.graph.tgg.TripleRule;
-import tools.vitruv.optggs.transpiler.graph.tgg.TripleRulePathToNode;
 import tools.vitruv.optggs.transpiler.graph.tgg.TripleRulesBuilder;
-import tools.vitruv.optggs.transpiler.graph.tgg.TGGLink;
 
 // TODO: Not fully working yet, we need additional information on how to build the constraint, e.g.
 // if the operator was only used inside an argument
@@ -15,24 +15,21 @@ public class ResolvedMapAny implements ResolvedReferenceOperator {
     public void extendRules(TripleRulesBuilder builder) {
         final TripleRule latestRule = builder.getLatestRule();
 
-        final TripleRule copiedRule = latestRule.deepCopy();
-        final TripleRulePathToNode pathToLastNode = builder.getPathToLastNode();
-        final FQN lastNodeType = copiedRule.findNestedSourceNode(pathToLastNode).getType();
+        final GraphPattern pattern = latestRule.convertSourceNodesToGraphPattern();
+
+        final GraphPathToNode pathToLastNode = builder.getPathToLastNode();
+        final FQN lastNodeType = pattern.findNestedNode(pathToLastNode).getType();
 
         // Duplicate last source node and incoming link
-        final TGGSlice sourceSlice = copiedRule.addSourceSlice();
-        TGGNode duplicatedLastNode = sourceSlice.addNode(lastNodeType);
-        TGGLink linkToLastDuplicatedLastNode =
-                TGGLink.Black(pathToLastNode.getLastLink(), duplicatedLastNode);
+        PatternNode duplicatedLastNode = pattern.addNode(lastNodeType);
+        PatternLink linkToLastDuplicatedLastNode =
+                new PatternLink(pathToLastNode.getLastLink(), duplicatedLastNode);
 
         // Add the "duplicated" link to the node "above"
-        final TGGNode nodeBeforeLastNode =
-                copiedRule.findNestedSourceNode(pathToLastNode.pathToSecondLastNode());
+        final PatternNode nodeBeforeLastNode =
+                pattern.findNestedNode(pathToLastNode.pathToSecondLastNode());
         nodeBeforeLastNode.addLink(linkToLastDuplicatedLastNode);
 
-        // Now we can create a new constraint with the full chain and the last link and node
-        // duplicated
-        builder.addConstraint(
-                new ConstraintPattern(copiedRule.allSourcesAsSlice().nodes().stream().toList()));
+        builder.addConstraint(pattern);
     }
 }

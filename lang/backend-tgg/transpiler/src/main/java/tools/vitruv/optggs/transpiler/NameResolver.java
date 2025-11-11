@@ -1,9 +1,10 @@
 package tools.vitruv.optggs.transpiler;
 
 import tools.vitruv.optggs.operators.FQN;
+import tools.vitruv.optggs.transpiler.graph.pattern.GraphPattern;
 import tools.vitruv.optggs.transpiler.graph.tgg.TGGNode;
 import tools.vitruv.optggs.transpiler.graph.tgg.TripleRule;
-import tools.vitruv.optggs.transpiler.graph.pattern.ConstraintPattern;
+import tools.vitruv.optggs.transpiler.graph.pattern.GraphPattern;
 import tools.vitruv.optggs.transpiler.graph.tgg.Correspondence;
 import tools.vitruv.optggs.transpiler.graph.tgg.CorrespondenceType;
 
@@ -45,11 +46,11 @@ public interface NameResolver {
         }
     }
 
-    default String resolvePatternName(ConstraintPattern constraint) {
-        return "Pattern" + constraint.getId().toString().replace("-", "");
+    default String resolvePatternName(GraphPattern pattern) {
+        return "Pattern" + pattern.getId().toString().replace("-", "");
     }
 
-    default String resolveConstraintName(ConstraintPattern constraint) {
-        return "No" + resolvePatternName(constraint);
+    default String resolveConstraintName(GraphPattern pattern) {
+        return "No" + resolvePatternName(pattern);
     }
 }
