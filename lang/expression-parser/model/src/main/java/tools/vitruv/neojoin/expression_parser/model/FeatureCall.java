@@ -5,7 +5,26 @@ import lombok.RequiredArgsConstructor;
 
 import org.jspecify.annotations.Nullable;
 
-/** A FeatureCall is the first operation in a reference chain and defines the root type */
+/**
+ * A FeatureCall represents a feature (e.g. a variable), stores information about the type and is
+ * the first operation in a reference chain.
+ *
+ * <p>An example expression may look like
+ *
+ * <pre>
+ *     {@code someResult = car.axis.flatMap(a -> a.wheels).toList()}
+ * </pre>
+ *
+ * Here, {@code car} is a FeatureCall
+ * <p>
+ * A FeatureCall is also the first operation in a nested expression:
+ *
+ * <pre>
+ *     {@code someResult = car.axis.flatMap(oneAxis -> oneAxis.wheels).toList()}
+ * </pre>
+ *
+ * Here, {@code oneAxis} is also a FeatureCall
+ */
 @Data
 @RequiredArgsConstructor
 public class FeatureCall implements ReferenceOperator {
