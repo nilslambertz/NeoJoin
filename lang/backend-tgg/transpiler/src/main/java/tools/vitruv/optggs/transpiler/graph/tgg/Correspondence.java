@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Correspondence implements Greenable<Correspondence> {
+public class Correspondence {
     private final TGGNode source;
     private final TGGNode target;
     private boolean green;

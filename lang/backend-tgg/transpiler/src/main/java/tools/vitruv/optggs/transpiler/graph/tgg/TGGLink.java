@@ -8,7 +8,7 @@ import tools.vitruv.optggs.transpiler.graph.TGGNodeToPatternNodeConversionHelper
 import tools.vitruv.optggs.transpiler.graph.pattern.PatternLink;
 
 @Getter
-public class TGGLink extends AbstractGraphLink<TGGNode> implements Greenable<TGGLink> {
+public class TGGLink extends AbstractGraphLink<TGGNode> {
     boolean green;
 
     private TGGLink(String name, TGGNode target, boolean green) {
@@ -24,13 +24,11 @@ public class TGGLink extends AbstractGraphLink<TGGNode> implements Greenable<TGG
         return new TGGLink(name, target, false);
     }
 
-    @Override
     public TGGLink makeGreen() {
         this.green = true;
         return this;
     }
 
-    @Override
     public TGGLink makeBlack() {
         this.green = false;
         return this;

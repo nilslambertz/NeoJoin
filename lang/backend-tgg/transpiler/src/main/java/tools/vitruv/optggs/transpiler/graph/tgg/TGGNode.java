@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Getter
-public class TGGNode extends AbstractGraphNode<TGGLink, TGGNode> implements Greenable<TGGNode> {
+public class TGGNode extends AbstractGraphNode<TGGLink, TGGNode> {
     private boolean green;
 
     private TGGNode(
@@ -53,13 +53,11 @@ public class TGGNode extends AbstractGraphNode<TGGLink, TGGNode> implements Gree
         return create(id, type, true, nameRepository);
     }
 
-    @Override
     public TGGNode makeGreen() {
         this.green = true;
         return this;
     }
 
-    @Override
     public TGGNode makeBlack() {
         this.green = false;
         return this;
