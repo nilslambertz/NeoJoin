@@ -4,6 +4,8 @@ import lombok.Getter;
 
 import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.transpiler.graph.NameRepository;
+import tools.vitruv.optggs.transpiler.graph.TGGNodeToPatternNodeConversionHelper;
+import tools.vitruv.optggs.transpiler.graph.pattern.PatternNode;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -217,6 +219,12 @@ public class TripleRule {
                 newCorrespondences,
                 newConstraints,
                 isLinkRule);
+    }
+
+    public List<PatternNode> convertSourceNodesToPatternNodes() {
+        final TGGNodeToPatternNodeConversionHelper conversionHelper =
+                new TGGNodeToPatternNodeConversionHelper(nameRepository.deepCopy());
+        return sourceNodes.stream().map(conversionHelper::getConvertedNode).toList();
     }
 
     @Override

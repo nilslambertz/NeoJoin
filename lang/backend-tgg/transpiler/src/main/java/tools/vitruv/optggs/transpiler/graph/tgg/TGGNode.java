@@ -8,6 +8,9 @@ import tools.vitruv.optggs.transpiler.graph.Attribute;
 import tools.vitruv.optggs.transpiler.graph.GraphNodeCopyHelper;
 import tools.vitruv.optggs.transpiler.graph.NameRepository;
 import tools.vitruv.optggs.transpiler.graph.Property;
+import tools.vitruv.optggs.transpiler.graph.TGGNodeToPatternNodeConversionHelper;
+import tools.vitruv.optggs.transpiler.graph.pattern.PatternLink;
+import tools.vitruv.optggs.transpiler.graph.pattern.PatternNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +85,28 @@ public class TGGNode extends AbstractGraphNode<TGGLink, TGGNode> implements Gree
                 type,
                 green,
                 copyHelper.getCopiedNameRepository(),
+                copiedProperties,
+                copiedLinks,
+                copiedAttributes);
+    }
+
+    public PatternNode convertToPatternNode(TGGNodeToPatternNodeConversionHelper conversionHelper) {
+        final List<Property> copiedProperties =
+                this.properties.stream()
+                        .map(Property::deepCopy)
+                        .collect(Collectors.toCollection(ArrayList::new));
+        final List<PatternLink> copiedLinks =
+                this.links.stream()
+                        .map(link -> link.toPatternLink(conversionHelper))
+                        .collect(Collectors.toCollection(ArrayList::new));
+        final List<Attribute> copiedAttributes =
+                this.attributes.stream()
+                        .map(Attribute::deepCopy)
+                        .collect(Collectors.toCollection(ArrayList::new));
+        return new PatternNode(
+                id,
+                type,
+                conversionHelper.getCopiedNameRepository(),
                 copiedProperties,
                 copiedLinks,
                 copiedAttributes);

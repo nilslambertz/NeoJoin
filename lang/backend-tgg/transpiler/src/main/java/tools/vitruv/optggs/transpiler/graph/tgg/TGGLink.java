@@ -4,6 +4,8 @@ import lombok.Getter;
 
 import tools.vitruv.optggs.transpiler.graph.AbstractGraphLink;
 import tools.vitruv.optggs.transpiler.graph.GraphNodeCopyHelper;
+import tools.vitruv.optggs.transpiler.graph.TGGNodeToPatternNodeConversionHelper;
+import tools.vitruv.optggs.transpiler.graph.pattern.PatternLink;
 
 @Getter
 public class TGGLink extends AbstractGraphLink<TGGNode> implements Greenable<TGGLink> {
@@ -37,6 +39,10 @@ public class TGGLink extends AbstractGraphLink<TGGNode> implements Greenable<TGG
     @Override
     public TGGLink deepCopy(GraphNodeCopyHelper<TGGNode> copyHelper) {
         return new TGGLink(this.getName(), copyHelper.getCopiedNode(this.getTarget()), green);
+    }
+
+    public PatternLink toPatternLink(TGGNodeToPatternNodeConversionHelper conversionHelper) {
+        return new PatternLink(name, conversionHelper.getConvertedNode(target));
     }
 
     @Override

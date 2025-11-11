@@ -34,7 +34,7 @@ public class NameRepository {
         return get(preference.localName().toLowerCase());
     }
 
-    NameRepository deepCopy() {
+    public NameRepository deepCopy() {
         final NameRepository clone = new NameRepository();
         clone.names.addAll(names);
         return clone;
