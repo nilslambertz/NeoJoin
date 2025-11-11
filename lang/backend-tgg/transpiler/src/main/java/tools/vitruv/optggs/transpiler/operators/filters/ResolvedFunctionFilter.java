@@ -4,10 +4,10 @@ import tools.vitruv.optggs.operators.FunctionInvocation;
 import tools.vitruv.optggs.operators.LogicOperator;
 import tools.vitruv.optggs.operators.expressions.ConstantExpression;
 import tools.vitruv.optggs.operators.filters.FunctionFilter;
+import tools.vitruv.optggs.transpiler.graph.tgg.TGGNode;
 import tools.vitruv.optggs.transpiler.operators.ResolvedFilter;
-import tools.vitruv.optggs.transpiler.tgg.AttributeConstraint;
-import tools.vitruv.optggs.transpiler.tgg.Node;
-import tools.vitruv.optggs.transpiler.tgg.TripleRule;
+import tools.vitruv.optggs.transpiler.graph.tgg.AttributeConstraint;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleRule;
 
 public class ResolvedFunctionFilter implements ResolvedFilter {
     private final FunctionInvocation function;
@@ -28,8 +28,10 @@ public class ResolvedFunctionFilter implements ResolvedFilter {
             if (argument instanceof FunctionInvocation.ConstantArgument c) {
                 constraint.addParameter(parameter, new ConstantExpression(c.value()));
             } else if (argument instanceof FunctionInvocation.ConstrainedArgument arg) {
-                Node node = rule.allSourcesAsSlice().findByType(arg.node()).orElseThrow();
-                constraint.addParameter(parameter, node.addVariableAttribute(arg.attribute(), LogicOperator.Equals));
+                TGGNode node = rule.allSourcesAsSlice().findByType(arg.node()).orElseThrow();
+                constraint.addParameter(
+                        parameter,
+                        node.addVariableAttribute(arg.attribute(), LogicOperator.Equals));
             }
         }
         rule.addConstraintRule(constraint);
@@ -39,5 +41,4 @@ public class ResolvedFunctionFilter implements ResolvedFilter {
     public String toString() {
         return "Φ(" + function + ")";
     }
-
 }

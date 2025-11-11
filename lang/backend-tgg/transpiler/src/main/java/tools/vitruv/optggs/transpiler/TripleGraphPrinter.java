@@ -5,7 +5,7 @@ import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.output.FileOutput;
 import gg.jte.resolve.ResourceCodeResolver;
-import tools.vitruv.optggs.transpiler.tgg.TripleGrammar;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleGrammar;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -19,7 +19,7 @@ public class TripleGraphPrinter {
         params.put("grammar", grammar);
         params.put("nameResolver", nameResolver);
         try (FileOutput out = new FileOutput(file)) {
-            engine.render("TripleGrammar.jte", params, out);
+            engine.render("tgg/TripleGrammar.jte", params, out);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

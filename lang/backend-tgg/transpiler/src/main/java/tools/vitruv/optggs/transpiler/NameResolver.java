@@ -1,11 +1,12 @@
 package tools.vitruv.optggs.transpiler;
 
 import tools.vitruv.optggs.operators.FQN;
-import tools.vitruv.optggs.transpiler.tgg.Correspondence;
-import tools.vitruv.optggs.transpiler.tgg.CorrespondenceType;
-import tools.vitruv.optggs.transpiler.tgg.GraphConstraint;
-import tools.vitruv.optggs.transpiler.tgg.Node;
-import tools.vitruv.optggs.transpiler.tgg.TripleRule;
+import tools.vitruv.optggs.transpiler.graph.pattern.GraphPattern;
+import tools.vitruv.optggs.transpiler.graph.tgg.TGGNode;
+import tools.vitruv.optggs.transpiler.graph.tgg.TripleRule;
+import tools.vitruv.optggs.transpiler.graph.pattern.GraphPattern;
+import tools.vitruv.optggs.transpiler.graph.tgg.Correspondence;
+import tools.vitruv.optggs.transpiler.graph.tgg.CorrespondenceType;
 
 public interface NameResolver {
     String resolveName(FQN fqn);
@@ -25,31 +26,31 @@ public interface NameResolver {
                     rule.allSourcesAsSlice()
                             .filterMapNodes(
                                     node -> !node.links().isEmpty(),
-                                    node -> node.type().localName());
+                                    node -> node.getType().localName());
             var destinationNodes =
                     rule.allSourcesAsSlice()
                             .filterMapNodes(
                                     node -> node.links().isEmpty(),
-                                    node -> node.type().localName());
+                                    node -> node.getType().localName());
             return "Link"
                     + String.join("And", originNodes)
                     + "To"
                     + String.join("And", destinationNodes);
         } else {
             // Select rule
-            var greenSources = rule.allSourcesAsSlice().findNodes(Node::isGreen);
-            var greenTargets = rule.allTargetsAsSlice().findNodes(Node::isGreen);
-            var sources = greenSources.stream().map(node -> node.type().localName()).toList();
-            var targets = greenTargets.stream().map(node -> node.type().localName()).toList();
+            var greenSources = rule.allSourcesAsSlice().findNodes(TGGNode::isGreen);
+            var greenTargets = rule.allTargetsAsSlice().findNodes(TGGNode::isGreen);
+            var sources = greenSources.stream().map(node -> node.getType().localName()).toList();
+            var targets = greenTargets.stream().map(node -> node.getType().localName()).toList();
             return "Select" + String.join("And", sources) + "As" + String.join("And", targets);
         }
     }
 
-    default String resolvePatternName(GraphConstraint constraint) {
-        return "Pattern" + constraint.getId().toString().replace("-", "");
+    default String resolvePatternName(GraphPattern pattern) {
+        return "Pattern" + pattern.getId().toString().replace("-", "");
     }
 
-    default String resolveConstraintName(GraphConstraint constraint) {
-        return "No" + resolvePatternName(constraint);
+    default String resolveConstraintName(GraphPattern pattern) {
+        return "No" + resolvePatternName(pattern);
     }
 }
