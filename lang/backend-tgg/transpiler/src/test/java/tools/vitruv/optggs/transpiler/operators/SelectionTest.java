@@ -116,7 +116,7 @@ class SelectionTest {
         ));
         var rule = new TripleRule();
         selection.extendRule(rule);
-        assertEquals("src: [<a: pkg.A;;.id==<id>>, <b: pkg.B;;.id==<id>,.id==<id1>>, <c: pkg.C;;.id==<id1>>] tgt: [<a': t.A';;>] corr: [a<-->a', b<-->a', c<-->a']", rule.toString());
+        assertEquals("src: [<a: pkg.A;;.id==<id>>, <b: pkg.B;;.id==<id>>, <c: pkg.C;;.id==<id>>] tgt: [<a': t.A';;>] corr: [a<-->a', b<-->a', c<-->a']", rule.toString());
     }
 
 }

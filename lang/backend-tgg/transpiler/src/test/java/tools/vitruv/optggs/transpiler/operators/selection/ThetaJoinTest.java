@@ -43,6 +43,6 @@ class ThetaJoinTest {
         assertEquals("pkg.A ⨝(pkg.A::name=pkg.B::prename->concatWith(text: pkg.B::surname)) pkg.B ⨝(surname==surname) pkg.C", pattern.toString());
         var rule = new TripleRule();
         resolve(pattern).extendSlice(rule.allSourcesAsSlice());
-        assertEquals("src: [<a: pkg.A;;.name==<name>>, <b: pkg.B;;.prename==<prename>,.surname==<surname>,.surname==<surname1>>, <c: pkg.C;;.surname==<surname1>>] tgt: [] corr: [] cs: [concatWith(self: <prename>,text: <surname>,return: <name>)]", rule.toString());
+        assertEquals("src: [<a: pkg.A;;.name==<name>>, <b: pkg.B;;.prename==<prename>,.surname==<surname>>, <c: pkg.C;;.surname==<surname>>] tgt: [] corr: [] cs: [concatWith(self: <prename>,text: <surname>,return: <name>)]", rule.toString());
     }
 }

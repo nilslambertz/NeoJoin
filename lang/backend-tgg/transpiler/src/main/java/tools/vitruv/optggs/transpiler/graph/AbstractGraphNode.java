@@ -13,8 +13,10 @@ import tools.vitruv.optggs.operators.expressions.VariableExpression;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Value
 @NonFinal
@@ -25,25 +27,15 @@ public abstract class AbstractGraphNode<
     protected NameRepository nameRepository;
 
     @Getter(AccessLevel.NONE)
-    protected List<Property> properties;
-
-    @Getter(AccessLevel.NONE)
     protected List<L> links;
 
     @Getter(AccessLevel.NONE)
-    protected List<Attribute> attributes;
+    protected LinkedHashSet<Attribute> attributes;
 
     public abstract N deepCopy(GraphNodeCopyHelper<N> copyHelper);
 
-    public Property property(String name) {
-        return properties.stream()
-                .filter(property -> property.name().equals(name))
-                .findFirst()
-                .orElse(null);
-    }
-
     public ValueExpression addVariableAttribute(String name, LogicOperator operator) {
-        var variableName = variableNameForProperty(name);
+        var variableName = getVariableNameForProperty(name);
         return addVariableAttribute(name, operator, new VariableExpression(variableName));
     }
 
@@ -66,21 +58,32 @@ public abstract class AbstractGraphNode<
         return Collections.unmodifiableCollection(attributes);
     }
 
-    private String variableNameForProperty(String propertyName) {
-        var existingProperty = this.property(propertyName);
-        if (existingProperty instanceof VariableProperty) {
-            return existingProperty.value();
-        } else {
+    private Optional<Attribute> getFirstAttributeByName(String name) {
+        return attributes.stream().filter(attribute -> attribute.name().equals(name)).findFirst();
+    }
+
+    /**
+     * Returns a variable name for the provided property.
+     *
+     * <p>If a variable already exists, the existing variable name is returned. Otherwise, a new
+     * variable name is generated.
+     */
+    private String getVariableNameForProperty(String propertyName) {
+        Optional<Attribute> existingAttributeOptional = this.getFirstAttributeByName(propertyName);
+        if (existingAttributeOptional.isEmpty()) {
             return nameRepository.getLower(propertyName);
         }
+
+        final Attribute existingAttribute = existingAttributeOptional.get();
+        if (existingAttribute.value() instanceof VariableExpression variableExpression) {
+            return variableExpression.name();
+        }
+
+        return nameRepository.getLower(propertyName);
     }
 
     public Collection<L> links() {
         return Collections.unmodifiableCollection(links);
-    }
-
-    public List<Property> getProperties() {
-        return Collections.unmodifiableList(properties);
     }
 
     public N getFirstLinkTarget(String link) {
