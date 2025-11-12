@@ -1,5 +1,7 @@
 package tools.vitruv.optggs.operators.expressions;
 
+import lombok.EqualsAndHashCode;
+
 /**
  * A variable expression
  *
@@ -7,6 +9,7 @@ package tools.vitruv.optggs.operators.expressions;
  * var variable = new VariableExpression("x");
  * </pre>
  */
+@EqualsAndHashCode
 public class VariableExpression implements ValueExpression {
     private final String name;
 

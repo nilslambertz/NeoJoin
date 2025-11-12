@@ -1,5 +1,7 @@
 package tools.vitruv.optggs.operators.expressions;
 
+import lombok.EqualsAndHashCode;
+
 /**
  * A constant expression
  *
@@ -10,6 +12,7 @@ package tools.vitruv.optggs.operators.expressions;
  * constantString.value() == "\"Text\"";
  * </pre>
  */
+@EqualsAndHashCode
 public class ConstantExpression implements ValueExpression {
     private final String value;
 
