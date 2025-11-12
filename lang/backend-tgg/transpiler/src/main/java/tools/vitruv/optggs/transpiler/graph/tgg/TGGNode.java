@@ -55,6 +55,7 @@ public class TGGNode extends AbstractGraphNode<TGGLink, TGGNode> {
 
     public TGGNode makeGreen() {
         this.green = true;
+        links.forEach(TGGLink::makeGreen);
         return this;
     }
 
