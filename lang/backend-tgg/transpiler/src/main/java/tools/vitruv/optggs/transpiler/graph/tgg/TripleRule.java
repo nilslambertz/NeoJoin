@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class TripleRule {
     public interface RuleExtender {
@@ -21,12 +23,12 @@ public class TripleRule {
         AttributeConstraint addConstraint(AttributeConstraint constraint);
     }
 
+    @Getter private final UUID id = UUID.randomUUID();
     private final NameRepository nameRepository;
     private final List<TGGNode> sourceNodes;
     private final List<TGGNode> targetNodes;
     private final List<Correspondence> correspondences;
     private final List<AttributeConstraint> constraints;
-    @Getter private final boolean isLinkRule;
 
     public TripleRule() {
         nameRepository = new NameRepository();
@@ -34,7 +36,6 @@ public class TripleRule {
         targetNodes = new ArrayList<>();
         correspondences = new ArrayList<>();
         constraints = new ArrayList<>();
-        isLinkRule = false;
     }
 
     public static TripleRule LinkTripleRule() {
@@ -43,8 +44,7 @@ public class TripleRule {
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
-                new ArrayList<>(),
-                true);
+                new ArrayList<>());
     }
 
     private TripleRule(
@@ -52,14 +52,12 @@ public class TripleRule {
             List<TGGNode> sourceNodes,
             List<TGGNode> targetNodes,
             List<Correspondence> correspondences,
-            List<AttributeConstraint> constraints,
-            boolean isLinkRule) {
+            List<AttributeConstraint> constraints) {
         this.nameRepository = nameRepository;
         this.sourceNodes = sourceNodes;
         this.targetNodes = targetNodes;
         this.correspondences = correspondences;
         this.constraints = constraints;
-        this.isLinkRule = isLinkRule;
     }
 
     private TGGNode createNode(FQN type) {
@@ -217,8 +215,7 @@ public class TripleRule {
                 newSourceNodes,
                 newTargetNodes,
                 newCorrespondences,
-                newConstraints,
-                isLinkRule);
+                newConstraints);
     }
 
     public GraphPattern convertSourceNodesToGraphPattern() {
@@ -226,7 +223,9 @@ public class TripleRule {
                 new TGGNodeToPatternNodeConversionHelper(nameRepository.deepCopy());
         return new GraphPattern(
                 conversionHelper.getCopiedNameRepository(),
-                sourceNodes.stream().map(conversionHelper::getConvertedNode).toList());
+                sourceNodes.stream()
+                        .map(conversionHelper::getConvertedNode)
+                        .collect(Collectors.toCollection(ArrayList::new)));
     }
 
     @Override
