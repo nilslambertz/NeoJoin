@@ -21,7 +21,7 @@ import java.util.Optional;
 @Value
 @NonFinal
 public abstract class AbstractGraphNode<
-        L extends AbstractGraphLink<N>, N extends AbstractGraphNode<L, N>> {
+        L extends AbstractGraphLink<SELF>, SELF extends AbstractGraphNode<L, SELF>> {
     protected String id;
     protected FQN type;
     protected NameRepository nameRepository;
@@ -32,7 +32,7 @@ public abstract class AbstractGraphNode<
     @Getter(AccessLevel.NONE)
     protected LinkedHashSet<Attribute> attributes;
 
-    public abstract N deepCopy(GraphNodeCopyHelper<N> copyHelper);
+    public abstract SELF deepCopy(GraphNodeCopyHelper<SELF> copyHelper);
 
     public ValueExpression addVariableAttribute(String name, LogicOperator operator) {
         var variableName = getVariableNameForProperty(name);
@@ -86,7 +86,7 @@ public abstract class AbstractGraphNode<
         return Collections.unmodifiableCollection(links);
     }
 
-    public N getFirstLinkTarget(String link) {
+    public SELF getFirstLinkTarget(String link) {
         return this.links.stream()
                 .filter(someLink -> someLink.getName().equals(link))
                 .findFirst()
