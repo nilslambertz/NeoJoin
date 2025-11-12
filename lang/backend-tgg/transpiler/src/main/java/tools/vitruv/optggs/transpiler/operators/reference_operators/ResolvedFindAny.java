@@ -8,9 +8,7 @@ import tools.vitruv.optggs.transpiler.graph.tgg.GraphPathToNode;
 import tools.vitruv.optggs.transpiler.graph.tgg.TripleRule;
 import tools.vitruv.optggs.transpiler.graph.tgg.TripleRulesBuilder;
 
-// TODO: Not fully working yet, we need additional information on how to build the constraint, e.g.
-// if the operator was only used inside an argument
-public class ResolvedMapAny implements ResolvedReferenceOperator {
+public class ResolvedFindAny implements ResolvedReferenceOperator {
     @Override
     public void extendRules(TripleRulesBuilder builder) {
         final TripleRule latestRule = builder.getLatestRule();

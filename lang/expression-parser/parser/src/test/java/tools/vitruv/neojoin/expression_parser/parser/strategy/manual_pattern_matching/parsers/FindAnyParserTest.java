@@ -7,7 +7,7 @@ import org.eclipse.xtext.xbase.XClosure;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 import org.junit.jupiter.api.Test;
 
-import tools.vitruv.neojoin.expression_parser.model.MapAny;
+import tools.vitruv.neojoin.expression_parser.model.FindAny;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.ManualPatternMatchingStrategy;
@@ -18,8 +18,8 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_mat
 
 import java.util.Optional;
 
-class MapAnyParserTest implements ExpressionParserTest {
-    private static final MapAnyParser parser = new MapAnyParser();
+class FindAnyParserTest implements ExpressionParserTest {
+    private static final FindAnyParser parser = new FindAnyParser();
 
     @Test
     public void parseFindFirst() throws UnsupportedReferenceExpressionException {
@@ -47,10 +47,10 @@ class MapAnyParserTest implements ExpressionParserTest {
         final ReferenceOperator result =
                 assertExampleExpressionChainResultAndGetFollowingReferenceOperator(
                         resultOptional.get());
-        assertInstanceOf(MapAny.class, result);
+        assertInstanceOf(FindAny.class, result);
 
-        final MapAny resultAsMapAny = (MapAny) result;
-        assertNull(resultAsMapAny.getFollowingOperator());
+        final FindAny resultAsFindAny = (FindAny) result;
+        assertNull(resultAsFindAny.getFollowingOperator());
     }
 
     @Test
@@ -79,9 +79,9 @@ class MapAnyParserTest implements ExpressionParserTest {
         final ReferenceOperator result =
                 assertExampleExpressionChainResultAndGetFollowingReferenceOperator(
                         resultOptional.get());
-        assertInstanceOf(MapAny.class, result);
+        assertInstanceOf(FindAny.class, result);
 
-        final MapAny resultAsMapAny = (MapAny) result;
-        assertNull(resultAsMapAny.getFollowingOperator());
+        final FindAny resultAsFindAny = (FindAny) result;
+        assertNull(resultAsFindAny.getFollowingOperator());
     }
 }

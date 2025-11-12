@@ -9,7 +9,7 @@ import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStr
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.parsers.CollectReferencesParser;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.parsers.FeatureCallParser;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.parsers.FilterParser;
-import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.parsers.MapAnyParser;
+import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.parsers.FindAnyParser;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.parsers.FlatMapParser;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.parsers.MapParser;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.manual_pattern_matching.parsers.MemberFeatureCallParser;
@@ -26,7 +26,7 @@ public class ManualPatternMatchingStrategy implements PatternMatchingStrategy {
                     new CollectReferencesParser(),
                     new FlatMapParser(),
                     new MapParser(),
-                    new MapAnyParser());
+                    new FindAnyParser());
 
     @Override
     public @NonNull ReferenceOperator parseReferenceOperator(@NonNull XExpression expression)
