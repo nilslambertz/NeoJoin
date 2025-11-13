@@ -6,7 +6,7 @@ import tools.vitruv.optggs.operators.LogicOperator;
 import tools.vitruv.optggs.operators.expressions.ConstantExpression;
 import tools.vitruv.optggs.transpiler.graph.tgg.TGGSlice;
 import tools.vitruv.optggs.transpiler.graph.tgg.TGGNode;
-import tools.vitruv.optggs.transpiler.graph.tgg.AttributeConstraint;
+import tools.vitruv.optggs.transpiler.graph.tgg.constraint.ArbitraryAttributeConstraint;
 
 public class ResolvedThetaJoin implements ResolvedPatternLink {
     private final FQN element;
@@ -25,7 +25,7 @@ public class ResolvedThetaJoin implements ResolvedPatternLink {
     @Override
     public TGGNode extendSlice(TGGSlice slice, TGGNode lastNode) {
         final TGGNode node = slice.findByType(element).orElseGet(() -> slice.addNode(element));
-        var constraint = new AttributeConstraint(function.name());
+        var constraint = new ArbitraryAttributeConstraint(function.name());
         for (var parameter : function.parameters()) {
             var argument = function.argument(parameter);
             if (argument instanceof FunctionInvocation.ConstantArgument c) {

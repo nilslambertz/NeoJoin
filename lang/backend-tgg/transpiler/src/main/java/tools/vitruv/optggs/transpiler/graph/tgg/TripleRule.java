@@ -6,6 +6,7 @@ import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.transpiler.graph.NameRepository;
 import tools.vitruv.optggs.transpiler.graph.TGGNodeToPatternNodeConversionHelper;
 import tools.vitruv.optggs.transpiler.graph.pattern.GraphPattern;
+import tools.vitruv.optggs.transpiler.graph.tgg.constraint.AttributeConstraint;
 
 import java.util.ArrayList;
 import java.util.Collection;

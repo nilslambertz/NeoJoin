@@ -2,6 +2,7 @@ package tools.vitruv.optggs.transpiler.graph.tgg;
 
 import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.operators.selection.PatternLink;
+import tools.vitruv.optggs.transpiler.graph.tgg.constraint.AttributeConstraint;
 
 import java.util.ArrayList;
 import java.util.Collection;

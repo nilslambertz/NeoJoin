@@ -1,28 +1,29 @@
-package tools.vitruv.optggs.transpiler.graph.tgg;
+package tools.vitruv.optggs.transpiler.graph.tgg.constraint;
 
 import lombok.Value;
 
 import tools.vitruv.optggs.operators.expressions.ValueExpression;
+import tools.vitruv.optggs.transpiler.graph.tgg.Parameter;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Value
-public class AttributeConstraint {
-    String name;
+public class ArbitraryAttributeConstraint implements AttributeConstraint {
+    String constraintName;
     List<Parameter> parameters;
 
-    public AttributeConstraint(String name) {
-        this(name, new ArrayList<>());
+    public ArbitraryAttributeConstraint(String constraintName) {
+        this(constraintName, new ArrayList<>());
     }
 
-    public AttributeConstraint(String name, List<Parameter> parameters) {
-        this.name = name;
+    public ArbitraryAttributeConstraint(String constraintName, List<Parameter> parameters) {
+        this.constraintName = constraintName;
         this.parameters = parameters;
     }
 
-    public Collection<Parameter> parameters() {
+    @Override
+    public List<Parameter> getParameters() {
         // Order parameters to have a deterministic order
         // This is because eMoflon::neo gives us these parameters based on the index in the
         // invocation, which
@@ -33,13 +34,16 @@ public class AttributeConstraint {
         return parameters.stream()
                 .sorted(
                         (a, b) -> {
-                            if (a.attribute().equals("self")) {
+                            if (a.attribute().equals(AttributeConstraint.SELF_PARAMETER_NAME)) {
                                 return -1;
-                            } else if (a.attribute().equals("return")) {
+                            } else if (a.attribute()
+                                    .equals(AttributeConstraint.RETURN_PARAMETER_NAME)) {
                                 return 1;
-                            } else if (b.attribute().equals("self")) {
+                            } else if (b.attribute()
+                                    .equals(AttributeConstraint.SELF_PARAMETER_NAME)) {
                                 return 1;
-                            } else if (b.attribute().equals("return")) {
+                            } else if (b.attribute()
+                                    .equals(AttributeConstraint.RETURN_PARAMETER_NAME)) {
                                 return -1;
                             } else {
                                 return a.attribute().compareTo(b.attribute());
@@ -52,8 +56,10 @@ public class AttributeConstraint {
         parameters.add(new Parameter(name, value));
     }
 
-    public AttributeConstraint deepCopy() {
-        return new AttributeConstraint(name, parameters.stream().map(Parameter::deepCopy).toList());
+    @Override
+    public ArbitraryAttributeConstraint deepCopy() {
+        return new ArbitraryAttributeConstraint(
+                constraintName, parameters.stream().map(Parameter::deepCopy).toList());
     }
 
     @Override
@@ -62,6 +68,6 @@ public class AttributeConstraint {
                 parameters.stream()
                         .map((param) -> param.attribute() + ": " + param.value())
                         .toList();
-        return name + "(" + String.join(",", params) + ")";
+        return constraintName + "(" + String.join(",", params) + ")";
     }
 }
