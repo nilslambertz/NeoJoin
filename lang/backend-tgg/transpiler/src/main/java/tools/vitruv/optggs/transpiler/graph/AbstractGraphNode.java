@@ -8,7 +8,6 @@ import lombok.experimental.NonFinal;
 import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.operators.LogicOperator;
 import tools.vitruv.optggs.operators.expressions.ConstantExpression;
-import tools.vitruv.optggs.operators.expressions.ValueExpression;
 import tools.vitruv.optggs.operators.expressions.VariableExpression;
 
 import java.util.Collection;
@@ -34,12 +33,12 @@ public abstract class AbstractGraphNode<
 
     public abstract SELF deepCopy(GraphNodeCopyHelper<SELF> copyHelper);
 
-    public ValueExpression addVariableAttribute(String name, LogicOperator operator) {
+    public VariableExpression addVariableAttribute(String name, LogicOperator operator) {
         var variableName = getVariableNameForProperty(name);
         return addVariableAttribute(name, operator, new VariableExpression(variableName));
     }
 
-    public ValueExpression addVariableAttribute(
+    public VariableExpression addVariableAttribute(
             String name, LogicOperator operator, VariableExpression variable) {
         addAttribute(new Attribute(name, operator, variable));
         return variable;
