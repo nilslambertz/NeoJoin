@@ -103,6 +103,15 @@ public class ConstraintSolver {
                         .supportsBindings(List.of("B B", "B F", "F B"))
                         .supportsGenBindings(List.of("B B", "F F"))
         );
+        solvers.add(
+            new ConstraintSolver("notEquals", "NotEquals", classLoader.getResource("tools/vitruv/optggs/driver/constraints/NotEquals.java"))
+                // The arguments are typed as String, but the constraint supports arbitrary types.
+                // However, we need a fixed type here and cannot overload the method or make it work with a
+                // more generic type
+                .parameter("self", "EString")
+                .parameter("other", "EString")
+                .supportsBindings(List.of("B B", "B F", "F B"))
+        );
         return solvers;
     }
 }
