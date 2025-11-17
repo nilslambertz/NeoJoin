@@ -23,11 +23,7 @@ public class EmslParser {
                 IResourceServiceProvider.Registry.INSTANCE.getResourceServiceProvider(
                         URI.createFileURI(path));
         if (resourceServiceProvider == null) {
-            throw new IllegalStateException(
-                    "Could not find IResourceServiceProvider for URI: "
-                            + path
-                            + ". Make sure the file has the correct extension (.msl) "
-                            + "and the language is registered.");
+            throw new IllegalStateException("ResourceServiceProvider not found");
         }
 
         var resourceSet = resourceServiceProvider.get(ResourceSet.class);

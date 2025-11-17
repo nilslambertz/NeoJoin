@@ -28,6 +28,23 @@
             <groupId>gg.jte</groupId>
             <artifactId>jte-runtime</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>tools.vitruv.neojoin.emsl_parser</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -37,7 +54,9 @@
                 <artifactId>jte-maven-plugin</artifactId>
                 <version>${jte.version}</version>
                 <configuration>
-                    <sourceDirectory>${project.basedir}/src/main/resources/tools/vitruv/neojoin/tgg/emsl_utils/templates</sourceDirectory>
+                    <sourceDirectory>
+                        ${project.basedir}/src/main/resources/tools/vitruv/neojoin/tgg/emsl_utils/templates
+                    </sourceDirectory>
                     <targetDirectory>${project.build.directory}/generated-sources/jte</targetDirectory>
                     <contentType>Plain</contentType>
                 </configuration>
