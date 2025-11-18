@@ -3,8 +3,8 @@
     xmlns:xmi="http://www.omg.org/XMI"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
-    name="SimpleCarModel"
-    nsURI="http://example.org/SimpleCarModel"
+    name="SimpleCarMetamodel"
+    nsURI="http://example.org/SimpleCarMetamodel"
     nsPrefix="simplecar">
 
   <eClassifiers xsi:type="ecore:EClass" name="Car">

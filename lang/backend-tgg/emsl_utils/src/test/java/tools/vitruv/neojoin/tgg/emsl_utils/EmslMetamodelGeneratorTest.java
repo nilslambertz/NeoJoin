@@ -22,31 +22,32 @@ import org.junit.jupiter.api.io.TempDir;
 
 import tools.vitruv.neojoin.emsl_parser.EmslParser;
 
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
 
 class EmslMetamodelGeneratorTest {
     @TempDir Path tempDirectory;
 
-    private static final String ECORE_METAMODEL_FILENAME = "SimpleCarModel.ecore";
+    private static final String ECORE_METAMODEL_FILENAME = "SimpleCarMetamodel.ecore";
 
     private ResourceSet resourceSet;
-    private URI ecoreResourceURI;
 
     @BeforeEach
     void setup() {
-        // Load test model
-        var resourceUrl = getClass().getClassLoader().getResource(ECORE_METAMODEL_FILENAME);
-        assertThat(resourceUrl).isNotNull();
-        ecoreResourceURI = URI.createURI(resourceUrl.toString());
-
-        // Create the ResourceSet
+        // Setup ResourceSet
         resourceSet = new ResourceSetImpl();
         resourceSet
                 .getResourceFactoryRegistry()
                 .getExtensionToFactoryMap()
                 .put("ecore", new EcoreResourceFactoryImpl());
-        Resource ecoreResource = resourceSet.getResource(ecoreResourceURI, true);
+
+        // Load test model
+        final URL resourceUrl = getClass().getClassLoader().getResource(ECORE_METAMODEL_FILENAME);
+        assertThat(resourceUrl).isNotNull();
+        final URI ecoreResourceURI = URI.createURI(resourceUrl.toString());
+
+        final Resource ecoreResource = resourceSet.getResource(ecoreResourceURI, true);
         assertThat(ecoreResource).isNotNull();
         assertThat(ecoreResource.getContents()).isNotEmpty();
     }
@@ -78,7 +79,7 @@ class EmslMetamodelGeneratorTest {
         assertThat(firstEntity).isInstanceOf(Metamodel.class);
 
         final Metamodel metamodel = (Metamodel) firstEntity;
-        assertThat(metamodel.getName()).isEqualTo("SimpleCarModel");
+        assertThat(metamodel.getName()).isEqualTo("SimpleCarMetamodel");
 
         assertThat(metamodel.getNodeBlocks()).hasSize(3);
 
