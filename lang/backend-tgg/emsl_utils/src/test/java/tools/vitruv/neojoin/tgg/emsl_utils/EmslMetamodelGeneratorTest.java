@@ -53,7 +53,7 @@ class EmslMetamodelGeneratorTest {
     }
 
     @Test
-    void testGenerateAndParsePipeline() {
+    void generateMetamodels() {
         // given
         final Path outputPath = tempDirectory.resolve("test-metamodel-output.msl");
 

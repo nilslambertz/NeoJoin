@@ -66,7 +66,7 @@ class EmslModelGeneratorTest extends AbstractEmslGeneratorTest {
     }
 
     @Test
-    void testGenerateAndParsePipeline() throws IOException {
+    void generateModels() throws IOException {
         // given
         final Path outputPath = tempDirectory.resolve("test-model-output.msl");
 
