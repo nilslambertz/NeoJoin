@@ -10,6 +10,7 @@ import tools.vitruv.neojoin.expression_parser.model.FeatureCall;
 import tools.vitruv.neojoin.expression_parser.model.FlatMap;
 import tools.vitruv.neojoin.expression_parser.model.Map;
 import tools.vitruv.neojoin.expression_parser.model.MemberFeatureCall;
+import tools.vitruv.neojoin.expression_parser.model.ReferenceFilter;
 import tools.vitruv.neojoin.expression_parser.model.ReferenceOperator;
 import tools.vitruv.neojoin.expression_parser.parser.exception.UnsupportedReferenceExpressionException;
 import tools.vitruv.neojoin.expression_parser.parser.strategy.PatternMatchingStrategy;
@@ -94,6 +95,11 @@ public class MapParser implements ReferenceOperatorParser {
             return new Map(memberFeatureCall.getFeatureInformation());
         } else if (mapArgumentOperator instanceof Map mapCall) {
             return new Map(mapCall.getFeatureInformation());
+        } else if (mapArgumentOperator instanceof FlatMap flatMapCall) {
+            return new FlatMap(flatMapCall.getFeatureInformation());
+        } else if (mapArgumentOperator instanceof ReferenceFilter filter) {
+            return new ReferenceFilter(
+                    filter.getFeature(), filter.getOperator(), filter.getConstantValue());
         }
 
         throw new UnsupportedReferenceExpressionException(
