@@ -33,7 +33,7 @@ public class Correspondence {
         return new CorrespondenceType(source, target);
     }
 
-    public Correspondence deepCopy(TGGNodeCopyHelper copyHelper) {
+    public Correspondence deepCopy(TGGNodeDeepCopyHelper copyHelper) {
         return new Correspondence(
                 copyHelper.getCopiedNode(source), copyHelper.getCopiedNode(target), green);
     }
