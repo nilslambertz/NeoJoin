@@ -1,18 +1,22 @@
-package tools.vitruv.optggs.transpiler.graph;
+package tools.vitruv.optggs.transpiler.graph.tgg;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.Value;
 
 import org.jspecify.annotations.Nullable;
 
+import tools.vitruv.optggs.transpiler.graph.NameRepository;
 import tools.vitruv.optggs.transpiler.graph.pattern.PatternNode;
-import tools.vitruv.optggs.transpiler.graph.tgg.TGGNode;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Value
 public class TGGNodeToPatternNodeConversionHelper {
+    @Getter(AccessLevel.NONE)
     Map<TGGNode, PatternNode> oldToNewNodes = new HashMap<>();
+
     NameRepository copiedNameRepository;
 
     /**
