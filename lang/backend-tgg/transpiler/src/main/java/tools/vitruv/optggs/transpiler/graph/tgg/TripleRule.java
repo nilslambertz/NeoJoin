@@ -187,7 +187,7 @@ public class TripleRule {
     }
 
     public TripleRule deepCopy() {
-        final TGGNodeCopyHelper copyHelper = new TGGNodeCopyHelper(nameRepository);
+        final TGGNodeDeepCopyHelper copyHelper = new TGGNodeDeepCopyHelper(nameRepository);
 
         final List<TGGNode> newSourceNodes = new ArrayList<>();
         for (final TGGNode oldSourceNode : sourceNodes) {

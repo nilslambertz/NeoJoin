@@ -31,7 +31,7 @@ public abstract class AbstractGraphNode<
     @Getter(AccessLevel.NONE)
     protected LinkedHashSet<Attribute> attributes;
 
-    public abstract SELF deepCopy(GraphNodeCopyHelper<SELF> copyHelper);
+    public abstract SELF deepCopy(GraphNodeDeepCopyHelper<SELF> copyHelper);
 
     public VariableExpression addVariableAttribute(String name, LogicOperator operator) {
         var variableName = getVariableNameForProperty(name);

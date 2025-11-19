@@ -3,8 +3,7 @@ package tools.vitruv.optggs.transpiler.graph.tgg;
 import lombok.Getter;
 
 import tools.vitruv.optggs.transpiler.graph.AbstractGraphLink;
-import tools.vitruv.optggs.transpiler.graph.GraphNodeCopyHelper;
-import tools.vitruv.optggs.transpiler.graph.TGGNodeToPatternNodeConversionHelper;
+import tools.vitruv.optggs.transpiler.graph.GraphNodeDeepCopyHelper;
 import tools.vitruv.optggs.transpiler.graph.pattern.PatternLink;
 
 @Getter
@@ -35,7 +34,7 @@ public class TGGLink extends AbstractGraphLink<TGGNode> {
     }
 
     @Override
-    public TGGLink deepCopy(GraphNodeCopyHelper<TGGNode> copyHelper) {
+    public TGGLink deepCopy(GraphNodeDeepCopyHelper<TGGNode> copyHelper) {
         return new TGGLink(this.getName(), copyHelper.getCopiedNode(this.getTarget()), green);
     }
 

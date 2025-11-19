@@ -9,7 +9,7 @@ public abstract class AbstractGraphLink<N extends AbstractGraphNode<?, N>> {
     protected String name;
     protected N target;
 
-    public abstract AbstractGraphLink<N> deepCopy(GraphNodeCopyHelper<N> copyHelper);
+    public abstract AbstractGraphLink<N> deepCopy(GraphNodeDeepCopyHelper<N> copyHelper);
 
     @Override
     public String toString() {

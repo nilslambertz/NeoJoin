@@ -3,7 +3,7 @@ package tools.vitruv.optggs.transpiler.graph.pattern;
 import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.transpiler.graph.AbstractGraphNode;
 import tools.vitruv.optggs.transpiler.graph.Attribute;
-import tools.vitruv.optggs.transpiler.graph.GraphNodeCopyHelper;
+import tools.vitruv.optggs.transpiler.graph.GraphNodeDeepCopyHelper;
 import tools.vitruv.optggs.transpiler.graph.NameRepository;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class PatternNode extends AbstractGraphNode<PatternLink, PatternNode> {
     }
 
     @Override
-    public PatternNode deepCopy(GraphNodeCopyHelper<PatternNode> copyHelper) {
+    public PatternNode deepCopy(GraphNodeDeepCopyHelper<PatternNode> copyHelper) {
         final List<PatternLink> copiedLinks =
                 this.links.stream()
                         .map(link -> link.deepCopy(copyHelper))

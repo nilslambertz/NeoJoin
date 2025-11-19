@@ -5,9 +5,8 @@ import lombok.Getter;
 import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.transpiler.graph.AbstractGraphNode;
 import tools.vitruv.optggs.transpiler.graph.Attribute;
-import tools.vitruv.optggs.transpiler.graph.GraphNodeCopyHelper;
+import tools.vitruv.optggs.transpiler.graph.GraphNodeDeepCopyHelper;
 import tools.vitruv.optggs.transpiler.graph.NameRepository;
-import tools.vitruv.optggs.transpiler.graph.TGGNodeToPatternNodeConversionHelper;
 import tools.vitruv.optggs.transpiler.graph.pattern.PatternLink;
 import tools.vitruv.optggs.transpiler.graph.pattern.PatternNode;
 
@@ -58,7 +57,7 @@ public class TGGNode extends AbstractGraphNode<TGGLink, TGGNode> {
     }
 
     @Override
-    public TGGNode deepCopy(GraphNodeCopyHelper<TGGNode> copyHelper) {
+    public TGGNode deepCopy(GraphNodeDeepCopyHelper<TGGNode> copyHelper) {
         final List<TGGLink> copiedLinks =
                 this.links.stream()
                         .map(link -> link.deepCopy(copyHelper))
