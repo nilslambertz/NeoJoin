@@ -6,9 +6,11 @@ import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.transpiler.graph.NameRepository;
 import tools.vitruv.optggs.transpiler.graph.tgg.GraphPathToNode;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Value
 public class GraphPattern {
@@ -17,11 +19,10 @@ public class GraphPattern {
     NameRepository nameRepository;
     List<PatternNode> nodes;
 
-    public PatternNode addNode(FQN type) {
-        final String name = nameRepository.getLower(type);
-        final PatternNode node = PatternNode.create(name, type, nameRepository);
+    public GraphPattern addNode(PatternNode node) {
         nodes.add(node);
-        return node;
+        nodes.addAll(node.collectLinkTargets());
+        return this;
     }
 
     public Optional<PatternNode> findNodeByType(FQN type) {
@@ -34,5 +35,15 @@ public class GraphPattern {
             lastNode = lastNode.getFirstLinkTarget(nextReference);
         }
         return lastNode;
+    }
+
+    public GraphPattern duplicateAllNodesWithDifferentNames() {
+        final PatternNodeRenameCopyHelper copyHelper = new PatternNodeRenameCopyHelper();
+        final List<PatternNode> copiedNodesWithDifferentNames =
+                nodes.stream()
+                        .map(node -> node.copyWithDifferentNames(copyHelper))
+                        .collect(Collectors.toCollection(ArrayList::new));
+        nodes.addAll(copiedNodesWithDifferentNames);
+        return this;
     }
 }

@@ -25,6 +25,54 @@ public class PatternNode extends AbstractGraphNode<PatternLink, PatternNode> {
         return new PatternNode(id, type, nameRepository, new ArrayList<>(), new LinkedHashSet<>());
     }
 
+    public PatternNode copyWithDifferentNames() {
+        return copyWithDifferentNames(new PatternNodeRenameCopyHelper());
+    }
+
+    PatternNode copyWithDifferentNames(PatternNodeRenameCopyHelper copyAndRenameHelper) {
+        if (copyAndRenameHelper.getOldToNewNodes().containsKey(this)) {
+            return copyAndRenameHelper.getOldToNewNodes().get(this);
+        }
+
+        final List<PatternLink> copiedLinks =
+                this.links.stream()
+                        .map(link -> link.copyWithDifferentNames(copyAndRenameHelper))
+                        .collect(Collectors.toCollection(ArrayList::new));
+        final LinkedHashSet<Attribute> copiedAttributes =
+                this.attributes.stream()
+                        .map(Attribute::deepCopy)
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return new PatternNode(
+                nameRepository.get(id), type, nameRepository, copiedLinks, copiedAttributes);
+    }
+
+    List<PatternNode> collectLinkTargets() {
+        final ArrayList<PatternNode> results = new ArrayList<>();
+
+        final ArrayList<PatternNode> directTargets =
+                links.stream()
+                        .map(PatternLink::getTarget)
+                        .collect(Collectors.toCollection(ArrayList::new));
+        results.addAll(directTargets);
+
+        final ArrayList<PatternNode> recursiveTargets =
+                directTargets.stream()
+                        .map(PatternNode::collectLinkTargets)
+                        .flatMap(List::stream)
+                        .collect(Collectors.toCollection(ArrayList::new));
+        results.addAll(recursiveTargets);
+
+        return results;
+    }
+
+    public GraphPattern toGraphPattern() {
+        final ArrayList<PatternNode> allNodes = new ArrayList<>();
+        allNodes.add(this);
+        allNodes.addAll(collectLinkTargets());
+        return new GraphPattern(nameRepository, allNodes);
+    }
+
     @Override
     public PatternNode deepCopy(GraphNodeDeepCopyHelper<PatternNode> copyHelper) {
         final List<PatternLink> copiedLinks =

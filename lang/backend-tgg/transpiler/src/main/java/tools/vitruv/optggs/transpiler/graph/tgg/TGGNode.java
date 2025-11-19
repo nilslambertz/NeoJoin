@@ -76,7 +76,12 @@ public class TGGNode extends AbstractGraphNode<TGGLink, TGGNode> {
                 copiedAttributes);
     }
 
-    public PatternNode convertToPatternNode(TGGNodeToPatternNodeConversionHelper conversionHelper) {
+    public PatternNode convertToPatternNode() {
+        return convertToPatternNode(
+                new TGGNodeToPatternNodeConversionHelper(nameRepository.deepCopy()));
+    }
+
+    PatternNode convertToPatternNode(TGGNodeToPatternNodeConversionHelper conversionHelper) {
         final List<PatternLink> copiedLinks =
                 this.links.stream()
                         .map(link -> link.toPatternLink(conversionHelper))
