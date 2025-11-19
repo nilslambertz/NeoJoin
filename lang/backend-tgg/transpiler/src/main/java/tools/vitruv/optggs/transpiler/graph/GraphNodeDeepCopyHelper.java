@@ -1,5 +1,7 @@
 package tools.vitruv.optggs.transpiler.graph;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 
@@ -8,8 +10,10 @@ import java.util.Map;
 
 @Value
 @NonFinal
-public abstract class GraphNodeCopyHelper<N extends AbstractGraphNode<?, N>> {
+public abstract class GraphNodeDeepCopyHelper<N extends AbstractGraphNode<?, N>> {
+    @Getter(AccessLevel.NONE)
     Map<N, N> oldToNewNodes = new HashMap<>();
+
     NameRepository copiedNameRepository;
 
     public N getCopiedNode(N oldNode) {
