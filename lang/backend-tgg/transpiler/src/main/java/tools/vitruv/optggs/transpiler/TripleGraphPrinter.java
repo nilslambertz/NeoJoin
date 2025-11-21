@@ -5,6 +5,8 @@ import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.output.FileOutput;
 import gg.jte.resolve.ResourceCodeResolver;
+
+import tools.vitruv.optggs.transpiler.emoflon.EmoflonTripleGraphGrammarPreprocessor;
 import tools.vitruv.optggs.transpiler.graph.tgg.TripleGrammar;
 
 import java.io.IOException;
@@ -13,7 +15,11 @@ import java.util.HashMap;
 
 public class TripleGraphPrinter {
     public static void print(TripleGrammar grammar, Path file, NameResolver nameResolver) {
-        CodeResolver codeResolver = new ResourceCodeResolver("tools/vitruv/optggs/transpiler/templates");
+        // Preprocess grammar for eMoflon
+        EmoflonTripleGraphGrammarPreprocessor.preprocess(grammar);
+
+        CodeResolver codeResolver =
+                new ResourceCodeResolver("tools/vitruv/optggs/transpiler/templates");
         TemplateEngine engine = TemplateEngine.create(codeResolver, ContentType.Plain);
         var params = new HashMap<String, Object>();
         params.put("grammar", grammar);

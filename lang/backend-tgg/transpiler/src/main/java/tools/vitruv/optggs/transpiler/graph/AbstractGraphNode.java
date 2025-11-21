@@ -57,6 +57,10 @@ public abstract class AbstractGraphNode<
         return Collections.unmodifiableCollection(attributes);
     }
 
+    public void removeAttribute(Attribute attribute) {
+        attributes.remove(attribute);
+    }
+
     private Optional<Attribute> getFirstAttributeByName(String name) {
         return attributes.stream().filter(attribute -> attribute.name().equals(name)).findFirst();
     }
