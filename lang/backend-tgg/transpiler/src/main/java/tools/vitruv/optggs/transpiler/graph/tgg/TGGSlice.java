@@ -6,15 +6,14 @@ import tools.vitruv.optggs.transpiler.graph.tgg.constraint.AttributeConstraint;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class TGGSlice {
     private final TripleRule.RuleExtender ruleExtender;
-    private final List<TGGNode> nodes = new ArrayList<>();
-    private final List<Correspondence> correspondences = new ArrayList<>();
+    private final ArrayList<TGGNode> nodes = new ArrayList<>();
+    private final ArrayList<Correspondence> correspondences = new ArrayList<>();
 
     public TGGSlice(
             TripleRule.RuleExtender ruleExtender,

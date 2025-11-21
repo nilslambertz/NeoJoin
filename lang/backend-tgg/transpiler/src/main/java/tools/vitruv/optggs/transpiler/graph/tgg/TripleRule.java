@@ -25,10 +25,10 @@ public class TripleRule {
 
     @Getter private final UUID id = UUID.randomUUID();
     private final NameRepository nameRepository;
-    private final List<TGGNode> sourceNodes;
-    private final List<TGGNode> targetNodes;
-    private final List<Correspondence> correspondences;
-    private final List<AttributeConstraint> constraints;
+    private final ArrayList<TGGNode> sourceNodes;
+    private final ArrayList<TGGNode> targetNodes;
+    private final ArrayList<Correspondence> correspondences;
+    private final ArrayList<AttributeConstraint> constraints;
 
     public TripleRule() {
         nameRepository = new NameRepository();
@@ -38,21 +38,12 @@ public class TripleRule {
         constraints = new ArrayList<>();
     }
 
-    public static TripleRule LinkTripleRule() {
-        return new TripleRule(
-                new NameRepository(),
-                new ArrayList<>(),
-                new ArrayList<>(),
-                new ArrayList<>(),
-                new ArrayList<>());
-    }
-
     private TripleRule(
             NameRepository nameRepository,
-            List<TGGNode> sourceNodes,
-            List<TGGNode> targetNodes,
-            List<Correspondence> correspondences,
-            List<AttributeConstraint> constraints) {
+            ArrayList<TGGNode> sourceNodes,
+            ArrayList<TGGNode> targetNodes,
+            ArrayList<Correspondence> correspondences,
+            ArrayList<AttributeConstraint> constraints) {
         this.nameRepository = nameRepository;
         this.sourceNodes = sourceNodes;
         this.targetNodes = targetNodes;
@@ -188,24 +179,24 @@ public class TripleRule {
     public TripleRule deepCopy() {
         final TGGNodeDeepCopyHelper copyHelper = new TGGNodeDeepCopyHelper(nameRepository);
 
-        final List<TGGNode> newSourceNodes = new ArrayList<>();
+        final ArrayList<TGGNode> newSourceNodes = new ArrayList<>();
         for (final TGGNode oldSourceNode : sourceNodes) {
             final TGGNode copiedSourceNode = copyHelper.getCopiedNode(oldSourceNode);
             newSourceNodes.add(copiedSourceNode);
         }
 
-        final List<TGGNode> newTargetNodes = new ArrayList<>();
+        final ArrayList<TGGNode> newTargetNodes = new ArrayList<>();
         for (final TGGNode oldTargetNode : targetNodes) {
             final TGGNode copiedTargetNode = copyHelper.getCopiedNode(oldTargetNode);
             newTargetNodes.add(copiedTargetNode);
         }
 
-        final List<Correspondence> newCorrespondences = new ArrayList<>();
+        final ArrayList<Correspondence> newCorrespondences = new ArrayList<>();
         for (final Correspondence correspondence : correspondences) {
             newCorrespondences.add(correspondence.deepCopy(copyHelper));
         }
 
-        final List<AttributeConstraint> newConstraints = new ArrayList<>();
+        final ArrayList<AttributeConstraint> newConstraints = new ArrayList<>();
         for (final AttributeConstraint constraint : constraints) {
             newConstraints.add(constraint.deepCopy());
         }

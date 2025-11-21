@@ -7,21 +7,20 @@ import lombok.RequiredArgsConstructor;
 import tools.vitruv.optggs.operators.FQN;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Getter
 public class GraphPathToNode {
     private final FQN root;
-    List<String> linkPath = new ArrayList<>();
+    ArrayList<String> linkPath = new ArrayList<>();
 
     public void addLinkToPath(String reference) {
         linkPath.add(reference);
     }
 
     public GraphPathToNode pathToSecondLastNode() {
-        return new GraphPathToNode(root, linkPath.subList(0, linkPath.size() - 1));
+        return new GraphPathToNode(root, new ArrayList<>(linkPath.subList(0, linkPath.size() - 1)));
     }
 
     public String getLastLink() {

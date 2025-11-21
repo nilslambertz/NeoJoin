@@ -10,10 +10,10 @@ import tools.vitruv.optggs.operators.LogicOperator;
 import tools.vitruv.optggs.operators.expressions.ConstantExpression;
 import tools.vitruv.optggs.operators.expressions.VariableExpression;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -26,7 +26,7 @@ public abstract class AbstractGraphNode<
     protected NameRepository nameRepository;
 
     @Getter(AccessLevel.NONE)
-    protected List<L> links;
+    protected ArrayList<L> links;
 
     @Getter(AccessLevel.NONE)
     protected LinkedHashSet<Attribute> attributes;

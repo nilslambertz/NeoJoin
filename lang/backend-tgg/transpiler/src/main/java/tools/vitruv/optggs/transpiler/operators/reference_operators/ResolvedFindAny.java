@@ -8,6 +8,7 @@ import tools.vitruv.optggs.transpiler.graph.tgg.TGGNode;
 import tools.vitruv.optggs.transpiler.graph.tgg.TripleRule;
 import tools.vitruv.optggs.transpiler.graph.tgg.TripleRulesBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ResolvedFindAny implements ResolvedReferenceOperator {
@@ -26,7 +27,8 @@ public class ResolvedFindAny implements ResolvedReferenceOperator {
         latestRule.convertSourceNodesToGraphPattern();
         final PatternNode patternWithSecondLinkFromSameRootLastNode =
                 patternWithSecondLinkFromSameRoot.findNestedNode(
-                        new GraphPathToNode(nodeBeforeLastNode.getType(), List.of(lastLink)));
+                        new GraphPathToNode(
+                                nodeBeforeLastNode.getType(), new ArrayList<>(List.of(lastLink))));
 
         final PatternNode patternWithSecondLinkFromSameRootCopiedLastNode =
                 patternWithSecondLinkFromSameRootLastNode.copyWithDifferentNames();

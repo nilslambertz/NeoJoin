@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Value;
 
 import tools.vitruv.optggs.transpiler.graph.pattern.GraphPattern;
-import tools.vitruv.optggs.transpiler.graph.pattern.GraphPattern;
 import tools.vitruv.optggs.transpiler.graph.tgg.TripleRule;
 import tools.vitruv.optggs.transpiler.graph.tgg.TripleRulesBuilder;
 import tools.vitruv.optggs.transpiler.operators.reference_operators.ResolvedReferenceOperatorChain;
@@ -76,7 +75,7 @@ public class ResolvedQuery {
     }
 
     private TripleRule createLinkRule(ResolvedLink link) {
-        final TripleRule rule = TripleRule.LinkTripleRule();
+        final TripleRule rule = new TripleRule();
         selection.extendRule(rule);
         link.extendRule(rule);
 

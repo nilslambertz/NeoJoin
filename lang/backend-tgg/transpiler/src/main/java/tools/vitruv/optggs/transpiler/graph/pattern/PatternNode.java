@@ -16,7 +16,7 @@ public class PatternNode extends AbstractGraphNode<PatternLink, PatternNode> {
             String id,
             FQN type,
             NameRepository nameRepository,
-            List<PatternLink> links,
+            ArrayList<PatternLink> links,
             LinkedHashSet<Attribute> attributes) {
         super(id, type, nameRepository, links, attributes);
     }
@@ -34,7 +34,7 @@ public class PatternNode extends AbstractGraphNode<PatternLink, PatternNode> {
             return copyAndRenameHelper.getOldToNewNodes().get(this);
         }
 
-        final List<PatternLink> copiedLinks =
+        final ArrayList<PatternLink> copiedLinks =
                 this.links.stream()
                         .map(link -> link.copyWithDifferentNames(copyAndRenameHelper))
                         .collect(Collectors.toCollection(ArrayList::new));
@@ -75,7 +75,7 @@ public class PatternNode extends AbstractGraphNode<PatternLink, PatternNode> {
 
     @Override
     public PatternNode deepCopy(GraphNodeDeepCopyHelper<PatternNode> copyHelper) {
-        final List<PatternLink> copiedLinks =
+        final ArrayList<PatternLink> copiedLinks =
                 this.links.stream()
                         .map(link -> link.deepCopy(copyHelper))
                         .collect(Collectors.toCollection(ArrayList::new));

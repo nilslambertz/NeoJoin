@@ -17,7 +17,11 @@ public class GraphPattern {
     UUID id = UUID.randomUUID();
 
     NameRepository nameRepository;
-    List<PatternNode> nodes;
+    ArrayList<PatternNode> nodes;
+
+    public List<PatternNode> getNodes() {
+        return nodes.stream().toList();
+    }
 
     public GraphPattern addNode(PatternNode node) {
         nodes.add(node);

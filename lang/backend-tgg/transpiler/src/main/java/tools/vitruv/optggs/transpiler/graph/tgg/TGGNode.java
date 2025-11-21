@@ -12,7 +12,6 @@ import tools.vitruv.optggs.transpiler.graph.pattern.PatternNode;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -25,7 +24,7 @@ public class TGGNode extends AbstractGraphNode<TGGLink, TGGNode> {
             FQN type,
             boolean green,
             NameRepository nameRepository,
-            List<TGGLink> links,
+            ArrayList<TGGLink> links,
             LinkedHashSet<Attribute> attributes) {
         super(id, type, nameRepository, links, attributes);
         this.green = green;
@@ -58,7 +57,7 @@ public class TGGNode extends AbstractGraphNode<TGGLink, TGGNode> {
 
     @Override
     public TGGNode deepCopy(GraphNodeDeepCopyHelper<TGGNode> copyHelper) {
-        final List<TGGLink> copiedLinks =
+        final ArrayList<TGGLink> copiedLinks =
                 this.links.stream()
                         .map(link -> link.deepCopy(copyHelper))
                         .collect(Collectors.toCollection(ArrayList::new));
@@ -82,7 +81,7 @@ public class TGGNode extends AbstractGraphNode<TGGLink, TGGNode> {
     }
 
     PatternNode convertToPatternNode(TGGNodeToPatternNodeConversionHelper conversionHelper) {
-        final List<PatternLink> copiedLinks =
+        final ArrayList<PatternLink> copiedLinks =
                 this.links.stream()
                         .map(link -> link.toPatternLink(conversionHelper))
                         .collect(Collectors.toCollection(ArrayList::new));
