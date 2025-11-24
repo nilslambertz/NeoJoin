@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class TGGNode extends AbstractGraphNode<TGGLink, TGGNode> {
     private boolean green;
 
-    private TGGNode(
+    TGGNode(
             String id,
             FQN type,
             boolean green,
