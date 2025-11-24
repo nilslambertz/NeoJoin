@@ -1,6 +1,10 @@
 package tools.vitruv.optggs.transpiler.graph.tgg;
 
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+
+import org.jspecify.annotations.NonNull;
 
 import tools.vitruv.optggs.operators.FQN;
 import tools.vitruv.optggs.transpiler.graph.NameRepository;
@@ -14,6 +18,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Builder(access = AccessLevel.PACKAGE)
 public class TripleRule {
     public interface RuleExtender {
         TGGNode addNode(FQN type);
@@ -23,12 +28,12 @@ public class TripleRule {
         AttributeConstraint addConstraint(AttributeConstraint constraint);
     }
 
-    @Getter private final UUID id = UUID.randomUUID();
-    private final NameRepository nameRepository;
-    private final ArrayList<TGGNode> sourceNodes;
-    private final ArrayList<TGGNode> targetNodes;
-    private final ArrayList<Correspondence> correspondences;
-    private final ArrayList<AttributeConstraint> constraints;
+    @Getter @NonNull private final UUID id = UUID.randomUUID();
+    @NonNull private final NameRepository nameRepository;
+    @NonNull private final ArrayList<TGGNode> sourceNodes;
+    @NonNull private final ArrayList<TGGNode> targetNodes;
+    @NonNull private final ArrayList<Correspondence> correspondences;
+    @NonNull private final ArrayList<AttributeConstraint> constraints;
 
     public TripleRule() {
         nameRepository = new NameRepository();
