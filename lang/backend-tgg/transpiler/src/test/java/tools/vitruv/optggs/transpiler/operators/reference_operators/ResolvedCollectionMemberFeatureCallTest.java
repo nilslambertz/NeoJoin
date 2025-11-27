@@ -110,7 +110,7 @@ class ResolvedCollectionMemberFeatureCallTest extends AbstractTripleGraphGrammar
                         .orElseThrow();
         assertThat(sourceNode2.getId()).isEqualTo("anotherRuleNode2");
         assertThat(sourceNode2.getType()).isEqualTo(new FQN("Metamodel5", "LocalName5"));
-        assertThat(sourceNode2.isGreen()).isTrue();
+        assertThat(sourceNode2.isGreen()).isFalse();
         assertThat(sourceNode2.links()).hasSize(1);
         final TGGLink sourceNode2AnotherLink =
                 sourceNode2.links().stream()
@@ -119,7 +119,7 @@ class ResolvedCollectionMemberFeatureCallTest extends AbstractTripleGraphGrammar
                         .orElseThrow();
         assertThat(sourceNode2AnotherLink.getName()).isEqualTo("anotherTestLink");
         assertThat(sourceNode2AnotherLink.getTarget()).isEqualTo(sourceNode1);
-        assertThat(sourceNode2AnotherLink.isGreen()).isTrue();
+        assertThat(sourceNode2AnotherLink.isGreen()).isFalse();
         assertThat(sourceNode2.attributes()).isEmpty();
 
         // Assert target nodes
@@ -129,7 +129,7 @@ class ResolvedCollectionMemberFeatureCallTest extends AbstractTripleGraphGrammar
                 generatedRule.allTargetsAsSlice().nodes().stream().findFirst().orElseThrow();
         assertThat(targetNode1.getId()).isEqualTo("anotherRuleTargetNode1");
         assertThat(targetNode1.getType()).isEqualTo(new FQN("Metamodel6", "LocalName6"));
-        assertThat(targetNode1.isGreen()).isTrue();
+        assertThat(targetNode1.isGreen()).isFalse();
         assertThat(targetNode1.links()).isEmpty();
         assertThat(targetNode1.attributes()).isEmpty();
 
@@ -140,7 +140,7 @@ class ResolvedCollectionMemberFeatureCallTest extends AbstractTripleGraphGrammar
                 generatedRule.correspondences().stream().findFirst().orElseThrow();
         assertThat(correspondence.getSource()).isEqualTo(sourceNode2);
         assertThat(correspondence.getTarget()).isEqualTo(targetNode1);
-        assertThat(correspondence.isGreen()).isTrue();
+        assertThat(correspondence.isGreen()).isFalse();
     }
 
     private TripleRule getTripleRuleToCopyAndExtend() {
