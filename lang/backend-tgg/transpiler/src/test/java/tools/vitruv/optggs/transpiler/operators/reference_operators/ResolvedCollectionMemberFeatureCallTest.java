@@ -32,8 +32,8 @@ class ResolvedCollectionMemberFeatureCallTest extends AbstractTripleGraphGrammar
         tripleRulesBuilder.addRule(ruleToCopyAndExtend);
         tripleRulesBuilder.setPathToLastNode(
                 new GraphPathToNode(
-                        new FQN("Metamodel5", "LocalName5"),
-                        new ArrayList<>(List.of("anotherTestLink"))));
+                        new FQN("SomeOtherSourceMetamodel", "SomeOtherSourceLocalName2"),
+                        new ArrayList<>(List.of("someOtherSourceLinkFromParentToChild"))));
 
         final ResolvedCollectionMemberFeatureCall resolvedCollectionMemberFeatureCall =
                 new ResolvedCollectionMemberFeatureCall(
@@ -70,110 +70,124 @@ class ResolvedCollectionMemberFeatureCallTest extends AbstractTripleGraphGrammar
         assertThat(generatedRule.allSourcesAsSlice().nodes()).hasSize(3);
 
         // New source node
-        final TGGNode sourceNode3 =
+        final TGGNode sourceChildChildNode =
                 generatedRule.allSourcesAsSlice().nodes().stream()
-                        .filter(node -> !node.getId().equals("anotherRuleNode1"))
-                        .filter(node -> !node.getId().equals("anotherRuleNode2"))
+                        .filter(node -> !node.getId().equals("SomeOtherChildSourceNode"))
+                        .filter(node -> !node.getId().equals("SomeOtherParentSourceNode"))
                         .findFirst()
                         .orElseThrow();
-        assertThat(sourceNode3.getId())
-                .isNotEqualTo("anotherRuleNode1")
-                .isNotEqualTo("anotherRuleNode2")
+        assertThat(sourceChildChildNode.getId())
+                .isNotEqualTo("SomeOtherChildSourceNode")
+                .isNotEqualTo("SomeOtherParentSourceNode")
                 .isNotNull();
-        assertThat(sourceNode3.getType())
+        assertThat(sourceChildChildNode.getType())
                 .isEqualTo(new FQN("NewNodeMetamodel", "NewNodeLocalName"));
-        assertThat(sourceNode3.isGreen()).isTrue();
-        assertThat(sourceNode3.links()).isEmpty();
-        assertThat(sourceNode3.attributes()).isEmpty();
+        assertThat(sourceChildChildNode.isGreen()).isTrue();
+        assertThat(sourceChildChildNode.links()).isEmpty();
+        assertThat(sourceChildChildNode.attributes()).isEmpty();
 
-        final TGGNode sourceNode1 =
+        final TGGNode sourceChildNode =
                 generatedRule.allSourcesAsSlice().nodes().stream()
-                        .filter(node -> node.getId().equals("anotherRuleNode1"))
+                        .filter(node -> node.getId().equals("SomeOtherChildSourceNode"))
                         .findFirst()
                         .orElseThrow();
-        assertThat(sourceNode1.getId()).isEqualTo("anotherRuleNode1");
-        assertThat(sourceNode1.getType()).isEqualTo(new FQN("Metamodel4", "LocalName4"));
-        assertThat(sourceNode1.isGreen()).isFalse();
-        assertThat(sourceNode1.attributes()).isEmpty();
+        assertThat(sourceChildNode.getId()).isEqualTo("SomeOtherChildSourceNode");
+        assertThat(sourceChildNode.getType())
+                .isEqualTo(new FQN("SomeOtherSourceMetamodel", "SomeOtherSourceLocalName1"));
+        assertThat(sourceChildNode.isGreen()).isFalse();
+        assertThat(sourceChildNode.attributes()).isEmpty();
 
         // New link to new node
-        assertThat(sourceNode1.links()).hasSize(1);
-        final TGGLink sourceNode1NewLink = sourceNode1.links().stream().toList().getFirst();
-        assertThat(sourceNode1NewLink.getName()).isEqualTo("someNewFeature");
-        assertThat(sourceNode1NewLink.getTarget()).isEqualTo(sourceNode3);
-        assertThat(sourceNode1NewLink.isGreen()).isTrue();
+        assertThat(sourceChildNode.links()).hasSize(1);
+        final TGGLink sourceChildNodeLinkToNewChild =
+                sourceChildNode.links().stream().toList().getFirst();
+        assertThat(sourceChildNodeLinkToNewChild.getName()).isEqualTo("someNewFeature");
+        assertThat(sourceChildNodeLinkToNewChild.getTarget()).isEqualTo(sourceChildChildNode);
+        assertThat(sourceChildNodeLinkToNewChild.isGreen()).isTrue();
 
-        final TGGNode sourceNode2 =
+        final TGGNode sourceParentNode =
                 generatedRule.allSourcesAsSlice().nodes().stream()
-                        .filter(node -> node.getId().equals("anotherRuleNode2"))
+                        .filter(node -> node.getId().equals("SomeOtherParentSourceNode"))
                         .findFirst()
                         .orElseThrow();
-        assertThat(sourceNode2.getId()).isEqualTo("anotherRuleNode2");
-        assertThat(sourceNode2.getType()).isEqualTo(new FQN("Metamodel5", "LocalName5"));
-        assertThat(sourceNode2.isGreen()).isFalse();
-        assertThat(sourceNode2.links()).hasSize(1);
-        final TGGLink sourceNode2AnotherLink =
-                sourceNode2.links().stream()
-                        .filter(link -> link.getName().equals("anotherTestLink"))
+        assertThat(sourceParentNode.getId()).isEqualTo("SomeOtherParentSourceNode");
+        assertThat(sourceParentNode.getType())
+                .isEqualTo(new FQN("SomeOtherSourceMetamodel", "SomeOtherSourceLocalName2"));
+        assertThat(sourceParentNode.isGreen()).isFalse();
+        assertThat(sourceParentNode.links()).hasSize(1);
+        final TGGLink sourceParentNodeExistingLinkToChild =
+                sourceParentNode.links().stream()
+                        .filter(
+                                link ->
+                                        link.getName()
+                                                .equals("someOtherSourceLinkFromParentToChild"))
                         .findFirst()
                         .orElseThrow();
-        assertThat(sourceNode2AnotherLink.getName()).isEqualTo("anotherTestLink");
-        assertThat(sourceNode2AnotherLink.getTarget()).isEqualTo(sourceNode1);
-        assertThat(sourceNode2AnotherLink.isGreen()).isFalse();
-        assertThat(sourceNode2.attributes()).isEmpty();
+        assertThat(sourceParentNodeExistingLinkToChild.getName())
+                .isEqualTo("someOtherSourceLinkFromParentToChild");
+        assertThat(sourceParentNodeExistingLinkToChild.getTarget()).isEqualTo(sourceChildNode);
+        assertThat(sourceParentNodeExistingLinkToChild.isGreen()).isFalse();
+        assertThat(sourceParentNode.attributes()).isEmpty();
 
         // Assert target nodes
         assertThat(generatedRule.allTargetsAsSlice().nodes()).hasSize(1);
 
-        final TGGNode targetNode1 =
+        final TGGNode targetNode =
                 generatedRule.allTargetsAsSlice().nodes().stream().findFirst().orElseThrow();
-        assertThat(targetNode1.getId()).isEqualTo("anotherRuleTargetNode1");
-        assertThat(targetNode1.getType()).isEqualTo(new FQN("Metamodel6", "LocalName6"));
-        assertThat(targetNode1.isGreen()).isFalse();
-        assertThat(targetNode1.links()).isEmpty();
-        assertThat(targetNode1.attributes()).isEmpty();
+        assertThat(targetNode.getId()).isEqualTo("SomeOtherTargetNode");
+        assertThat(targetNode.getType())
+                .isEqualTo(new FQN("SomeOtherTargetMetamodel", "SomeOtherTargetLocalName1"));
+        assertThat(targetNode.isGreen()).isFalse();
+        assertThat(targetNode.links()).isEmpty();
+        assertThat(targetNode.attributes()).isEmpty();
 
         // Assert correspondences
         assertThat(generatedRule.correspondences()).hasSize(1);
 
         final Correspondence correspondence =
                 generatedRule.correspondences().stream().findFirst().orElseThrow();
-        assertThat(correspondence.getSource()).isEqualTo(sourceNode2);
-        assertThat(correspondence.getTarget()).isEqualTo(targetNode1);
+        assertThat(correspondence.getSource()).isEqualTo(sourceParentNode);
+        assertThat(correspondence.getTarget()).isEqualTo(targetNode);
         assertThat(correspondence.isGreen()).isFalse();
     }
 
     private TripleRule getTripleRuleToCopyAndExtend() {
-        final TGGNode anotherRuleSourceNode1 =
+        final TGGNode anotherSourceChildNode =
                 TGGNodeFixtures.someTGGNode(
-                        "anotherRuleNode1",
-                        new FQN("Metamodel4", "LocalName4"),
+                        "SomeOtherChildSourceNode",
+                        new FQN("SomeOtherSourceMetamodel", "SomeOtherSourceLocalName1"),
                         false,
                         NameRepositoryFixtures.someNameRepository(),
                         new ArrayList<>(),
                         new LinkedHashSet<>());
-        final TGGNode anotherRuleSourceNode2 =
+        final TGGNode anotherSourceParentNode =
                 TGGNodeFixtures.someTGGNode(
-                        "anotherRuleNode2",
-                        new FQN("Metamodel5", "LocalName5"),
+                        "SomeOtherParentSourceNode",
+                        new FQN("SomeOtherSourceMetamodel", "SomeOtherSourceLocalName2"),
                         true,
                         NameRepositoryFixtures.someNameRepository(),
                         new ArrayList<>(
-                                List.of(TGGLink.Green("anotherTestLink", anotherRuleSourceNode1))),
+                                List.of(
+                                        TGGLink.Green(
+                                                "someOtherSourceLinkFromParentToChild",
+                                                anotherSourceChildNode))),
                         new LinkedHashSet<>());
-        final TGGNode anotherRuleTargetNode1 =
+
+        final TGGNode anotherTargetNode =
                 TGGNodeFixtures.someTGGNode(
-                        "anotherRuleTargetNode1",
-                        new FQN("Metamodel6", "LocalName6"),
+                        "SomeOtherTargetNode",
+                        new FQN("SomeOtherTargetMetamodel", "SomeOtherTargetLocalName1"),
                         true,
                         NameRepositoryFixtures.someNameRepository(),
                         new ArrayList<>(),
                         new LinkedHashSet<>());
+
         final Correspondence anotherRuleCorrespondence =
-                Correspondence.Green(anotherRuleSourceNode2, anotherRuleTargetNode1);
+                Correspondence.Green(anotherSourceParentNode, anotherTargetNode);
+
         return TripleRuleFixtures.someTripleRule(
-                new ArrayList<>(List.of(anotherRuleSourceNode1, anotherRuleSourceNode2)),
-                new ArrayList<>(List.of(anotherRuleTargetNode1)),
+                new ArrayList<>(List.of(anotherSourceChildNode, anotherSourceParentNode)),
+                new ArrayList<>(List.of(anotherTargetNode)),
                 new ArrayList<>(List.of(anotherRuleCorrespondence)));
     }
 
@@ -181,51 +195,54 @@ class ResolvedCollectionMemberFeatureCallTest extends AbstractTripleGraphGrammar
         // Assert source nodes
         assertThat(tripleRule.allSourcesAsSlice().nodes()).hasSize(2);
 
-        final TGGNode sourceNode1 =
+        final TGGNode sourceChildNode =
                 tripleRule.allSourcesAsSlice().nodes().stream()
-                        .filter(node -> node.getId().equals("anotherRuleNode1"))
+                        .filter(node -> node.getId().equals("SomeOtherChildSourceNode"))
                         .findFirst()
                         .orElseThrow();
-        assertThat(sourceNode1.getId()).isEqualTo("anotherRuleNode1");
-        assertThat(sourceNode1.getType()).isEqualTo(new FQN("Metamodel4", "LocalName4"));
-        assertThat(sourceNode1.isGreen()).isFalse();
-        assertThat(sourceNode1.links()).isEmpty();
-        assertThat(sourceNode1.attributes()).isEmpty();
+        assertThat(sourceChildNode.getId()).isEqualTo("SomeOtherChildSourceNode");
+        assertThat(sourceChildNode.getType())
+                .isEqualTo(new FQN("SomeOtherSourceMetamodel", "SomeOtherSourceLocalName1"));
+        assertThat(sourceChildNode.isGreen()).isFalse();
+        assertThat(sourceChildNode.links()).isEmpty();
+        assertThat(sourceChildNode.attributes()).isEmpty();
 
-        final TGGNode sourceNode2 =
+        final TGGNode sourceParentNode =
                 tripleRule.allSourcesAsSlice().nodes().stream()
-                        .filter(node -> node.getId().equals("anotherRuleNode2"))
+                        .filter(node -> node.getId().equals("SomeOtherParentSourceNode"))
                         .findFirst()
                         .orElseThrow();
-        assertThat(sourceNode2.getId()).isEqualTo("anotherRuleNode2");
-        assertThat(sourceNode2.getType()).isEqualTo(new FQN("Metamodel5", "LocalName5"));
-        assertThat(sourceNode2.isGreen()).isTrue();
-        assertThat(sourceNode2.links()).hasSize(1);
-        assertThat(sourceNode2.links().stream().toList().getFirst().getName())
-                .isEqualTo("anotherTestLink");
-        assertThat(sourceNode2.links().stream().toList().getFirst().getTarget())
-                .isEqualTo(sourceNode1);
-        assertThat(sourceNode2.links().stream().toList().getFirst().isGreen()).isTrue();
-        assertThat(sourceNode2.attributes()).isEmpty();
+        assertThat(sourceParentNode.getId()).isEqualTo("SomeOtherParentSourceNode");
+        assertThat(sourceParentNode.getType())
+                .isEqualTo(new FQN("SomeOtherSourceMetamodel", "SomeOtherSourceLocalName2"));
+        assertThat(sourceParentNode.isGreen()).isTrue();
+        assertThat(sourceParentNode.links()).hasSize(1);
+        assertThat(sourceParentNode.links().stream().toList().getFirst().getName())
+                .isEqualTo("someOtherSourceLinkFromParentToChild");
+        assertThat(sourceParentNode.links().stream().toList().getFirst().getTarget())
+                .isEqualTo(sourceChildNode);
+        assertThat(sourceParentNode.links().stream().toList().getFirst().isGreen()).isTrue();
+        assertThat(sourceParentNode.attributes()).isEmpty();
 
         // Assert target nodes
         assertThat(tripleRule.allTargetsAsSlice().nodes()).hasSize(1);
 
-        final TGGNode targetNode1 =
+        final TGGNode targetNode =
                 tripleRule.allTargetsAsSlice().nodes().stream().findFirst().orElseThrow();
-        assertThat(targetNode1.getId()).isEqualTo("anotherRuleTargetNode1");
-        assertThat(targetNode1.getType()).isEqualTo(new FQN("Metamodel6", "LocalName6"));
-        assertThat(targetNode1.isGreen()).isTrue();
-        assertThat(targetNode1.links()).isEmpty();
-        assertThat(targetNode1.attributes()).isEmpty();
+        assertThat(targetNode.getId()).isEqualTo("SomeOtherTargetNode");
+        assertThat(targetNode.getType())
+                .isEqualTo(new FQN("SomeOtherTargetMetamodel", "SomeOtherTargetLocalName1"));
+        assertThat(targetNode.isGreen()).isTrue();
+        assertThat(targetNode.links()).isEmpty();
+        assertThat(targetNode.attributes()).isEmpty();
 
         // Assert correspondences
         assertThat(tripleRule.correspondences()).hasSize(1);
 
         final Correspondence correspondence =
                 tripleRule.correspondences().stream().findFirst().orElseThrow();
-        assertThat(correspondence.getSource()).isEqualTo(sourceNode2);
-        assertThat(correspondence.getTarget()).isEqualTo(targetNode1);
+        assertThat(correspondence.getSource()).isEqualTo(sourceParentNode);
+        assertThat(correspondence.getTarget()).isEqualTo(targetNode);
         assertThat(correspondence.isGreen()).isTrue();
     }
 }
