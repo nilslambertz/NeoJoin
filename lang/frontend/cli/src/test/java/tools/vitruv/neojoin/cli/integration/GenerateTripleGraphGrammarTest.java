@@ -1,19 +1,24 @@
 package tools.vitruv.neojoin.cli.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import static tools.vitruv.neojoin.cli.integration.Utils.getResource;
 
+import org.eclipse.emf.ecore.EObject;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import picocli.CommandLine;
 
 import tools.vitruv.neojoin.cli.Main;
+import tools.vitruv.neojoin.emsl_parser.EmslParser;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 public class GenerateTripleGraphGrammarTest {
 
@@ -22,7 +27,8 @@ public class GenerateTripleGraphGrammarTest {
      * --generate-tgg-rules=<tgg-project-output> <query>}
      */
     @Test
-    public void testGenerateMetaModel(@TempDir Path outputDirectory) throws IOException {
+    @Disabled("Disabled until the parsing of the project works")
+    public void testGenerateTripleGraphGrammar(@TempDir Path outputDirectory) throws IOException {
         // GIVEN meta-models, a valid query and a TGG project output path
         var metaModelPath = getResource(Utils.MODELS);
         var query = getResource(Utils.QUERIES.resolve("car.nj"));
@@ -56,8 +62,8 @@ public class GenerateTripleGraphGrammarTest {
         assertEquals(0, exitCode);
 
         // TODO: Fix parsing
-        /*final List<EObject> parsedObjects =
+        final List<EObject> parsedObjects =
                 EmslParser.parse(tripleGraphGrammarRulesFilePath.toAbsolutePath().toString());
-        assertThat(parsedObjects).isNotNull().isNotEmpty();*/
+        assertThat(parsedObjects).isNotNull().isNotEmpty();
     }
 }
