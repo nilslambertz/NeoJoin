@@ -3,10 +3,12 @@ name: CI
 on:
   workflow_dispatch:
   push:
-  pull_request:
     branches:
     - main
     - feature/manual-pattern-matching-test
+  pull_request:
+    branches:
+    - main
 #  schedule:
 #  - cron: "0 2 * * 1" # at 02:00 on Monday
 
