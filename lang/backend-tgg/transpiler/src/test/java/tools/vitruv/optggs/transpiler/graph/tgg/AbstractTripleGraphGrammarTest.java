@@ -116,4 +116,15 @@ public abstract class AbstractTripleGraphGrammarTest {
         assertThat(correspondence.getTarget()).isEqualTo(targetNode);
         assertThat(correspondence.isGreen()).isTrue();
     }
+
+    protected TripleRule getTripleRuleById(TripleRulesBuilder builder, UUID id) {
+        return getTripleRuleById(builder.getTripleRules(), id);
+    }
+
+    protected TripleRule getTripleRuleById(List<TripleRule> tripleRules, UUID id) {
+        return tripleRules.stream()
+                .filter(rule -> rule.getId().equals(id))
+                .findFirst()
+                .orElseThrow();
+    }
 }
