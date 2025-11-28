@@ -7,8 +7,8 @@ on:
     branches:
     - main
     - feature/manual-pattern-matching-test
-  schedule:
-  - cron: "0 2 * * 1" # at 02:00 on Monday
+#  schedule:
+#  - cron: "0 2 * * 1" # at 02:00 on Monday
 
 jobs:
   build-maven:
