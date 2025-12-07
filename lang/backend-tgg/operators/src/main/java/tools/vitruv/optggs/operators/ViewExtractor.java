@@ -127,7 +127,7 @@ public class ViewExtractor {
                                     .map(AQRSource::from)
                                     .map(AQRFrom::clazz)
                                     .map(EClass::getEPackage)
-                                    .map(EPackage::getNsPrefix)
+                                    .map(EPackage::getName)
                                     .orElse(null);
                     final FQN targetLeaf = targetRoot.withLocalName(reference.type().name());
                     query.referenceOperator(
@@ -143,7 +143,7 @@ public class ViewExtractor {
     }
 
     private static FQN fqn(AQRFrom from) {
-        return new FQN(from.clazz().getEPackage().getNsPrefix(), from.clazz().getName());
+        return new FQN(from.clazz().getEPackage().getName(), from.clazz().getName());
     }
 
     private static FQN fqn(String name) {
