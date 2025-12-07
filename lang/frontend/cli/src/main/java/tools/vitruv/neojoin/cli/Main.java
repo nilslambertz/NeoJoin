@@ -46,7 +46,9 @@ import tools.vitruv.optggs.operators.View;
 import tools.vitruv.optggs.operators.ViewExtractor;
 import tools.vitruv.optggs.transpiler.LocalNameResolver;
 
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -116,6 +118,9 @@ public class Main implements Callable<Integer> {
         Path targetModelPath;
     }
 
+    private static final int TOTAL_RUNS = 15;
+    private static final int WARMUP_RUNS = 5;
+
     /**
      * CLI entry point.
      *
@@ -124,7 +129,29 @@ public class Main implements Callable<Integer> {
     @Override
     public Integer call() {
         try {
-            return execute();
+            final String queryFileName = this.queryFile.getFileName().toString();
+            final String queryName = queryFileName.substring(0, queryFileName.lastIndexOf("."));
+            final String performanceTestResultsFilename = "BENCHMARK_RESULTS_" + queryName + ".csv";
+            try(PrintWriter writer = new PrintWriter(new FileWriter(performanceTestResultsFilename))) {
+                writer.println("Run_ID,Step_Name,Duration_ms");
+            }
+            System.out.println("Benchmark started. Output will be saved to: " + performanceTestResultsFilename);
+
+            for(int runId = 0; runId < TOTAL_RUNS; runId++) {
+                final PerformanceTracker tracker = new PerformanceTracker(runId);
+                int result = execute(tracker);
+                if(result != 0) {
+                    System.err.println("Error encountered during benchmark at run " + runId);
+                    return result;
+                }
+                if(runId >= WARMUP_RUNS) {
+                    tracker.appendToCsv(performanceTestResultsFilename);
+                    System.out.println("Run " + runId + " completed and stored");
+                } else {
+                    System.out.println("Run " + runId + " (Warmup) completed");
+                }
+            }
+            System.out.println("Benchmark finished successfully.");
         } catch (IllegalArgumentException ex) {
             printError("Invalid meta-model path: %s", ex.getMessage());
         } catch (TransformatorException e) {
@@ -142,7 +169,7 @@ public class Main implements Callable<Integer> {
             printError("Failed to read input model: %s", e.getMessage());
         }
 
-        return 1;
+        return 0;
     }
 
     /**
@@ -163,7 +190,7 @@ public class Main implements Callable<Integer> {
      *
      * @return exit code
      */
-    private int execute() throws IOException, UnsupportedReferenceExpressionException {
+    private int execute(PerformanceTracker tracker) throws IOException, UnsupportedReferenceExpressionException {
         // collect available meta-models
         EPackage.Registry registry = new PackageModelCollector(metaModelPath).collect();
         ResourceSet sourceMetaModelResourceSet = new ResourceSetImpl();
@@ -172,10 +199,14 @@ public class Main implements Callable<Integer> {
             .map(EPackage.class::cast)
             .map(EPackage::eResource)
             .forEach(sourceMetaModelResourceSet.getResources()::add);
+        tracker.checkpoint("SETUP_METAMODELS");
 
         // parse query
         var setup = new NeoJoinStandaloneSetup(registry);
+        tracker.checkpoint("SETUP_NEOJOIN");
+
         var result = setup.getParser().parse(URI.createFileURI(queryFile.toString()));
+        tracker.checkpoint("PARSE_QUERY");
 
         printIssues(result.issues());
 
@@ -199,6 +230,7 @@ public class Main implements Callable<Integer> {
             EMFUtils.save(getOutputURI(generate.output, "ecore"), targetMetamodelPackage);
             registry.put(targetMetamodelPackage.getNsURI(), targetMetamodelPackage);
         }
+        tracker.checkpoint("GENERATE_AND_STORE_TARGET_ECORE_METAMODEL");
 
         if (transform != null) {
             // transform instance models
@@ -221,13 +253,14 @@ public class Main implements Callable<Integer> {
                 return 1;
             }
 
-            generateTripleGraphGrammarProject(sourceMetaModelResourceSet, targetMetaModel, aqr, registry);
+            generateTripleGraphGrammarProject(tracker, sourceMetaModelResourceSet, targetMetaModel, aqr, registry);
         }
 
         return 0;
     }
 
     private void generateTripleGraphGrammarProject(
+            PerformanceTracker tracker,
             ResourceSet sourceMetaModelResourceSet,
             ModelInfo targetMetaModel,
             AQR aqr,
@@ -240,17 +273,20 @@ public class Main implements Callable<Integer> {
         // Generate metamodel(s) for eMoflon
         final Path sourceMetamodelPath = Path.of("target/emsl-source-metamodel.msl");
         EmslMetamodelGenerator.generateMetamodels(sourceMetaModelResourceSet, sourceMetamodelPath);
+        tracker.checkpoint("GENERATE_SOURCE_EMSL_METAMODELS");
 
         final ResourceSet targetMetaModelResourceSet = new ResourceSetImpl();
         targetMetaModelResourceSet.getResources().add(targetMetaModel.pack().eResource());
         final Path targetMetamodelPath = Path.of("target/emsl-target-metamodel.msl");
         EmslMetamodelGenerator.generateMetamodels(targetMetaModelResourceSet, targetMetamodelPath);
+        tracker.checkpoint("GENERATE_TARGET_EMSL_METAMODELS");
 
         // TODO: How to choose Project name?
         final Project project = new Project("TestTGGProjectV2");
         project.addSourceMetamodel(new Metamodel(sourceMetamodelPath));
         project.addTargetMetamodel(new Metamodel(targetMetamodelPath));
         final View view = ViewExtractor.viewFromAQR(aqr, new ManualPatternMatchingStrategy());
+        tracker.checkpoint("GENERATE_VIEW_FROM_AQR");
 
         if (tggRuleGeneration.sourceModelPath != null) {
             final Path sourceModelOutputPath = Path.of("target/emsl-source-model.msl");
@@ -272,6 +308,7 @@ public class Main implements Callable<Integer> {
 
         API.generateProjectForView(
                 project, view, tggRuleGeneration.output, new LocalNameResolver());
+        tracker.checkpoint("GENERATE_EMOFLON_TGG_PROJECT");
     }
 
     private static String convertEcoreModelToEmslAndGetModelName(
