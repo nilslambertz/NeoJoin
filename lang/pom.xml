@@ -8,7 +8,7 @@
   <parent>
     <groupId>tools.vitruv</groupId>
     <artifactId>parent</artifactId>
-    <version>3.3.1</version>
+    <version>3.3.2</version>
   </parent>
 
   <!-- Project Information -->
@@ -193,7 +193,7 @@
       <dependency>
         <groupId>tools.vitruv</groupId>
         <artifactId>tools.vitruv.change.p2wrappers.emfcompare</artifactId>
-        <version>3.2.2</version>
+        <version>3.2.3</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
