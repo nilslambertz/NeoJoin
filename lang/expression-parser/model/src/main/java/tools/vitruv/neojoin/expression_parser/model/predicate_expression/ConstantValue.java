@@ -11,6 +11,10 @@ public class ConstantValue {
         return new ConstantValue(value, true);
     }
 
+    public static ConstantValue Boolean(boolean isTrue) {
+        return ConstantValue.of(isTrue ? "true" : "false");
+    }
+
     public static ConstantValue of(String value) {
         return new ConstantValue(value, false);
     }

@@ -8,6 +8,7 @@ import org.eclipse.xtext.common.types.JvmField;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.xbase.XAbstractFeatureCall;
 import org.eclipse.xtext.xbase.XBinaryOperation;
+import org.eclipse.xtext.xbase.XBooleanLiteral;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XNumberLiteral;
 import org.eclipse.xtext.xbase.XStringLiteral;
@@ -87,6 +88,8 @@ public class PredicateExpressionUtils {
             return Optional.of(ConstantValue.of(numberLiteral.getValue()));
         } else if (expression instanceof XStringLiteral stringLiteral) {
             return Optional.of(ConstantValue.String(stringLiteral.getValue()));
+        } else if (expression instanceof XBooleanLiteral booleanLiteral) {
+            return Optional.of(ConstantValue.Boolean(booleanLiteral.isIsTrue()));
         }
         return Optional.empty();
     }
