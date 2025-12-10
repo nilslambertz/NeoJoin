@@ -1,0 +1,38 @@
+export PerformanceTestTargetChainLength30Nested0 to "http://vitruv.tools/nilslambertz/PerformanceTestTargetChainLength30Nested0"
+
+import "http://example.org/PerformanceTestModel"
+
+from A a create PerformanceTestTargetChainLength30Nested0 {
+    someExpression := a.refC_Multi
+        .filter[c  | c.attC2 > 0]
+        .flatMap[c  | c.refE_Multi]
+        .map[e  | e.refD_Single]
+        .filter[d  | d.attD1 >= 0.0]
+        .flatMap[d  | d.refF_Multi]
+        .filter[f  | f.attF2 == true]
+        .map[f  | f.refG_Single]
+        .flatMap[g  | g.refI_Multi]
+        .filter[i  | i.attI2 > 5]
+        .findFirst[]
+        .refA_Multi
+        .filter[a2 | a2.attA2 >= 3]
+        .flatMap[a2 | a2.refI_Multi]
+        .filter[i2 | i2.attI1 != ""]
+        .flatMap[i2 | i2.refG_Multi]
+        .filter[g2 | g2.attG2 >= 1]
+        .map[g2 | g2.refH_Single]
+        .filter[h  | h.attH1 > 1.0]
+        .flatMap[h  | h.refJ_Multi]
+        .filter[j  | j.attJ2 == false]
+        .map[j  | j.refI_Single]
+        .filter[i3 | i3.attI2 <= 200]
+        .flatMap[i3 | i3.refA_Multi]
+        .filter[a3 | a3.attA1 != "test"]
+        .map[a3 | a3.refJ_Single]
+        .filter[j2 | j2.attJ1 > 1.0]
+        .map[j2 | j2.refA_Single]
+        .flatMap[a4 | a4.refC_Multi]
+        .filter[c2 | c2.attC1 != "x"]
+        .toList() create PerformanceTestTargetChainLength30Nested0Child {
+                          }
+}

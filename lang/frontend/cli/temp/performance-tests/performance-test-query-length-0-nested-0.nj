@@ -1,0 +1,7 @@
+export PerformanceTestTargetChainLength0Nested0 to "http://vitruv.tools/nilslambertz/PerformanceTestTargetChainLength0Nested0"
+
+import "http://example.org/PerformanceTestModel"
+
+from A a create PerformanceTestTargetChainLength0Nested0 {
+    targetAttribute = a.attA1
+}

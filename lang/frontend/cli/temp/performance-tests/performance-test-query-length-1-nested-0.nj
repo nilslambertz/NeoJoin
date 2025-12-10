@@ -1,0 +1,8 @@
+export PerformanceTestTargetChainLength1Nested0 to "http://vitruv.tools/nilslambertz/PerformanceTestTargetChainLength1Nested0"
+
+import "http://example.org/PerformanceTestModel"
+
+from A a create PerformanceTestTargetChainLength1Nested0 {
+    someExpression := a.refC_Multi create PerformanceTestTargetChainLength1Nested0Child {
+                                           }
+}

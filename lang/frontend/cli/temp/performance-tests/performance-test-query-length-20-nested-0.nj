@@ -1,0 +1,28 @@
+export PerformanceTestTargetChainLength20Nested0 to "http://vitruv.tools/nilslambertz/PerformanceTestTargetChainLength20Nested0"
+
+import "http://example.org/PerformanceTestModel"
+
+from A a create PerformanceTestTargetChainLength20Nested0 {
+    someExpression := a.refI_Multi
+        .filter[i  | i.attI2 > 10]
+        .flatMap[i  | i.refG_Multi]
+        .map[g  | g.refH_Single]
+        .filter[h  | h.attH1 >= 0.5]
+        .flatMap[h  | h.refJ_Multi]
+        .filter[j  | j.attJ2 != true]
+        .map[j  | j.refA_Single]
+        .flatMap[a2 | a2.refC_Multi]
+        .filter[c  | c.attC2 != 0]
+        .flatMap[c  | c.refE_Multi]
+        .map[e  | e.refD_Single]
+        .filter[d  | d.attD2]
+        .flatMap[d  | d.refF_Multi]
+        .filter[f  | f.attF2 == true]
+        .map[f  | f.refG_Single]
+        .flatMap[g2 | g2.refI_Multi]
+        .filter[i2 | i2.attI2 < 100]
+        .map[i2 | i2.refJ_Single]
+        .map[j2 | j2.refA_Single]
+        .toList() create PerformanceTestTargetChainLength20Nested0Child {
+                          }
+}
