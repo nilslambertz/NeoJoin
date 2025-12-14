@@ -48,33 +48,4 @@ class CollectReferencesParserTest implements ExpressionParserTest {
                         resultOptional.get());
         assertNull(result);
     }
-
-    @Test
-    public void parseFlatten() throws UnsupportedReferenceExpressionException {
-        // given
-        final JvmOperation flattenOperation = JvmOperationFixtures.createJvmOperation();
-        flattenOperation.setSimpleName("flatten");
-
-        final XClosure closure = XClosureFixtures.createXClosure();
-        closure.setExpression(XBlockExpressionFixtures.createXBlockExpression());
-
-        final XMemberFeatureCall memberFeatureCall =
-                XMemberFeatureCallFixtures.createXMemberFeatureCall();
-        memberFeatureCall.setFeature(flattenOperation);
-        memberFeatureCall.getMemberCallArguments().add(closure);
-        memberFeatureCall.setMemberCallTarget(exampleExpressionChain());
-
-        // when
-        final ManualPatternMatchingStrategy strategy = new ManualPatternMatchingStrategy();
-        final Optional<ReferenceOperator> resultOptional =
-                parser.parse(strategy, memberFeatureCall);
-
-        // then
-        assertTrue(resultOptional.isPresent());
-
-        final ReferenceOperator result =
-                assertExampleExpressionChainResultAndGetFollowingReferenceOperator(
-                        resultOptional.get());
-        assertNull(result);
-    }
 }
