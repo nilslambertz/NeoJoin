@@ -1,8 +1,0 @@
-export NilsLambertzPerformanceTestTargetLength1 to "http://vitruv.tools/nilslambertz/NilsLambertzPerformanceTestTargetLength1"
-
-import "http://example.org/PerformanceTestModel"
-
-from A a create NilsLambertzPerformanceTestTargetLength1 {
-    someExpression := a.refC_Multi create NilsLambertzPerformanceTestTargetLength1Child {
-        }
-}
