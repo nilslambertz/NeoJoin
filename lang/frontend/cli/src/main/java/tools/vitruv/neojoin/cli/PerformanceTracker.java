@@ -21,7 +21,7 @@ public class PerformanceTracker {
         final double durationMs = (now - lastTimestamp) / 1_000_000.0;
         lastTimestamp = now;
 
-        records.add(String.format("%d,%s,%.4f", runId, stepName, durationMs));
+        records.add(String.format("%d;%s;%.4f", runId, stepName, durationMs));
     }
 
     public void appendToCsv(String filename) {
