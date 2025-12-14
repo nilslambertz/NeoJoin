@@ -199,11 +199,10 @@ public class Main implements Callable<Integer> {
             .map(EPackage.class::cast)
             .map(EPackage::eResource)
             .forEach(sourceMetaModelResourceSet.getResources()::add);
-        tracker.checkpoint("SETUP_METAMODELS");
 
         // parse query
         var setup = new NeoJoinStandaloneSetup(registry);
-        tracker.checkpoint("SETUP_NEOJOIN");
+        tracker.checkpoint("SETUP_METAMODELS_AND_NEOJOIN");
 
         var result = setup.getParser().parse(URI.createFileURI(queryFile.toString()));
         tracker.checkpoint("PARSE_QUERY");
@@ -230,7 +229,6 @@ public class Main implements Callable<Integer> {
             EMFUtils.save(getOutputURI(generate.output, "ecore"), targetMetamodelPackage);
             registry.put(targetMetamodelPackage.getNsURI(), targetMetamodelPackage);
         }
-        tracker.checkpoint("GENERATE_AND_STORE_TARGET_ECORE_METAMODEL");
 
         if (transform != null) {
             // transform instance models
@@ -273,20 +271,19 @@ public class Main implements Callable<Integer> {
         // Generate metamodel(s) for eMoflon
         final Path sourceMetamodelPath = Path.of("target/emsl-source-metamodel.msl");
         EmslMetamodelGenerator.generateMetamodels(sourceMetaModelResourceSet, sourceMetamodelPath);
-        tracker.checkpoint("GENERATE_SOURCE_EMSL_METAMODELS");
 
         final ResourceSet targetMetaModelResourceSet = new ResourceSetImpl();
         targetMetaModelResourceSet.getResources().add(targetMetaModel.pack().eResource());
         final Path targetMetamodelPath = Path.of("target/emsl-target-metamodel.msl");
         EmslMetamodelGenerator.generateMetamodels(targetMetaModelResourceSet, targetMetamodelPath);
-        tracker.checkpoint("GENERATE_TARGET_EMSL_METAMODELS");
+        tracker.checkpoint("GENERATE_ECORE_AND_EMSL_METAMODELS");
 
         // TODO: How to choose Project name?
         final Project project = new Project("TestTGGProjectV2");
         project.addSourceMetamodel(new Metamodel(sourceMetamodelPath));
         project.addTargetMetamodel(new Metamodel(targetMetamodelPath));
         final View view = ViewExtractor.viewFromAQR(aqr, new ManualPatternMatchingStrategy());
-        tracker.checkpoint("GENERATE_VIEW_FROM_AQR");
+        tracker.checkpoint("PARSE_EXPRESSIONS_AND_GENERATE_VIEW_FROM_AQR");
 
         if (tggRuleGeneration.sourceModelPath != null) {
             final Path sourceModelOutputPath = Path.of("target/emsl-source-model.msl");
