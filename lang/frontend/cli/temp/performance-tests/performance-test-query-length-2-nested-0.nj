@@ -1,8 +1,0 @@
-export PerformanceTestTargetChainLength2Nested0 to "http://vitruv.tools/nilslambertz/PerformanceTestTargetChainLength2Nested0"
-
-import "http://example.org/PerformanceTestModel"
-
-from A a create PerformanceTestTargetChainLength2Nested0 {
-    someExpression := a.refC_Multi.flatMap[c | c.refE_Multi].toList() create PerformanceTestTargetChainLength2Nested0Child {
-                                                                              }
-}
