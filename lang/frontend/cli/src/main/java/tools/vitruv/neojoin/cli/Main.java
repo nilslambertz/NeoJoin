@@ -133,7 +133,7 @@ public class Main implements Callable<Integer> {
             final String queryName = queryFileName.substring(0, queryFileName.lastIndexOf("."));
             final String performanceTestResultsFilename = "BENCHMARK_RESULTS_" + queryName + ".csv";
             try(PrintWriter writer = new PrintWriter(new FileWriter(performanceTestResultsFilename))) {
-                writer.println("Run_ID,Step_Name,Duration_ms");
+                writer.println("Run_ID;Step_Name;Duration_ms");
             }
             System.out.println("Benchmark started. Output will be saved to: " + performanceTestResultsFilename);
 
