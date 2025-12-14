@@ -1,0 +1,7 @@
+export NilsLambertzPerformanceTestTargetLength0 to "http://vitruv.tools/nilslambertz/NilsLambertzPerformanceTestTargetLength0"
+
+import "http://example.org/PerformanceTestModel"
+
+from A a create NilsLambertzPerformanceTestTargetLength0 {
+    it.attA1
+}

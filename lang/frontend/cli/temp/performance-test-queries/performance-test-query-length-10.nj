@@ -1,0 +1,19 @@
+export NilsLambertzPerformanceTestTargetLength10 to "http://vitruv.tools/nilslambertz/NilsLambertzPerformanceTestTargetLength10"
+
+import "http://example.org/PerformanceTestModel"
+
+from A a create NilsLambertzPerformanceTestTargetLength10 {
+    someExpression := a
+        .refB_Single
+        .refD_Multi
+        .filter[someD  | someD.attD1 > 3.1415]
+        .flatMap[someD | someD.refF_Multi]
+        .filter[someF  | someF.attF2 == true]
+        .map[someF     | someF.refG_Single]
+        .flatMap[someG | someG.refI_Multi]
+        .filter[someI  | someI.attI2 <= 5]
+        .flatMap[someI | someI.refA_Multi]
+        .flatMap[someA | someA.refC_Multi]
+        .toList() create NilsLambertzPerformanceTestTargetLength10Child {
+        }
+}

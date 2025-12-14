@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="PerformanceTestModel"
+    nsURI="http://example.org/PerformanceTestModel" nsPrefix="perf">
+
+  <eClassifiers xsi:type="ecore:EClass" name="A">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attA1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attA2" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refB_Single" eType="#//B"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refC_Multi" upperBound="-1" eType="#//C" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refJ_Single" eType="#//J"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refI_Multi" upperBound="-1" eType="#//I"/>
+  </eClassifiers>
+
+  <eClassifiers xsi:type="ecore:EClass" name="B">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attB1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attB2" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refC_Single" eType="#//C"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refD_Multi" upperBound="-1" eType="#//D" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refA_Single" eType="#//A"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refJ_Multi" upperBound="-1" eType="#//J"/>
+  </eClassifiers>
+
+  <eClassifiers xsi:type="ecore:EClass" name="C">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attC1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attC2" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refD_Single" eType="#//D"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refE_Multi" upperBound="-1" eType="#//E" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refB_Single" eType="#//B"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refA_Multi" upperBound="-1" eType="#//A"/>
+  </eClassifiers>
+
+  <eClassifiers xsi:type="ecore:EClass" name="D">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attD1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attD2" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refE_Single" eType="#//E"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refF_Multi" upperBound="-1" eType="#//F" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refC_Single" eType="#//C"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refB_Multi" upperBound="-1" eType="#//B"/>
+  </eClassifiers>
+
+  <eClassifiers xsi:type="ecore:EClass" name="E">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attE1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attE2" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refF_Single" eType="#//F"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refG_Multi" upperBound="-1" eType="#//G" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refD_Single" eType="#//D"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refC_Multi" upperBound="-1" eType="#//C"/>
+  </eClassifiers>
+
+  <eClassifiers xsi:type="ecore:EClass" name="F">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attF1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attF2" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refG_Single" eType="#//G"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refH_Multi" upperBound="-1" eType="#//H" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refE_Single" eType="#//E"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refD_Multi" upperBound="-1" eType="#//D"/>
+  </eClassifiers>
+
+  <eClassifiers xsi:type="ecore:EClass" name="G">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attG1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attG2" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refH_Single" eType="#//H"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refI_Multi" upperBound="-1" eType="#//I" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refF_Single" eType="#//F"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refE_Multi" upperBound="-1" eType="#//E"/>
+  </eClassifiers>
+
+  <eClassifiers xsi:type="ecore:EClass" name="H">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attH1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attH2" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refI_Single" eType="#//I"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refJ_Multi" upperBound="-1" eType="#//J" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refG_Single" eType="#//G"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refF_Multi" upperBound="-1" eType="#//F"/>
+  </eClassifiers>
+
+  <eClassifiers xsi:type="ecore:EClass" name="I">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attI1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attI2" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refJ_Single" eType="#//J"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refA_Multi" upperBound="-1" eType="#//A"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refH_Single" eType="#//H"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refG_Multi" upperBound="-1" eType="#//G"/>
+  </eClassifiers>
+
+  <eClassifiers xsi:type="ecore:EClass" name="J">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attJ1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attJ2" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refA_Single" eType="#//A"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refB_Multi" upperBound="-1" eType="#//B"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refI_Single" eType="#//I"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refH_Multi" upperBound="-1" eType="#//H"/>
+  </eClassifiers>
+
+</ecore:EPackage>
