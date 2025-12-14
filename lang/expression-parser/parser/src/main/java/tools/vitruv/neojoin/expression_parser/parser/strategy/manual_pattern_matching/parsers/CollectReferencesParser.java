@@ -14,9 +14,8 @@ import java.util.Set;
 
 public class CollectReferencesParser implements ReferenceOperatorParser {
     private static final String TO_LIST_OPERATION_SIMPLE_NAME = "toList";
-    private static final String FLATTEN_OPERATION_SIMPLE_NAME = "flatten";
     private static final Set<String> COLLECT_OPERATIONS_SIMPLE_NAMES =
-            Set.of(TO_LIST_OPERATION_SIMPLE_NAME, FLATTEN_OPERATION_SIMPLE_NAME);
+            Set.of(TO_LIST_OPERATION_SIMPLE_NAME);
 
     public Optional<ReferenceOperator> parse(
             PatternMatchingStrategy strategy, XExpression expression)
