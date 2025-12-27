@@ -54,16 +54,16 @@ public class ${p.name()}ForwardRunner {
 
     public NeoGenerator createGenerator(NeoCoreBuilder builder) {
         var api = new API_Transform(builder);
-        var genAPI = new API_TestTGGProjectV2_GEN(builder);
-        var fwdAPI = new API_TestTGGProjectV2_FWD(builder);
-        var genRules = genAPI.getAllRulesForTestTGGProjectV2_GEN();
-        var analyser = new TripleRuleAnalyser(new API_Transform(builder).getTripleRulesOfTestTGGProjectV2());
+        var genAPI = new API_${p.name()}_GEN(builder);
+        var fwdAPI = new API_${p.name()}_FWD(builder);
+        var genRules = genAPI.getAllRulesFor${p.name()}_GEN();
+        var analyser = new TripleRuleAnalyser(new API_Transform(builder).getTripleRulesOf${p.name()}());
         forwardTransformation = new ForwardTransformationOperationalStrategy(//
             solver, //
             builder, //
             genRules, //
-            fwdAPI.getAllRulesForTestTGGProjectV2_FWD(), //
-            api.getConstraintsOfTestTGGProjectV2(), //
+            fwdAPI.getAllRulesFor${p.name()}_FWD(), //
+            api.getConstraintsOf${p.name()}(), //
             srcModelName, //
             trgModelName//
         );
