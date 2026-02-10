@@ -41,8 +41,8 @@
     <maven.compiler.target>21</maven.compiler.target>
     <sonar.organization>vitruv-tools</sonar.organization>
     <xtext.version>2.41.0</xtext.version>
-    <jte.version>3.2.1</jte.version>
-    <junit-jupiter.version>5.13.4</junit-jupiter.version>
+    <jte.version>3.2.2</jte.version>
+    <junit-jupiter.version>6.0.2</junit-jupiter.version>
   </properties>
 
   <!-- Modules -->
@@ -92,7 +92,7 @@
       <dependency>
         <groupId>net.sourceforge.plantuml</groupId>
         <artifactId>plantuml</artifactId>
-        <version>1.2025.10</version>
+        <version>1.2026.1</version>
       </dependency>
       <dependency>
         <groupId>org.antlr</groupId>
@@ -102,7 +102,7 @@
       <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
-        <version>3.27.6</version>
+        <version>3.27.7</version>
       </dependency>
       <dependency>
         <groupId>org.projectlombok</groupId>
@@ -128,12 +128,12 @@
       <dependency>
         <groupId>org.eclipse.lsp4j</groupId>
         <artifactId>org.eclipse.lsp4j</artifactId>
-        <version>0.24.0</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.lsp4j</groupId>
         <artifactId>org.eclipse.lsp4j.jsonrpc</artifactId>
-        <version>0.24.0</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.xtext</groupId>
