@@ -40,8 +40,6 @@
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <sonar.organization>vitruv-tools</sonar.organization>
-    <xtext.version>2.41.0</xtext.version>
-    <jte.version>3.2.3</jte.version>
   </properties>
 
   <!-- Modules -->
@@ -52,7 +50,6 @@
     <module>model</module>
     <module>expression-parser</module>
     <module>p2wrappers</module>
-    <module>emsl-parser</module>
   </modules>
 
   <!-- Dependency Management -->
@@ -76,12 +73,12 @@
       <dependency>
         <groupId>gg.jte</groupId>
         <artifactId>jte</artifactId>
-          <version>${jte.version}</version>
+        <version>3.2.3</version>
       </dependency>
       <dependency>
         <groupId>gg.jte</groupId>
         <artifactId>jte-runtime</artifactId>
-        <version>${jte.version}</version>
+        <version>3.2.3</version>
       </dependency>
       <dependency>
         <groupId>info.picocli</groupId>
@@ -112,17 +109,17 @@
       <dependency>
         <groupId>org.eclipse.emf</groupId>
         <artifactId>org.eclipse.emf.common</artifactId>
-        <version>2.43.0</version>
+        <version>2.45.0</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.emf</groupId>
         <artifactId>org.eclipse.emf.ecore</artifactId>
-        <version>2.41.0</version>
+        <version>2.42.0</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.emf</groupId>
         <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
-        <version>2.39.0</version>
+        <version>2.40.0</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.lsp4j</groupId>
@@ -137,42 +134,52 @@
       <dependency>
         <groupId>org.eclipse.xtext</groupId>
         <artifactId>org.eclipse.xtext</artifactId>
-        <version>${xtext.version}</version>
+        <version>2.42.0</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.xtext</groupId>
         <artifactId>org.eclipse.xtext.common.types</artifactId>
-        <version>${xtext.version}</version>
+        <version>2.42.0</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.xtext</groupId>
         <artifactId>org.eclipse.xtext.ide</artifactId>
-        <version>${xtext.version}</version>
+        <version>2.42.0</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.xtext</groupId>
         <artifactId>org.eclipse.xtext.util</artifactId>
-        <version>${xtext.version}</version>
+        <version>2.42.0</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.xtext</groupId>
         <artifactId>org.eclipse.xtext.xbase</artifactId>
-        <version>${xtext.version}</version>
+        <version>2.42.0</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.xtext</groupId>
         <artifactId>org.eclipse.xtext.xbase.ide</artifactId>
-        <version>${xtext.version}</version>
+        <version>2.42.0</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.xtext</groupId>
         <artifactId>org.eclipse.xtext.xbase.lib</artifactId>
-        <version>${xtext.version}</version>
+        <version>2.42.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.platform</groupId>
+        <artifactId>org.eclipse.osgi</artifactId>
+        <version>3.19.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.platform</groupId>
+        <artifactId>org.eclipse.core.resources</artifactId>
+        <version>3.19.0</version>
       </dependency>
       <dependency>
         <groupId>org.jetbrains</groupId>
         <artifactId>annotations</artifactId>
-        <version>26.0.2-1</version>
+        <version>26.1.0</version>
       </dependency>
       <dependency>
         <groupId>org.jspecify</groupId>
@@ -182,7 +189,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>6.0.2</version>
+        <version>6.0.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -190,6 +197,11 @@
         <groupId>tools.vitruv</groupId>
         <artifactId>tools.vitruv.change.p2wrappers.emfcompare</artifactId>
         <version>3.2.3</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>2.6</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
